@@ -33,7 +33,9 @@
     playhead: 48,
     noise: 0.12,
     dragging: null,
-    dragTap: 0
+    dragTap: 0,
+    keyboardTap: 0,
+    keyboardFocused: false
   };
 
   var els = {
@@ -151,7 +153,7 @@
     if (data.achieved) {
       els.hint.textContent = '峰值已经压到 80% 以下；看看平滑核怎样削弱高频';
     } else {
-      els.hint.textContent = '拖动播放头，或上下拖下方 tap';
+      els.hint.textContent = '拖动播放头 / tap；键盘 ←→ 播放头，1–5 选 tap，↑↓ 调整';
     }
   }
 
@@ -337,6 +339,17 @@
       ctx.stroke();
       ctx.restore();
 
+      if (state.keyboardFocused && index === state.keyboardTap) {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(191, 163, 106, 0.75)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.arc(cx, y, 13, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+
       K.drawLabel(ctx, cx, y - 16, 'h' + index, {
         color: color,
         background: 'rgba(250, 246, 238, 0.92)',
@@ -476,6 +489,40 @@
   canvas.addEventListener('pointercancel', stopDrag);
   canvas.addEventListener('pointerleave', function () {
     if (!state.dragging) canvas.classList.remove('is-grabbable');
+  });
+
+  canvas.addEventListener('focus', function () {
+    state.keyboardFocused = true;
+    requestRender();
+  });
+
+  canvas.addEventListener('blur', function () {
+    state.keyboardFocused = false;
+    requestRender();
+  });
+
+  canvas.addEventListener('keydown', function (event) {
+    var tapIndex = parseInt(event.key, 10);
+    if (tapIndex >= 1 && tapIndex <= 5) {
+      state.keyboardTap = tapIndex - 1;
+      event.preventDefault();
+      requestRender();
+      return;
+    }
+
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      var step = event.shiftKey ? 8 : 1;
+      setPlayhead(state.playhead + (event.key === 'ArrowLeft' ? -step : step));
+      return;
+    }
+
+    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      var delta = event.shiftKey ? 0.1 : 0.02;
+      setTap(state.keyboardTap, state.taps[state.keyboardTap] +
+        (event.key === 'ArrowUp' ? delta : -delta));
+    }
   });
 
   /* ------------------------------------------------------------------ *

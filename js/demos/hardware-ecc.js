@@ -33,7 +33,9 @@
     received: [],
     wasCorrected: false,
     nextError: 0,
-    lastCorrection: null
+    lastCorrection: null,
+    keyboardIndex: 0,
+    keyboardFocused: false
   };
 
   var els = {
@@ -163,7 +165,7 @@
     } else if (data.diff.length > 0) {
       els.hint.textContent = 'syndrome 非零：点“纠正”看它指向哪一位';
     } else {
-      els.hint.textContent = '点任意码字位翻转；或点“注入单比特错误”';
+      els.hint.textContent = '点码字位翻转；键盘 ←→ 选择，空格翻转';
     }
   }
 
@@ -261,6 +263,17 @@
         ctx.setLineDash([3, 3]);
         ctx.beginPath();
         ctx.arc(cx, y, size * 0.65, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      if (state.keyboardFocused && state.keyboardIndex === i) {
+        ctx.save();
+        ctx.strokeStyle = K.PALETTE.e1;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([2, 3]);
+        ctx.beginPath();
+        ctx.arc(cx, y, size * 0.78, 0, Math.PI * 2);
         ctx.stroke();
         ctx.restore();
       }
@@ -419,6 +432,35 @@
 
   canvas.addEventListener('pointerleave', function () {
     canvas.classList.remove('is-grabbable');
+  });
+
+  canvas.addEventListener('focus', function () {
+    state.keyboardFocused = true;
+    requestRender();
+  });
+
+  canvas.addEventListener('blur', function () {
+    state.keyboardFocused = false;
+    requestRender();
+  });
+
+  canvas.addEventListener('keydown', function (event) {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      state.keyboardIndex = (state.keyboardIndex +
+        (event.key === 'ArrowLeft' ? 6 : 1)) % 7;
+      requestRender();
+      return;
+    }
+    if (event.key === ' ' || event.key === 'Enter') {
+      event.preventDefault();
+      flipBit(state.keyboardIndex);
+      return;
+    }
+    if (event.key === 'c' || event.key === 'C') {
+      event.preventDefault();
+      els.btnCorrect.click();
+    }
   });
 
   els.messageBits.forEach(function (button, index) {

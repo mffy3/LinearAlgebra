@@ -174,7 +174,7 @@
     if (data.achieved) {
       els.hint.textContent = '找到强边缘了；换个核，看看同一个窗口会变成什么';
     } else {
-      els.hint.textContent = '拖动左边的金色窗口，扫过输入图';
+      els.hint.textContent = '拖动金色窗口，或用方向键移动';
     }
   }
 
@@ -484,6 +484,20 @@
   canvas.addEventListener('pointercancel', endDrag);
   canvas.addEventListener('pointerleave', function () {
     if (!state.dragging) canvas.classList.remove('is-grabbable');
+  });
+
+  canvas.addEventListener('keydown', function (event) {
+    var dx = 0;
+    var dy = 0;
+    if (event.key === 'ArrowLeft') dx = -1;
+    else if (event.key === 'ArrowRight') dx = 1;
+    else if (event.key === 'ArrowUp') dy = -1;
+    else if (event.key === 'ArrowDown') dy = 1;
+    else return;
+    event.preventDefault();
+    state.window.x = clamp(state.window.x + dx, 0, 4);
+    state.window.y = clamp(state.window.y + dy, 0, 4);
+    updateReadouts();
   });
 
   /* ------------------------------------------------------------------ *
