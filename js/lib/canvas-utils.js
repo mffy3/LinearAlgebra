@@ -13,22 +13,22 @@
   'use strict';
 
   var PALETTE = {
-    bg: '#070b12',
-    grid: 'rgba(148, 163, 184, 0.17)',
-    gridMajor: 'rgba(148, 163, 184, 0.28)',
-    gridGhost: 'rgba(148, 163, 184, 0.065)',
-    axis: 'rgba(203, 213, 225, 0.55)',
-    axisGhost: 'rgba(203, 213, 225, 0.11)',
-    e1: '#5eead4',
-    e2: '#c4b5fd',
-    square: '#5eead4',
-    squareNegative: '#fb7185',
-    circle: '#fbbf24',
-    eigen: '#fb7185',
-    blue: '#60a5fa',
-    text: '#e8eef8',
-    muted: '#93a4bd',
-    origin: '#e2e8f0'
+    bg: '#fbfbfd',
+    grid: 'rgba(29, 29, 31, 0.085)',
+    gridMajor: 'rgba(29, 29, 31, 0.15)',
+    gridGhost: 'rgba(29, 29, 31, 0.04)',
+    axis: 'rgba(29, 29, 31, 0.45)',
+    axisGhost: 'rgba(29, 29, 31, 0.08)',
+    e1: '#0066cc',
+    e2: '#bf4800',
+    square: '#0066cc',
+    squareNegative: '#b42318',
+    circle: '#b45309',
+    eigen: '#b42318',
+    blue: '#0066cc',
+    text: '#1d1d1f',
+    muted: '#6e6e73',
+    origin: '#1d1d1f'
   };
 
   /* ------------------------------------------------------------------ *
@@ -219,19 +219,12 @@
 
     var cx = view.originX;
     var cy = view.originY;
-    var radius = Math.max(view.width, view.height) * 0.72;
+    var radius = Math.max(view.width, view.height) * 0.78;
     var gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-    gradient.addColorStop(0, 'rgba(45, 212, 191, 0.065)');
-    gradient.addColorStop(0.42, 'rgba(124, 58, 237, 0.028)');
+    gradient.addColorStop(0, 'rgba(0, 102, 204, 0.032)');
+    gradient.addColorStop(0.55, 'rgba(191, 72, 0, 0.012)');
     gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
     ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, view.width, view.height);
-
-    // 四角压暗，让中心网格更聚焦。
-    var vignette = ctx.createRadialGradient(cx, cy, radius * 0.35, cx, cy, radius * 1.08);
-    vignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
-    vignette.addColorStop(1, 'rgba(0, 0, 0, 0.32)');
-    ctx.fillStyle = vignette;
     ctx.fillRect(0, 0, view.width, view.height);
     ctx.restore();
   }
@@ -385,10 +378,6 @@
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
     if (s.dash) ctx.setLineDash(s.dash);
-    if (s.glow) {
-      ctx.shadowColor = s.glowColor || s.stroke || PALETTE.e1;
-      ctx.shadowBlur = s.glow;
-    }
 
     var ok = pathWorldPoints(ctx, view, points, closed);
     if (!ok) {
@@ -421,10 +410,6 @@
     ctx.lineWidth = s.lineWidth == null ? 1.2 : s.lineWidth;
     ctx.lineCap = s.lineCap || 'round';
     if (s.dash) ctx.setLineDash(s.dash);
-    if (s.glow) {
-      ctx.shadowColor = s.glowColor || ctx.strokeStyle;
-      ctx.shadowBlur = s.glow;
-    }
     ctx.beginPath();
     ctx.moveTo(clipped.x1, clipped.y1);
     ctx.lineTo(clipped.x2, clipped.y2);
@@ -475,10 +460,6 @@
       ctx.lineWidth = s.lineWidth == null ? 2.4 : s.lineWidth;
       ctx.lineCap = 'round';
       if (s.dash) ctx.setLineDash(s.dash);
-      if (s.glow) {
-        ctx.shadowColor = s.glowColor || color;
-        ctx.shadowBlur = s.glow;
-      }
       ctx.beginPath();
       ctx.moveTo(clipped.x1, clipped.y1);
       ctx.lineTo(clipped.x2, clipped.y2);
@@ -513,10 +494,6 @@
 
     ctx.save();
     ctx.fillStyle = color;
-    if (s.glow) {
-      ctx.shadowColor = s.glowColor || color;
-      ctx.shadowBlur = s.glow;
-    }
     ctx.beginPath();
     ctx.moveTo(sb.x, sb.y);
     ctx.lineTo(bx + nx * half, by + ny * half);
@@ -529,8 +506,8 @@
       var offset = s.labelOffset || { x: 12, y: -12 };
       drawLabel(ctx, sb.x + offset.x, sb.y + offset.y, s.label, {
         color: s.labelColor || color,
-        background: s.labelBackground === false ? null : 'rgba(7, 11, 18, 0.78)',
-        border: s.labelBorder === false ? null : withAlpha(color, 0.28),
+        background: s.labelBackground === false ? null : 'rgba(255, 255, 255, 0.92)',
+        border: s.labelBorder === false ? null : withAlpha(color, 0.22),
         font: s.labelFont || '600 13px "Segoe UI", "Microsoft YaHei", sans-serif',
         align: offset.x < 0 ? 'right' : 'left'
       });

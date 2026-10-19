@@ -50,8 +50,7 @@
     dragging: null,
     showGrid: true,
     showOriginal: true,
-    showHeight: true,
-    showLabel: true
+    showHeight: true
   };
 
   var els = {
@@ -87,7 +86,6 @@
     toggleGrid: document.getElementById('toggle-grid'),
     toggleOriginal: document.getElementById('toggle-original'),
     toggleHeight: document.getElementById('toggle-height'),
-    toggleLabel: document.getElementById('toggle-label'),
     btnReplay: document.getElementById('btn-replay'),
     btnReset: document.getElementById('btn-reset'),
     btnQuizApply: document.getElementById('btn-quiz-apply'),
@@ -288,7 +286,7 @@
   }
 
   function fitWorldSpan() {
-    var target = view.width < 560 ? 7.5 : 9.5;
+    var target = view.width < 560 ? 7 : 8.8;
     if (view.worldSpan !== target) {
       view.worldSpan = target;
       view.resize();
@@ -315,7 +313,7 @@
   function drawOriginalSquare(ctx) {
     K.drawWorldPolygon(ctx, view, L.unitSquarePoints(), {
       closed: true,
-      stroke: 'rgba(148, 163, 184, 0.3)',
+      stroke: 'rgba(29, 29, 31, 0.3)',
       lineWidth: 1.1,
       dash: [4, 5]
     });
@@ -324,11 +322,11 @@
   function drawParallelogram(ctx, geometry) {
     K.drawWorldPolygon(ctx, view, geometry.square, {
       closed: true,
-      fill: geometry.isNegative ? 'rgba(251, 113, 133, 0.16)' : (geometry.isZero ? 'rgba(251, 191, 36, 0.1)' : 'rgba(94, 234, 212, 0.16)'),
+      fill: geometry.isNegative ? 'rgba(180, 35, 24, 0.16)' : (geometry.isZero ? 'rgba(180, 83, 9, 0.1)' : 'rgba(0, 102, 204, 0.16)'),
       stroke: geometry.accent,
       lineWidth: 2,
       glow: 14,
-      glowColor: geometry.isNegative ? 'rgba(251, 113, 133, 0.42)' : (geometry.isZero ? 'rgba(251, 191, 36, 0.32)' : 'rgba(94, 234, 212, 0.42)')
+      glowColor: geometry.isNegative ? 'rgba(180, 35, 24, 0.42)' : (geometry.isZero ? 'rgba(180, 83, 9, 0.32)' : 'rgba(0, 102, 204, 0.42)')
     });
 
     // 四个顶点，帮助看清“角去了哪里”
@@ -337,35 +335,6 @@
         radius: 2.4,
         fill: geometry.accent
       });
-    });
-  }
-
-  function drawAreaLabel(ctx, geometry) {
-    if (!state.showLabel) return;
-
-    // 标签放在图形最上方顶点的上方，避免盖住平行四边形本身。
-    var top = null;
-    geometry.square.forEach(function (point) {
-      var screen = view.worldToScreen(point);
-      if (!top || screen.y < top.y) top = { x: screen.x, y: screen.y };
-    });
-    if (!top) top = view.worldToScreen(geometry.centroid);
-
-    var x = L.clamp(top.x, 62, Math.max(62, view.width - 62));
-    var y = Math.max(24, top.y - 20);
-    if (!view.contains({ x: x, y: y }, 30)) {
-      var fallback = view.worldToScreen(geometry.centroid);
-      x = fallback.x;
-      y = fallback.y;
-    }
-
-    K.drawLabel(ctx, x, y, 'S = ' + L.formatFixed(geometry.area, 2), {
-      color: geometry.accent,
-      background: 'rgba(7, 11, 18, 0.8)',
-      border: K.withAlpha(geometry.accent, 0.3),
-      align: 'center',
-      font: '600 12px "Cascadia Code", Consolas, monospace',
-      fontSize: 13
     });
   }
 
@@ -390,7 +359,7 @@
 
     var size = 9;
     ctx.save();
-    ctx.strokeStyle = 'rgba(251, 191, 36, 0.62)';
+    ctx.strokeStyle = 'rgba(180, 83, 9, 0.62)';
     ctx.lineWidth = 1.1;
     ctx.beginPath();
     ctx.moveTo(foot.x + ux * size, foot.y + uy * size);
@@ -404,7 +373,7 @@
     if (!state.showHeight || geometry.base <= EPS || geometry.area <= EPS) return;
 
     K.drawWorldLine(ctx, view, geometry.otherVec, geometry.projection, {
-      stroke: 'rgba(251, 191, 36, 0.72)',
+      stroke: 'rgba(180, 83, 9, 0.72)',
       lineWidth: 1.5,
       dash: [6, 5]
     });
@@ -416,28 +385,28 @@
     var mid = L.lerpVec(geometry.otherVec, geometry.projection, 0.55);
     var screen = view.worldToScreen(mid);
     if (view.contains(screen, 40)) {
-      K.drawLabel(ctx, screen.x + 10, screen.y - 10, 'h = ' + L.formatFixed(geometry.height, 2), {
-        color: '#fbbf24',
-        background: 'rgba(7, 11, 18, 0.78)',
-        border: 'rgba(251, 191, 36, 0.24)',
-        font: '600 11px "Cascadia Code", Consolas, monospace',
-        fontSize: 12
+      K.drawLabel(ctx, screen.x + 9, screen.y - 7, 'h', {
+        color: '#b45309',
+        background: 'rgba(255, 255, 255, 0.86)',
+        border: 'rgba(180, 83, 9, 0.18)',
+        font: '500 10px "Cascadia Code", Consolas, monospace',
+        fontSize: 11
       });
     }
 
     // 底边标签
     var baseMid = L.scaleVec(geometry.baseVec, 0.5);
     var baseNormal = L.normalize({ x: -geometry.baseVec.y, y: geometry.baseVec.x });
-    var labelPoint = L.addVec(baseMid, L.scaleVec(baseNormal, -0.38));
+    var labelPoint = L.addVec(baseMid, L.scaleVec(baseNormal, -0.14));
     var baseScreen = view.worldToScreen(labelPoint);
     if (view.contains(baseScreen, 40)) {
-      K.drawLabel(ctx, baseScreen.x, baseScreen.y, 'b = ' + L.formatFixed(geometry.base, 2), {
-        color: '#fbbf24',
-        background: 'rgba(7, 11, 18, 0.78)',
-        border: 'rgba(251, 191, 36, 0.24)',
+      K.drawLabel(ctx, baseScreen.x, baseScreen.y, 'b', {
+        color: '#b45309',
+        background: 'rgba(255, 255, 255, 0.86)',
+        border: 'rgba(180, 83, 9, 0.18)',
         align: 'center',
-        font: '600 11px "Cascadia Code", Consolas, monospace',
-        fontSize: 12
+        font: '500 10px "Cascadia Code", Consolas, monospace',
+        fontSize: 11
       });
     }
   }
@@ -446,14 +415,14 @@
     var origin = { x: 0, y: 0 };
 
     K.drawArrowWorld(ctx, view, origin, { x: 1, y: 0 }, {
-      color: 'rgba(94, 234, 212, 0.18)',
+      color: 'rgba(0, 102, 204, 0.18)',
       lineWidth: 1,
       dash: [3, 4],
       head: 7,
       headWidth: 4
     });
     K.drawArrowWorld(ctx, view, origin, { x: 0, y: 1 }, {
-      color: 'rgba(196, 181, 253, 0.18)',
+      color: 'rgba(191, 72, 0, 0.18)',
       lineWidth: 1,
       dash: [3, 4],
       head: 7,
@@ -483,7 +452,7 @@
 
     K.drawPointWorld(ctx, view, origin, {
       radius: 3.2,
-      fill: '#e2e8f0'
+      fill: '#1d1d1f'
     });
   }
 
@@ -520,7 +489,6 @@
     drawParallelogram(ctx, geometry);
     drawHeight(ctx, geometry);
     drawBasis(ctx, geometry);
-    drawAreaLabel(ctx, geometry);
   }
 
   function requestRender() {
@@ -705,11 +673,6 @@
 
   els.toggleHeight.addEventListener('change', function () {
     state.showHeight = els.toggleHeight.checked;
-    requestRender();
-  });
-
-  els.toggleLabel.addEventListener('change', function () {
-    state.showLabel = els.toggleLabel.checked;
     requestRender();
   });
 

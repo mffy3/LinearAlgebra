@@ -254,7 +254,7 @@
   }
 
   function fitWorldSpan() {
-    var target = view.width < 560 ? 7.5 : 9.5;
+    var target = view.width < 560 ? 7 : 8.8;
     if (view.worldSpan !== target) {
       view.worldSpan = target;
       view.resize();
@@ -296,7 +296,7 @@
     if (view.contains(screen, 44)) {
       K.drawLabel(ctx, screen.x, screen.y, label, {
         color: color,
-        background: 'rgba(7, 11, 18, 0.8)',
+        background: 'rgba(255, 255, 255, 0.8)',
         border: K.withAlpha(color, 0.3),
         align: 'center',
         font: '600 11px "Cascadia Code", Consolas, monospace',
@@ -321,7 +321,7 @@
     if (state.showColumn && cs.dimension === 0) {
       K.drawPointWorld(ctx, view, { x: 0, y: 0 }, {
         radius: 5,
-        fill: 'rgba(94, 234, 212, 0.16)',
+        fill: 'rgba(0, 102, 204, 0.16)',
         stroke: K.PALETTE.e1,
         lineWidth: 1.4
       });
@@ -334,21 +334,21 @@
     var e2 = L.applyMat(m, { x: 0, y: 1 });
 
     K.drawArrowWorld(ctx, view, origin, e1, {
-      color: 'rgba(94, 234, 212, 0.5)',
+      color: 'rgba(0, 102, 204, 0.5)',
       lineWidth: 1.5,
       head: 9,
       headWidth: 5,
       label: 'e₁′',
-      labelColor: 'rgba(94, 234, 212, 0.8)',
+      labelColor: 'rgba(0, 102, 204, 0.8)',
       labelOffset: { x: 10, y: -11 }
     });
     K.drawArrowWorld(ctx, view, origin, e2, {
-      color: 'rgba(196, 181, 253, 0.5)',
+      color: 'rgba(191, 72, 0, 0.5)',
       lineWidth: 1.5,
       head: 9,
       headWidth: 5,
       label: 'e₂′',
-      labelColor: 'rgba(196, 181, 253, 0.8)',
+      labelColor: 'rgba(191, 72, 0, 0.8)',
       labelOffset: { x: 10, y: -11 }
     });
   }
@@ -389,15 +389,13 @@
       ctx.save();
       ctx.strokeStyle = K.PALETTE.blue;
       ctx.lineWidth = 2;
-      ctx.shadowColor = K.PALETTE.blue;
-      ctx.shadowBlur = 12;
       ctx.beginPath();
       ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
       ctx.stroke();
       ctx.restore();
       K.drawLabel(ctx, p.x + 14, p.y + 14, 'Ax = 0', {
         color: K.PALETTE.blue,
-        background: 'rgba(7, 11, 18, 0.8)',
+        background: 'rgba(255, 255, 255, 0.8)',
         border: K.withAlpha(K.PALETTE.blue, 0.3),
         font: '600 11px "Cascadia Code", Consolas, monospace',
         fontSize: 12
@@ -406,7 +404,7 @@
 
     K.drawPointWorld(ctx, view, origin, {
       radius: 3.2,
-      fill: '#e2e8f0'
+      fill: '#1d1d1f'
     });
   }
 

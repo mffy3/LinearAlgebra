@@ -272,7 +272,7 @@
     // 原始方格：虚线参考
     K.drawWorldPolygon(ctx, view, original, {
       closed: true,
-      stroke: 'rgba(148, 163, 184, 0.24)',
+      stroke: 'rgba(29, 29, 31, 0.24)',
       lineWidth: 1,
       dash: [4, 5]
     });
@@ -280,11 +280,11 @@
     var negative = det < -1E-9;
     K.drawWorldPolygon(ctx, view, transformed, {
       closed: true,
-      fill: negative ? 'rgba(251, 113, 133, 0.12)' : 'rgba(94, 234, 212, 0.12)',
+      fill: negative ? 'rgba(180, 35, 24, 0.12)' : 'rgba(0, 102, 204, 0.12)',
       stroke: negative ? K.PALETTE.squareNegative : K.PALETTE.square,
       lineWidth: 1.7,
       glow: 10,
-      glowColor: negative ? 'rgba(251, 113, 133, 0.45)' : 'rgba(94, 234, 212, 0.38)'
+      glowColor: negative ? 'rgba(180, 35, 24, 0.45)' : 'rgba(0, 102, 204, 0.38)'
     });
 
     // 四个顶点，帮助看清格点去了哪里
@@ -302,15 +302,15 @@
 
     K.drawWorldPolygon(ctx, view, circle, {
       closed: true,
-      stroke: 'rgba(251, 191, 36, 0.12)',
+      stroke: 'rgba(180, 83, 9, 0.12)',
       lineWidth: 1,
       dash: [4, 6]
     });
 
     K.drawWorldPolygon(ctx, view, transformed, {
       closed: true,
-      fill: rank === 2 ? 'rgba(251, 191, 36, 0.035)' : null,
-      stroke: 'rgba(251, 191, 36, 0.5)',
+      fill: rank === 2 ? 'rgba(180, 83, 9, 0.035)' : null,
+      stroke: 'rgba(180, 83, 9, 0.5)',
       lineWidth: 1.25,
       dash: [6, 6]
     });
@@ -340,7 +340,7 @@
       var near = L.scaleVec(v, -6.2);
 
       K.drawWorldLine(ctx, view, near, far, {
-        stroke: 'rgba(251, 113, 133, 0.55)',
+        stroke: 'rgba(180, 35, 24, 0.55)',
         lineWidth: 1.2,
         dash: [6, 6]
       });
@@ -349,9 +349,9 @@
       var screen = view.worldToScreen(labelPoint);
       if (view.contains(screen, 36)) {
         K.drawLabel(ctx, screen.x + 8, screen.y - 8, labels[i] + ' = ' + L.formatFixed(lambda, 2), {
-          color: '#fda4af',
-          background: 'rgba(7, 11, 18, 0.76)',
-          border: 'rgba(251, 113, 133, 0.25)',
+          color: '#b42318',
+          background: 'rgba(255, 255, 255, 0.76)',
+          border: 'rgba(180, 35, 24, 0.25)',
           font: '600 11px "Cascadia Code", Consolas, monospace',
           fontSize: 12
         });
@@ -366,14 +366,14 @@
 
     // 原始基向量：很淡的参考
     K.drawArrowWorld(ctx, view, origin, { x: 1, y: 0 }, {
-      color: 'rgba(94, 234, 212, 0.2)',
+      color: 'rgba(0, 102, 204, 0.2)',
       lineWidth: 1,
       dash: [3, 4],
       head: 7,
       headWidth: 4
     });
     K.drawArrowWorld(ctx, view, origin, { x: 0, y: 1 }, {
-      color: 'rgba(196, 181, 253, 0.2)',
+      color: 'rgba(191, 72, 0, 0.2)',
       lineWidth: 1,
       dash: [3, 4],
       head: 7,
@@ -404,12 +404,12 @@
 
     K.drawPointWorld(ctx, view, origin, {
       radius: 3.2,
-      fill: '#e2e8f0'
+      fill: '#1d1d1f'
     });
   }
 
   function fitWorldSpan() {
-    var target = view.width < 560 ? 7.5 : 9.5;
+    var target = view.width < 560 ? 7 : 8.8;
     if (view.worldSpan !== target) {
       view.worldSpan = target;
       view.resize();
