@@ -93,6 +93,35 @@
   white-space: nowrap;
 }
 
+.kernel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  width: min(100%, 168px);
+  margin: 0 auto 12px;
+}
+
+.kernel-cell {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border: 1px solid rgba(46, 49, 44, 0.12);
+  border-radius: 7px;
+  color: var(--ink);
+  background: rgba(250, 246, 238, 0.62);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+}
+
+.kernel-cell.is-negative {
+  color: var(--warm);
+  background: rgba(176, 125, 110, 0.08);
+}
+
+.kernel-cell.is-center {
+  border-color: rgba(191, 163, 106, 0.45);
+}
+
 .matrix-readout {
   display: grid;
   gap: 7px;

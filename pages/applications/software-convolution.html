@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="计算机软件应用：图像卷积。拖动 3×3 窗口，看卷积核如何把局部像素加权成一个输出。">
+  <meta name="theme-color" content="#efeae1">
+  <title>图像卷积 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/canvas.css">
+  <link rel="stylesheet" href="../../css/applications.css">
+</head>
+<body class="lab-page application-page application-software">
+  <a class="skip-link" href="#lab-main">跳到主要内容</a>
+
+  <header class="site-header lab-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Linear Algebra 入口">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../../index.html">入口</a>
+        <a href="economics-portfolio.html">投资组合</a>
+        <a href="software-convolution.html" aria-current="page">图像卷积</a>
+        <a href="../../ROADMAP.md">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="lab-main" class="lab-main">
+    <section class="lab-intro application-intro" data-zone="intro">
+      <div class="lab-intro-copy">
+        <p class="eyebrow">APPLICATION 06 · 计算机软件 · 图像卷积</p>
+        <div class="application-title-row">
+          <span class="application-badge">SOFTWARE</span>
+          <h1>九个像素，<span class="gradient-text">决定一个输出</span></h1>
+        </div>
+        <p class="lede">
+          卷积核不是“滤波器”这个神秘词的全部。它就是一个 3×3 的小矩阵：每次取九个像素，
+          按九个权重加起来，得到输出图上的一个数。拖动窗口，看这个局部线性映射怎样扫过整张图。
+        </p>
+        <div class="intro-pills" aria-label="本章关键词">
+          <span class="pill">3×3 核</span>
+          <span class="pill">滑动窗口</span>
+          <span class="pill">局部线性映射</span>
+          <span class="pill pill-accent">可拖拽</span>
+        </div>
+      </div>
+
+      <aside class="application-formula" aria-label="卷积公式">
+        <p class="formula-label">一个输出像素</p>
+        <p class="formula-main">y = Σ kᵢⱼ · xᵢⱼ</p>
+        <p class="formula-sub">9 个输入像素 × 9 个核权重，再加起来。更换核，就是换一个线性函数；窗口滑动，就是把它作用到整张图。</p>
+      </aside>
+    </section>
+
+    <div class="workspace" data-zone="workspace">
+      <section class="stage-card" id="stage-card" data-zone="canvas" aria-labelledby="stage-title">
+        <div class="stage-head">
+          <div>
+            <p class="stage-kicker">LIVE SOFTWARE</p>
+            <h2 id="stage-title">滑动窗口，扫过图像</h2>
+          </div>
+          <div class="stage-actions">
+            <button class="btn btn-small btn-ghost" id="btn-reset" type="button">重置</button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="conv-canvas" class="transform-canvas" width="900" height="620"
+            aria-label="图像卷积可视化：左侧 7×7 输入图和 3×3 滑动窗口，右侧 5×5 输出图。">
+            你的浏览器不支持 Canvas，请换一个现代浏览器。
+          </canvas>
+
+          <div class="det-chip solve-chip" id="conv-chip">
+            <span>卷积</span>
+            <strong id="canvas-status">局部线性映射</strong>
+          </div>
+
+          <p class="canvas-hint" id="conv-hint">拖动左边的金色窗口，扫过输入图</p>
+        </div>
+
+        <div class="professor-strip" aria-live="polite">
+          <span class="professor-seal" aria-hidden="true">λ</span>
+          <div>
+            <p id="professor-strip-text">每个输出像素只看一个 3×3 窗口；9 个权重把 9 个输入压成一个数。</p>
+            <p class="professor-strip-prompt" id="professor-strip-prompt">先把窗口拖到边缘上，看输出值怎么变。</p>
+          </div>
+        </div>
+
+        <div class="stage-foot">
+          <div class="foot-item">
+            <span class="foot-label">当前输出</span>
+            <b id="readout-output">0.00</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">窗口</span>
+            <b id="readout-window">(1, 1)</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">核</span>
+            <b id="readout-kernel">边缘</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">输出范围</span>
+            <b id="readout-range">—</b>
+          </div>
+        </div>
+      </section>
+
+      <aside class="control-panel" data-zone="controls" aria-label="卷积核与预设">
+        <div class="panel-head">
+          <h2>卷积核</h2>
+          <span class="pill pill-soft">3 × 3</span>
+        </div>
+
+        <div class="professor-note" aria-live="polite">
+          <div class="professor-head">
+            <span class="professor-seal" aria-hidden="true">λ</span>
+            <span>边做边看</span>
+          </div>
+          <p id="professor-text">每个输出像素只看一个 3×3 窗口；9 个权重把 9 个输入压成一个数。</p>
+          <p class="professor-prompt" id="professor-prompt">先把窗口拖到边缘上，看输出值怎么变。</p>
+        </div>
+
+        <div class="kernel-grid" id="kernel-grid" aria-label="3×3 卷积核">
+          <span class="kernel-cell" data-kernel-cell="0">-1</span>
+          <span class="kernel-cell" data-kernel-cell="1">-1</span>
+          <span class="kernel-cell" data-kernel-cell="2">-1</span>
+          <span class="kernel-cell" data-kernel-cell="3">-1</span>
+          <span class="kernel-cell" data-kernel-cell="4">8</span>
+          <span class="kernel-cell" data-kernel-cell="5">-1</span>
+          <span class="kernel-cell" data-kernel-cell="6">-1</span>
+          <span class="kernel-cell" data-kernel-cell="7">-1</span>
+          <span class="kernel-cell" data-kernel-cell="8">-1</span>
+        </div>
+
+        <div class="panel-section">
+          <p class="panel-label">预设核</p>
+          <div class="preset-grid">
+            <button class="preset-btn" type="button" data-kernel="identity">恒等</button>
+            <button class="preset-btn" type="button" data-kernel="blur">模糊</button>
+            <button class="preset-btn is-active" type="button" data-kernel="edge">边缘</button>
+            <button class="preset-btn" type="button" data-kernel="sharpen">锐化</button>
+            <button class="preset-btn" type="button" data-kernel="emboss">浮雕</button>
+          </div>
+        </div>
+
+        <div class="challenge-card" id="challenge-card">
+          <div class="challenge-head">
+            <span>小挑战</span>
+            <strong id="challenge-state">进行中</strong>
+          </div>
+          <p>用边缘核，把窗口拖到边缘最强的位置。</p>
+          <div class="challenge-metric">
+            <span>边缘强度</span>
+            <b id="challenge-distance">0.0%</b>
+          </div>
+          <div class="challenge-meter" id="challenge-meter" role="progressbar"
+            aria-label="边缘强度挑战进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="challenge-meter-fill"></span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="explain-section" data-zone="lecture" aria-labelledby="explain-title">
+      <div class="section-heading">
+        <p class="eyebrow">WHY IT LOOKS LIKE THIS</p>
+        <h2 id="explain-title">卷积核就是一个线性函数</h2>
+        <p>它不“理解”图像，只是把局部窗口里的数按权重加起来。</p>
+      </div>
+
+      <div class="explain-grid explain-grid-three">
+        <article class="explain-card">
+          <span class="explain-index">01</span>
+          <h3>一个窗口 = 一个点积</h3>
+          <p>把 3×3 窗口拉成 9 维向量，卷积核也是一个 9 维向量；输出就是它们的点积。</p>
+          <p class="formula">y = k · x</p>
+          <p>换核，就是换一组权重；窗口位置，就是换输入的局部坐标。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">02</span>
+          <h3>滑动窗口 = 局部线性映射</h3>
+          <p>同一个核作用到每个 3×3 窗口，输出图就得到 5×5 个值。</p>
+          <p class="formula">Y[i,j] = Σ k[r,c] · X[i+r, j+c]</p>
+          <p>这也是“卷积神经网络”里卷积层的最小版本。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">03</span>
+          <h3>核在找什么？</h3>
+          <p>恒等核复制中心；平均核模糊；边缘核让平坦区域接近 0，让亮度突变处变大。</p>
+          <p class="formula">Σ kᵢⱼ = 0 → 只对变化敏感</p>
+          <p>它不是魔法：权重和为零时，均匀区域会被抵消。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="quiz-section" data-zone="quiz">
+      <div class="quiz-card" aria-labelledby="quiz-title">
+        <div class="quiz-copy">
+          <p class="eyebrow">先猜后验</p>
+          <h2 id="quiz-title">3×3 卷积核在当前窗口做了什么？</h2>
+          <p>先想：9 个输入像素和 9 个权重，最后只得到一个数。</p>
+          <div class="quiz-options" role="group" aria-label="选择答案">
+            <button class="quiz-option" type="button" data-quiz-conv="a">取窗口里最亮的像素</button>
+            <button class="quiz-option" type="button" data-quiz-conv="b">把 9 个像素按权重相加</button>
+            <button class="quiz-option" type="button" data-quiz-conv="c">把窗口旋转 90°</button>
+          </div>
+          <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></p>
+          <button class="btn btn-primary" id="btn-quiz-apply" type="button">切到边缘核验证 <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="quiz-visual" aria-hidden="true">
+          <canvas id="quiz-canvas" width="360" height="260"></canvas>
+          <span class="quiz-mini-label" id="quiz-mini-label">9 个权重 → 1 个输出</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-strip" data-zone="next" aria-labelledby="next-title">
+      <div>
+        <p class="eyebrow">NEXT APPLICATION</p>
+        <h2 id="next-title">下一站：PCA，把高维压到二维</h2>
+        <p>协方差矩阵的特征向量不只能看风险，也能找出数据里最重要的方向。</p>
+      </div>
+      <a class="btn btn-primary" href="../../ROADMAP.md">查看应用篇路线 <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>从箭头开始。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../../index.html">入口</a>
+        <a href="economics-portfolio.html">投资组合</a>
+        <a href="software-convolution.html">图像卷积</a>
+        <a href="../../ROADMAP.md">路线图</a>
+        <a href="../../RULES.md">规则</a>
+        <a href="../../MANUAL.md">手册</a>
+        <a href="../../REFERENCES.md">参考</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+        项目内容为原创，参考来源仅以链接与出处形式标注。
+      </p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">这个页面需要 JavaScript 才能绘制交互。请启用 JavaScript 后刷新。</div>
+  </noscript>
+
+  <script src="../../js/lib/math.js" defer></script>
+  <script src="../../js/lib/canvas-utils.js" defer></script>
+  <script src="../../js/lib/paths.js" defer></script>
+  <script src="../../js/lib/level-ui.js" defer></script>
+  <script src="../../js/lib/narration.js" defer></script>
+  <script src="../../js/demos/software-convolution.js" defer></script>
+</body>
+</html>

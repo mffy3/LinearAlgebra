@@ -181,6 +181,7 @@ pages/applications/physics-rotation.html # 已完成：刚体旋转
 pages/applications/physics-quantum.html # 已完成：量子态叠加
 pages/applications/economics-leontief.html # 已完成：投入产出
 pages/applications/economics-portfolio.html # 已完成：投资组合
+pages/applications/software-convolution.html # 已完成：图像卷积
 pages/applications/economics.html      # 规划中
 pages/applications/computer.html       # 规划中
 ...

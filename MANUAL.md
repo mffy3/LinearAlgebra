@@ -3,7 +3,7 @@
 > 写给老板的“公司使用说明书”。
 > 不需要懂前端工程，也能知道每个文件夹是干什么的、想加功能时该怎么说、改崩了怎么救。
 >
-> 当前版本：v1.8（3D 入口 + 水平选择 + 路线提示 + 零基础向量课 + 五个基础展厅 + 物理三页 + 经济两页）
+> 当前版本：v1.9（3D 入口 + 水平选择 + 路线提示 + 零基础向量课 + 五个基础展厅 + 物理三页 + 经济两页 + 图像卷积）
 > 配套文件：`RULES.md`（纪律）、`ROADMAP.md`（路线图）、`README.md`（对外介绍）、`ARCHITECTURE.md`（分区与迭代）
 
 ---
@@ -53,7 +53,8 @@ Linear Algebra/
 │       ├── physics-rotation.js 物理应用：R(θ) 与正交矩阵
 │       ├── physics-quantum.js 物理应用：复振幅与 Born 规则
 │       ├── economics-leontief.js 经济应用：(I − A)⁻¹d
-│       └── economics-portfolio.js 经济应用：wᵀΣw 与特征向量
+│       ├── economics-portfolio.js 经济应用：wᵀΣw 与特征向量
+│       └── software-convolution.js 软件应用：3×3 核与滑动窗口
 │
 ├── pages/                     各个独立展厅
 │   ├── library.html           全部展厅：地球仪与便当盒目录
@@ -68,7 +69,8 @@ Linear Algebra/
 │       ├── physics-rotation.html 物理：刚体旋转（当前开放）
 │       ├── physics-quantum.html 物理：量子态叠加（当前开放）
 │       ├── economics-leontief.html 经济：投入产出（当前开放）
-│       └── economics-portfolio.html 经济：投资组合（当前开放）
+│       ├── economics-portfolio.html 经济：投资组合（当前开放）
+│       └── software-convolution.html 软件：图像卷积（当前开放）
 │
 ├── assets/
 │   └── images/                仓库：图标、演示图片等静态素材
@@ -115,7 +117,7 @@ Linear Algebra/
 | 给方程组页加“更多变量” | `pages/05-solve.html`、`js/demos/solve.js` | 先扩展 `math.js` 的 `solve2` 或新增 `solve3`，并补测试 |
 | 给行列式页加“面积尺” | 无 | `js/demos/determinant.js`、`css/canvas.css` |
 | 加“物理受力分解”应用 | `pages/applications/physics.html`、`js/demos/physics-force.js` | 应用区入口；`math.js` 可能加向量投影 |
-| 加“图像卷积”应用 | `pages/applications/graphics.html`、`js/demos/graphics-convolution.js` | 需要图片素材与卷积核控件 |
+| 加“图像卷积”应用 | `pages/applications/software-convolution.html`、`js/demos/software-convolution.js` | 需要图片素材与卷积核控件 |
 | 调整全站配色 | 无 | `css/main.css` 顶部的颜色变量 |
 | 调整画布布局 | 无 | `css/canvas.css` |
 
@@ -312,6 +314,7 @@ Uncaught TypeError: ...
 - **物理 · 量子态**：调 θ、φ；看 |α|²、|β|² 的概率条，验证归一化和 Born 规则。
 - **经济 · 投入产出**：左右拖动需求框里的金点，或调 d₁、d₂；解 (I − A)x = d，看两个行业总产出和逆矩阵。
 - **经济 · 投资组合**：拖金点调权重，左右拖协方差椭圆调 ρ；看有效前沿、最小风险点和协方差矩阵特征向量。
+- **软件 · 图像卷积**：拖动 3×3 窗口，切换 5 种核；看 9 个像素怎样按权重变成一个输出。
 - 零基础向量课、五个基础展厅和物理应用都有“先猜后验”选择题，支持桌面 / 手机 / `file://` 直接打开。
 
 ## 附录 B：当前版本不包含什么

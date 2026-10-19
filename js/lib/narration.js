@@ -325,6 +325,34 @@
     };
   }
 
+  function convolution(s) {
+    if (s.kernel === 'identity') {
+      return {
+        text: '恒等核只保留中心像素，其余 8 个权重都是 0。输出图基本复制输入图，但边缘少了一圈。',
+        prompt: '换成平均核，看看 9 个权重都变成 1/9 时会发生什么。'
+      };
+    }
+
+    if (s.kernel === 'blur') {
+      return {
+        text: '平均核把窗口里的 9 个像素取平均。它压低突变、让图像变软；权重和是 1，所以整体亮度基本不变。',
+        prompt: '换成边缘核，注意平坦区域的输出会接近 0。'
+      };
+    }
+
+    if (s.progress >= 85) {
+      return {
+        text: '当前窗口的输出接近整张输出图的最大绝对值。边缘核在亮度突变处响应最强，平坦处几乎抵消。',
+        prompt: '换一个窗口，看看输出值怎样从正变负。'
+      };
+    }
+
+    return {
+      text: '卷积核就是一个 9 维权重向量；每个输出像素都是当前 3×3 窗口与它的点积。窗口在滑动，但核没有变。',
+      prompt: '把窗口拖到左边暗区和右边亮区的交界处。'
+    };
+  }
+
   function portfolio(s) {
     if (Math.abs(s.weight - s.star) < 0.02) {
       return {
@@ -364,6 +392,7 @@
     rotation: rotation,
     quantum: quantum,
     economics: economics,
-    portfolio: portfolio
+    portfolio: portfolio,
+    convolution: convolution
   };
 })(typeof globalThis !== 'undefined' ? globalThis : window);
