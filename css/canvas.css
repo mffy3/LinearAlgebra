@@ -186,6 +186,11 @@
   font-weight: 600;
 }
 
+.chip-sep {
+  color: var(--faint);
+  font-size: 0.68rem;
+}
+
 .det-chip.is-negative {
   color: var(--rose);
   border-color: rgba(251, 113, 133, 0.3);
@@ -239,6 +244,13 @@
   border: 1px solid rgba(94, 234, 212, 0.65);
   border-radius: 2px;
   background: rgba(94, 234, 212, 0.15);
+}
+
+.legend-dash {
+  display: inline-block;
+  width: 14px;
+  height: 0;
+  border-top: 2px dashed var(--amber);
 }
 
 .canvas-hint {
@@ -446,6 +458,40 @@
 .readout small {
   color: #5c6d84;
   font-size: 0.58rem;
+}
+
+/* 面积验算卡 */
+.formula-panel {
+  margin-top: 14px;
+  padding: 11px 12px;
+  border: 1px solid rgba(94, 234, 212, 0.16);
+  border-radius: 11px;
+  background: rgba(94, 234, 212, 0.04);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  line-height: 1.8;
+}
+
+.formula-panel p {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.formula-panel p + p {
+  margin-top: 2px;
+}
+
+.formula-panel span {
+  color: var(--muted);
+}
+
+.formula-panel b {
+  color: var(--teal);
+  font-weight: 550;
+  text-align: right;
+  white-space: nowrap;
 }
 
 /* 预设 */

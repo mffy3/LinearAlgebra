@@ -1320,7 +1320,8 @@ button {
     padding: 22px;
   }
 
-  .site-nav a[href$="ROADMAP.md"] {
+  .site-nav a[href$="ROADMAP.md"],
+  .site-nav a[href$="index.html"] {
     display: none;
   }
 }
