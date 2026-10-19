@@ -276,6 +276,34 @@
     };
   }
 
+  function quantum(s) {
+    if (Math.abs(s.theta - 45) < 0.5) {
+      return {
+        text: 'θ = 45° 时，α 和 β 的模长相等，所以 p(0) = p(1) = 0.5。相位 φ 可以继续转，但概率不会变。',
+        prompt: '转动 φ，观察两个振幅的箭头：概率不变，只有相对方向在变。'
+      };
+    }
+
+    if (Math.abs(s.theta) < 0.5) {
+      return {
+        text: 'θ = 0° 时 β = 0，状态就是 |0⟩；测量一定得到 0。',
+        prompt: '把 θ 往上推，看看 |1⟩ 的振幅怎样长出来。'
+      };
+    }
+
+    if (Math.abs(s.theta - 90) < 0.5) {
+      return {
+        text: 'θ = 90° 时 α = 0，状态就是 |1⟩；测量一定得到 1。',
+        prompt: '把 θ 拉回 45°，让两种结果重新各占一半。'
+      };
+    }
+
+    return {
+      text: 'α 和 β 都是复数。θ 决定两个振幅的大小，φ 决定 β 的相位；概率只看模平方，不看整体相位。',
+      prompt: '先把 θ 调到 45°，让两种结果各占一半。'
+    };
+  }
+
   global.LinAlgNarration = {
     transform: transform,
     determinant: determinant,
@@ -284,6 +312,7 @@
     solve: solve,
     physics: physics,
     combination: combination,
-    rotation: rotation
+    rotation: rotation,
+    quantum: quantum
   };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

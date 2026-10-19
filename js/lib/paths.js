@@ -18,13 +18,13 @@
       id: 'some',
       label: '略有了解',
       start: '02-determinant',
-      pages: ['02-determinant', '03-rank', '04-eigenvector', '05-solve', 'physics', 'physics-rotation']
+      pages: ['02-determinant', '03-rank', '04-eigenvector', '05-solve', 'physics', 'physics-rotation', 'physics-quantum']
     },
     learned: {
       id: 'learned',
       label: '有扎实的基础',
       start: 'physics',
-      pages: ['physics', 'physics-rotation', 'economics', 'computer', 'art', 'music', 'social']
+      pages: ['physics', 'physics-rotation', 'physics-quantum', 'economics', 'computer', 'art', 'music', 'social']
     }
   };
 
@@ -37,6 +37,7 @@
     '05-solve': '线性方程组',
     'physics': '物理',
     'physics-rotation': '刚体旋转',
+    'physics-quantum': '量子态',
     'economics': '经济',
     'computer': '计算机',
     'art': '美术',
@@ -51,7 +52,8 @@
     '04-eigenvector': 'det(A − λI) = 0',
     '05-solve': 'rank A = rank[A|b]',
     physics: 'T₁u + T₂v = −W',
-    'physics-rotation': 'R(θ)ᵀR(θ) = I，det R = 1'
+    'physics-rotation': 'R(θ)ᵀR(θ) = I，det R = 1',
+    'physics-quantum': '|α|² + |β|² = 1'
   };
 
   var checklists = {
@@ -168,8 +170,22 @@
         body: '正交矩阵保长、保角；用 RᵀR = I 和 det = 1 检查。'
       },
       learned: {
-        title: '应用 2 / 7 · 刚体旋转',
+        title: '应用 2 / 8 · 刚体旋转',
         body: '直接看 R(θ)ᵀR(θ) = I；长度、夹角、det 都不变。'
+      }
+    },
+    'physics-quantum': {
+      zero: {
+        title: '应用篇 · 量子态',
+        body: '量子态是一个复向量；测量时才按 |α|²、|β|² 选一个结果。'
+      },
+      some: {
+        title: '应用篇 · 量子态',
+        body: '先抓住归一化：|α|² + |β|² = 1；相位 φ 不改变概率。'
+      },
+      learned: {
+        title: '应用 3 / 8 · 量子态',
+        body: '直接看 |ψ⟩ = α|0⟩ + β|1⟩ 与 Born 规则 p = |α|²。'
       }
     },
     physics: {
@@ -182,7 +198,7 @@
         body: '把前面学的 Ax = b 用起来：两股张力就是两个未知数。'
       },
       learned: {
-        title: '应用 1 / 7 · 物理',
+        title: '应用 1 / 8 · 物理',
         body: '直接从方程开始：T₁u + T₂v = −W；不用再复习定义。'
       }
     }
