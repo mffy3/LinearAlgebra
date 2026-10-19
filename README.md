@@ -1,4 +1,4 @@
-# 线性空间实验室 · Linear Space Lab
+# MatrixLab · 线性代数可视化实验室
 
 > 把矩阵，看成一次空间的呼吸。
 >
