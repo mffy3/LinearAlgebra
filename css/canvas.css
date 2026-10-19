@@ -923,7 +923,7 @@ body[data-level="learned"].level-core .quiz-section {
   background: var(--surface);
   font-size: 0.68rem;
   line-height: 1.4;
-  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+  transition: border-color 150ms ease, transform 150ms ease;
 }
 
 .preset-btn:hover {
@@ -1202,7 +1202,7 @@ body[data-level="learned"].level-core .quiz-section {
   color: var(--ink);
   background: var(--surface);
   font-size: 0.78rem;
-  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+  transition: border-color 150ms ease, transform 150ms ease;
 }
 
 .quiz-option:hover {
@@ -1268,6 +1268,10 @@ body[data-level="learned"].level-core .quiz-section {
   font-family: var(--font-mono);
   font-size: 0.66rem;
   letter-spacing: 0.03em;
+}
+
+.application-page .quiz-visual::before {
+  display: none;
 }
 
 .quiz-visual::before {

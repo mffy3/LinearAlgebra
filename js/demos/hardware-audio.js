@@ -639,53 +639,73 @@
     var qctx = qv.ctx;
     K.drawBackdrop(qctx, qv);
 
-    var startX = qv.width * 0.12;
-    var y = qv.height * 0.42;
-    var cell = Math.min(qv.width * 0.105, qv.height * 0.18);
+    var gap = 6;
+    var cell = Math.min((qv.width * 0.58 - gap * 4) / 5, qv.height * 0.18);
+    var startX = qv.width * 0.07;
+    var y = qv.height * 0.38;
 
     for (var i = 0; i < 5; i++) {
       qctx.fillStyle = 'rgba(46, 49, 44, 0.12)';
-      qctx.fillRect(startX + i * cell, y, cell - 3, cell);
-      K.drawLabel(qctx, startX + i * cell + cell / 2, y + cell / 2,
+      qctx.fillRect(startX + i * (cell + gap), y, cell, cell);
+      K.drawLabel(qctx, startX + i * (cell + gap) + cell / 2, y + cell + 13,
         'x[n−' + (4 - i) + ']', {
           color: K.PALETTE.muted,
           background: 'transparent',
           border: null,
-          font: '500 8px "Cascadia Code", Consolas, monospace',
-          fontSize: 9
+          font: '500 7px "Cascadia Code", Consolas, monospace',
+          fontSize: 8,
+          align: 'center'
         });
     }
 
-    var arrowX = startX + cell * 5.2;
+    var arrowX = startX + 5 * cell + 4 * gap + 8;
+    var arrowY = y + cell / 2;
     qctx.save();
     qctx.strokeStyle = K.PALETTE.gold;
+    qctx.fillStyle = K.PALETTE.gold;
     qctx.lineWidth = 2;
     qctx.beginPath();
-    qctx.moveTo(arrowX, y + cell / 2);
-    qctx.lineTo(arrowX + qv.width * 0.13, y + cell / 2);
+    qctx.moveTo(arrowX, arrowY);
+    qctx.lineTo(arrowX + qv.width * 0.16, arrowY);
     qctx.stroke();
+    qctx.beginPath();
+    qctx.moveTo(arrowX + qv.width * 0.16, arrowY);
+    qctx.lineTo(arrowX + qv.width * 0.16 - 7, arrowY - 4);
+    qctx.lineTo(arrowX + qv.width * 0.16 - 7, arrowY + 4);
+    qctx.closePath();
+    qctx.fill();
     qctx.restore();
 
-    K.drawLabel(qctx, arrowX + qv.width * 0.07, y - 18, 'Σ h[k]', {
+    K.drawLabel(qctx, arrowX + qv.width * 0.08, arrowY - 20, 'Σ h[k]', {
       color: K.PALETTE.gold,
-      background: 'rgba(250, 246, 238, 0.9)',
+      background: 'rgba(250, 246, 238, 0.92)',
       border: 'rgba(191, 163, 106, 0.25)',
       font: '500 9px "Cascadia Code", Consolas, monospace',
-      fontSize: 10
+      fontSize: 10,
+      align: 'center'
     });
 
-    var outX = arrowX + qv.width * 0.2;
+    var outX = arrowX + qv.width * 0.23;
     qctx.fillStyle = 'rgba(116, 134, 118, 0.28)';
-    qctx.fillRect(outX, y + cell * 0.18, cell * 0.9, cell * 0.65);
-    K.drawLabel(qctx, outX + cell * 0.45, y - 18, 'y[n]', {
+    qctx.fillRect(outX, y + cell * 0.16, cell * 1.1, cell * 0.68);
+    K.drawLabel(qctx, outX + cell * 0.55, y + cell * 1.15, 'y[n]', {
       color: K.PALETTE.e1,
-      background: 'rgba(250, 246, 238, 0.9)',
+      background: 'rgba(250, 246, 238, 0.92)',
       border: 'rgba(46, 49, 44, 0.1)',
       font: '500 9px "Cascadia Code", Consolas, monospace',
-      fontSize: 10
+      fontSize: 10,
+      align: 'center'
+    });
+
+    K.drawLabel(qctx, qv.width / 2, qv.height * 0.79, '5 个采样 → 1 个加权和', {
+      color: K.PALETTE.muted,
+      background: 'rgba(250, 246, 238, 0.9)',
+      border: 'rgba(46, 49, 44, 0.08)',
+      font: '500 9px "Cascadia Code", Consolas, monospace',
+      fontSize: 10,
+      align: 'center'
     });
   }
-
   /* ------------------------------------------------------------------ *
    * 启动
    * ------------------------------------------------------------------ */

@@ -567,32 +567,55 @@
     var qctx = qv.ctx;
     K.drawBackdrop(qctx, qv);
 
-    var startX = qv.width * 0.12;
-    var y = qv.height * 0.42;
-    var size = Math.min(qv.width * 0.075, qv.height * 0.13);
+    var gap = 5;
+    var size = Math.min((qv.width * 0.78 - gap * 6) / 7, qv.height * 0.18);
+    var total = size * 7 + gap * 6;
+    var startX = (qv.width - total) / 2;
+    var y = qv.height * 0.37;
 
-    for (var i = 0; i < 7; i++) {
-      qctx.fillStyle = i === 3 ? 'rgba(176, 125, 110, 0.26)' : 'rgba(46, 49, 44, 0.1)';
-      qctx.fillRect(startX + i * (size + 4), y, size, size * 1.4);
-    }
-
-    K.drawLabel(qctx, startX + size * 3.5, y - 18, 'H 的列 = 错误签名', {
+    K.drawLabel(qctx, qv.width / 2, y - 28, 'syndrome = H r → 错误位置', {
       color: K.PALETTE.muted,
-      background: 'rgba(250, 246, 238, 0.9)',
+      background: 'rgba(250, 246, 238, 0.92)',
       border: 'rgba(46, 49, 44, 0.1)',
       font: '500 9px "Cascadia Code", Consolas, monospace',
-      fontSize: 10
+      fontSize: 10,
+      align: 'center'
     });
 
-    K.drawLabel(qctx, startX + size * 3.5, y + size * 2.1, 's = 011 → 第 3 位', {
+    for (var i = 0; i < 7; i++) {
+      var x = startX + i * (size + gap);
+      qctx.save();
+      qctx.fillStyle = i === 2
+        ? 'rgba(176, 125, 110, 0.26)'
+        : 'rgba(46, 49, 44, 0.1)';
+      qctx.strokeStyle = i === 2 ? K.PALETTE.e2 : 'rgba(46, 49, 44, 0.16)';
+      qctx.lineWidth = i === 2 ? 1.5 : 1;
+      qctx.beginPath();
+      if (qctx.roundRect) qctx.roundRect(x, y, size, size * 1.35, 5);
+      else qctx.rect(x, y, size, size * 1.35);
+      qctx.fill();
+      qctx.stroke();
+      qctx.restore();
+
+      K.drawLabel(qctx, x + size / 2, y + size * 0.7, String(i + 1), {
+        color: i === 2 ? K.PALETTE.e2 : K.PALETTE.ink,
+        background: 'transparent',
+        border: null,
+        font: '600 11px "Cascadia Code", Consolas, monospace',
+        fontSize: 12,
+        align: 'center'
+      });
+    }
+
+    K.drawLabel(qctx, qv.width / 2, y + size * 2.05, 's = 011 → 第 3 位', {
       color: K.PALETTE.e2,
       background: 'rgba(250, 246, 238, 0.94)',
       border: 'rgba(46, 49, 44, 0.12)',
       font: '500 10px "Cascadia Code", Consolas, monospace',
-      fontSize: 10
+      fontSize: 10,
+      align: 'center'
     });
   }
-
   /* ------------------------------------------------------------------ *
    * 启动
    * ------------------------------------------------------------------ */
