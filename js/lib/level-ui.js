@@ -32,7 +32,7 @@
   document.body.dataset.level = level;
   var data = P.levels[level];
   var key = P.pageKey(window.location.pathname);
-  if (key !== 'physics' && key !== 'physics-rotation' && key !== 'physics-quantum' && key !== 'economics-leontief') document.body.classList.add('level-core');
+  if (key !== 'physics' && key !== 'physics-rotation' && key !== 'physics-quantum' && key !== 'economics-leontief' && key !== 'economics-portfolio') document.body.classList.add('level-core');
   var index = P.indexOf(level, key);
   var inPath = index >= 0;
   var total = data.pages.length;
@@ -62,6 +62,7 @@
     else if (keyName === 'physics-rotation') root = 'pages/applications/physics-rotation.html';
     else if (keyName === 'physics-quantum') root = 'pages/applications/physics-quantum.html';
     else if (keyName === 'economics-leontief') root = 'pages/applications/economics-leontief.html';
+    else if (keyName === 'economics-portfolio') root = 'pages/applications/economics-portfolio.html';
     else if (/^(economics|computer|art|music|social)$/.test(keyName)) return null;
     else root = 'pages/' + keyName + '.html';
     var query = '?level=' + level;

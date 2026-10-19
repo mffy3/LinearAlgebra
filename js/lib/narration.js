@@ -325,6 +325,34 @@
     };
   }
 
+  function portfolio(s) {
+    if (Math.abs(s.weight - s.star) < 0.02) {
+      return {
+        text: '这是最小方差点：再往两边加权重，组合风险都会上升。它不一定在 50 / 50，而由 σ₁、σ₂、ρ 一起决定。',
+        prompt: '把 ρ 调低，看看最小风险点会不会继续往左移动。'
+      };
+    }
+
+    if (s.weight <= 0.001 || s.weight >= 0.999) {
+      return {
+        text: '现在只持有一种资产，没有分散。协方差里的交叉项完全消失，风险就是单个资产的风险。',
+        prompt: '把权重往中间拉一点，看看组合点会不会跑到单个资产点的左边。'
+      };
+    }
+
+    if (s.rho < 0) {
+      return {
+        text: '负相关时，两种资产经常往相反方向动，组合的波动被压低；协方差的交叉项是负的。',
+        prompt: '保持负相关，再找最小风险点：它可能比两个资产都低。'
+      };
+    }
+
+    return {
+      text: '组合风险不是两个风险的加权平均；相关性会让它或大或小。协方差矩阵的特征向量给出互不相关的风险方向。',
+      prompt: '先把权重拉到 50%，比较组合点和两个资产点。'
+    };
+  }
+
   global.LinAlgNarration = {
     transform: transform,
     determinant: determinant,
@@ -335,6 +363,7 @@
     combination: combination,
     rotation: rotation,
     quantum: quantum,
-    economics: economics
+    economics: economics,
+    portfolio: portfolio
   };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

@@ -3,7 +3,7 @@
 > 写给老板的“公司使用说明书”。
 > 不需要懂前端工程，也能知道每个文件夹是干什么的、想加功能时该怎么说、改崩了怎么救。
 >
-> 当前版本：v1.7（3D 入口 + 水平选择 + 路线提示 + 零基础向量课 + 五个基础展厅 + 物理三页 + 经济投入产出）
+> 当前版本：v1.8（3D 入口 + 水平选择 + 路线提示 + 零基础向量课 + 五个基础展厅 + 物理三页 + 经济两页）
 > 配套文件：`RULES.md`（纪律）、`ROADMAP.md`（路线图）、`README.md`（对外介绍）、`ARCHITECTURE.md`（分区与迭代）
 
 ---
@@ -52,7 +52,8 @@ Linear Algebra/
 │       ├── physics-force.js   物理应用：把张力写成 2×2 方程组
 │       ├── physics-rotation.js 物理应用：R(θ) 与正交矩阵
 │       ├── physics-quantum.js 物理应用：复振幅与 Born 规则
-│       └── economics-leontief.js 经济应用：(I − A)⁻¹d
+│       ├── economics-leontief.js 经济应用：(I − A)⁻¹d
+│       └── economics-portfolio.js 经济应用：wᵀΣw 与特征向量
 │
 ├── pages/                     各个独立展厅
 │   ├── library.html           全部展厅：地球仪与便当盒目录
@@ -66,7 +67,8 @@ Linear Algebra/
 │       ├── physics.html       物理：受力分解（当前开放）
 │       ├── physics-rotation.html 物理：刚体旋转（当前开放）
 │       ├── physics-quantum.html 物理：量子态叠加（当前开放）
-│       └── economics-leontief.html 经济：投入产出（当前开放）
+│       ├── economics-leontief.html 经济：投入产出（当前开放）
+│       └── economics-portfolio.html 经济：投资组合（当前开放）
 │
 ├── assets/
 │   └── images/                仓库：图标、演示图片等静态素材
@@ -309,6 +311,7 @@ Uncaught TypeError: ...
 - **物理 · 刚体旋转**：调 θ 或拖动手柄；正交旋转保长、保角、det = 1；普通矩阵把圆压成椭圆。
 - **物理 · 量子态**：调 θ、φ；看 |α|²、|β|² 的概率条，验证归一化和 Born 规则。
 - **经济 · 投入产出**：调最终需求 d₁、d₂；解 (I − A)x = d，看两个行业总产出和逆矩阵。
+- **经济 · 投资组合**：调权重 w₁ 与相关性 ρ；看有效前沿、最小风险点和协方差椭圆。
 - 零基础向量课、五个基础展厅和物理应用都有“先猜后验”选择题，支持桌面 / 手机 / `file://` 直接打开。
 
 ## 附录 B：当前版本不包含什么
