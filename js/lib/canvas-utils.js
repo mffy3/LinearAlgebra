@@ -13,22 +13,22 @@
   'use strict';
 
   var PALETTE = {
-    bg: '#fbfbfd',
-    grid: 'rgba(29, 29, 31, 0.085)',
-    gridMajor: 'rgba(29, 29, 31, 0.15)',
-    gridGhost: 'rgba(29, 29, 31, 0.04)',
-    axis: 'rgba(29, 29, 31, 0.45)',
-    axisGhost: 'rgba(29, 29, 31, 0.08)',
-    e1: '#0066cc',
-    e2: '#bf4800',
-    square: '#0066cc',
-    squareNegative: '#b42318',
-    circle: '#b45309',
-    eigen: '#b42318',
-    blue: '#0066cc',
-    text: '#1d1d1f',
-    muted: '#6e6e73',
-    origin: '#1d1d1f'
+    bg: '#faf6ee',
+    grid: 'rgba(46, 49, 44, 0.075)',
+    gridMajor: 'rgba(46, 49, 44, 0.13)',
+    gridGhost: 'rgba(46, 49, 44, 0.035)',
+    axis: 'rgba(46, 49, 44, 0.38)',
+    axisGhost: 'rgba(46, 49, 44, 0.07)',
+    e1: '#748676',
+    e2: '#b07d6e',
+    square: '#748676',
+    squareNegative: '#a45c55',
+    circle: '#b78d6e',
+    eigen: '#a45c55',
+    blue: '#77879a',
+    text: '#2e312c',
+    muted: '#6d7068',
+    origin: '#2e312c'
   };
 
   /* ------------------------------------------------------------------ *
@@ -221,8 +221,8 @@
     var cy = view.originY;
     var radius = Math.max(view.width, view.height) * 0.78;
     var gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-    gradient.addColorStop(0, 'rgba(0, 102, 204, 0.032)');
-    gradient.addColorStop(0.55, 'rgba(191, 72, 0, 0.012)');
+    gradient.addColorStop(0, 'rgba(116, 134, 118, 0.05)');
+    gradient.addColorStop(0.55, 'rgba(176, 125, 110, 0.02)');
     gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, view.width, view.height);
@@ -506,7 +506,7 @@
       var offset = s.labelOffset || { x: 12, y: -12 };
       drawLabel(ctx, sb.x + offset.x, sb.y + offset.y, s.label, {
         color: s.labelColor || color,
-        background: s.labelBackground === false ? null : 'rgba(255, 255, 255, 0.92)',
+        background: s.labelBackground === false ? null : 'rgba(250, 246, 238, 0.94)',
         border: s.labelBorder === false ? null : withAlpha(color, 0.22),
         font: s.labelFont || '600 13px "Segoe UI", "Microsoft YaHei", sans-serif',
         align: offset.x < 0 ? 'right' : 'left'

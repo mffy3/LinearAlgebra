@@ -36,6 +36,8 @@
     rotate90: L.rotation(Math.PI / 2),
     shear: L.shear(1, 0),
     diagonal: L.mat2(3, 0, 0, -2),
+    projection: L.mat2(0.5, 0.5, 0.5, 0.5),
+    reflection: L.mat2(0, 1, 1, 0),
     identity: L.identity()
   };
 
@@ -194,6 +196,7 @@
       vLen: vLen,
       image: image,
       imageLen: imageLen,
+      dot: dot,
       cross: cross,
       angle: angle,
       minAngle: minAngle,
@@ -226,11 +229,37 @@
    * 读数
    * ------------------------------------------------------------------ */
 
+  function updateProfessor(g, repeated) {
+    var textEl = document.getElementById('professor-text');
+    var promptEl = document.getElementById('professor-prompt');
+    if (!textEl || !promptEl || !window.LinAlgNarration) return;
+
+    var note = window.LinAlgNarration.eigen({
+      collinear: g.collinear,
+      real: g.eig.real,
+      zero: g.isZero,
+      scalar: g.isScalar,
+      repeated: repeated,
+      ratio: g.ratio || 0,
+      negative: g.dot < 0,
+      lambda: g.eig.values[0].re
+    });
+
+    if (textEl.textContent !== note.text) textEl.textContent = note.text;
+    if (promptEl.textContent !== note.prompt) promptEl.textContent = note.prompt;
+
+    var stripText = document.getElementById('professor-strip-text');
+    var stripPrompt = document.getElementById('professor-strip-prompt');
+    if (stripText && stripText.textContent !== note.text) stripText.textContent = note.text;
+    if (stripPrompt && stripPrompt.textContent !== note.prompt) stripPrompt.textContent = note.prompt;
+  }
+
   function updateReadouts() {
     var m = state.matrix;
     var g = computeGeometry(m);
     var eig = g.eig;
     var real = eig.real;
+    var repeated = real && Math.abs(eig.values[0].re - eig.values[1].re) <= 1e-8;
 
     var e1Text = eigenValueText(eig, 0);
     var e2Text = eigenValueText(eig, 1);
@@ -284,7 +313,6 @@
     } else if (!eig.real) {
       note = '复特征值：没有实特征方向。空间在旋转，而不是沿某条线拉伸。';
     } else {
-      var repeated = Math.abs(eig.values[0].re - eig.values[1].re) <= 1e-8;
       note = repeated
         ? '重根：只有一个独立特征方向（缺陷矩阵）。打开图层可以看到那条“不转向”的线。'
         : '有两条实特征方向。打开图层查看，或拖动 v 自己找。';
@@ -307,6 +335,8 @@
     els.challengeAngle.textContent = g.imageLen < 0.01 ? 'Av = 0' : (g.angle == null ? '—' : L.formatFixed(g.angle, 1) + '°');
     els.challengeFill.style.width = progress.toFixed(1) + '%';
     els.challengeMeter.setAttribute('aria-valuenow', String(Math.round(progress)));
+
+    updateProfessor(g, repeated);
   }
 
   /* ------------------------------------------------------------------ *
@@ -358,7 +388,7 @@
     var far = L.scaleVec(direction, 7);
     var near = L.scaleVec(direction, -7);
     K.drawWorldLine(ctx, view, near, far, {
-      stroke: 'rgba(180, 35, 24, 0.55)',
+      stroke: 'rgba(164, 92, 85, 0.55)',
       lineWidth: 1.6,
       dash: [7, 6]
     });
@@ -367,9 +397,9 @@
     var screen = view.worldToScreen(labelPoint);
     if (view.contains(screen, 44)) {
       K.drawLabel(ctx, screen.x, screen.y, 'λ' + (index === 0 ? '₁' : '₂') + ' = ' + L.formatFixed(lambda, 2), {
-        color: '#b42318',
-        background: 'rgba(255, 255, 255, 0.9)',
-        border: 'rgba(180, 35, 24, 0.22)',
+        color: '#a45c55',
+        background: 'rgba(250, 246, 238, 0.9)',
+        border: 'rgba(164, 92, 85, 0.22)',
         align: 'center',
         font: '500 11px "Cascadia Code", Consolas, monospace',
         fontSize: 12
@@ -383,9 +413,9 @@
     if (g.isZero || g.isScalar) {
       var note = g.isZero ? '所有方向 → 0' : '所有方向都是特征方向';
       K.drawLabel(ctx, 22, 24, note, {
-        color: '#b42318',
-        background: 'rgba(255, 255, 255, 0.9)',
-        border: 'rgba(180, 35, 24, 0.22)',
+        color: '#a45c55',
+        background: 'rgba(250, 246, 238, 0.9)',
+        border: 'rgba(164, 92, 85, 0.22)',
         font: '500 11px "Cascadia Code", Consolas, monospace',
         fontSize: 12
       });
@@ -394,9 +424,9 @@
 
     if (!g.eig.real) {
       K.drawLabel(ctx, 22, 24, '无实特征方向', {
-        color: '#b42318',
-        background: 'rgba(255, 255, 255, 0.9)',
-        border: 'rgba(180, 35, 24, 0.22)',
+        color: '#a45c55',
+        background: 'rgba(250, 246, 238, 0.9)',
+        border: 'rgba(164, 92, 85, 0.22)',
         font: '500 11px "Cascadia Code", Consolas, monospace',
         fontSize: 12
       });
@@ -422,21 +452,21 @@
     var e2 = L.applyMat(m, { x: 0, y: 1 });
 
     K.drawArrowWorld(ctx, view, origin, e1, {
-      color: 'rgba(0, 102, 204, 0.45)',
+      color: 'rgba(116, 134, 118, 0.45)',
       lineWidth: 1.4,
       head: 9,
       headWidth: 5,
       label: 'e₁′',
-      labelColor: 'rgba(0, 102, 204, 0.8)',
+      labelColor: 'rgba(116, 134, 118, 0.8)',
       labelOffset: { x: 10, y: -11 }
     });
     K.drawArrowWorld(ctx, view, origin, e2, {
-      color: 'rgba(191, 72, 0, 0.45)',
+      color: 'rgba(176, 125, 110, 0.45)',
       lineWidth: 1.4,
       head: 9,
       headWidth: 5,
       label: 'e₂′',
-      labelColor: 'rgba(191, 72, 0, 0.8)',
+      labelColor: 'rgba(176, 125, 110, 0.8)',
       labelOffset: { x: 10, y: -11 }
     });
   }
@@ -477,8 +507,8 @@
       ctx.restore();
       K.drawLabel(ctx, p.x + 14, p.y + 14, 'Av = 0', {
         color: K.PALETTE.blue,
-        background: 'rgba(255, 255, 255, 0.9)',
-        border: 'rgba(0, 102, 204, 0.22)',
+        background: 'rgba(250, 246, 238, 0.9)',
+        border: 'rgba(116, 134, 118, 0.22)',
         font: '500 11px "Cascadia Code", Consolas, monospace',
         fontSize: 12
       });
@@ -488,7 +518,7 @@
     if (g.collinear && !state.showEigen && g.vLen > 0.1) {
       var dir = L.normalize(state.probe);
       K.drawWorldLine(ctx, view, L.scaleVec(dir, -7), L.scaleVec(dir, 7), {
-        stroke: 'rgba(180, 35, 24, 0.2)',
+        stroke: 'rgba(164, 92, 85, 0.2)',
         lineWidth: 1.2,
         dash: [2, 7]
       });
@@ -496,7 +526,7 @@
 
     K.drawPointWorld(ctx, view, origin, {
       radius: 3.2,
-      fill: '#1d1d1f'
+      fill: '#2e312c'
     });
   }
 
@@ -517,14 +547,14 @@
       drawGhostGrid(ctx);
       K.drawGrid(ctx, view, map, {
         range: computeGridRange(m),
-        minor: 'rgba(29, 29, 31, 0.055)',
-        major: 'rgba(29, 29, 31, 0.09)',
+        minor: 'rgba(46, 49, 44, 0.055)',
+        major: 'rgba(46, 49, 44, 0.09)',
         lineWidth: 0.8,
         majorWidth: 1.05
       });
       K.drawAxes(ctx, view, map, {
         range: computeGridRange(m),
-        color: 'rgba(29, 29, 31, 0.32)',
+        color: 'rgba(46, 49, 44, 0.32)',
         lineWidth: 1.15
       });
     }

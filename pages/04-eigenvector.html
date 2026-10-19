@@ -46,8 +46,8 @@
         <p class="eyebrow">CHAPTER 04 · 特征向量 = 方向不变的轴</p>
         <h1>哪些方向，<span class="gradient-text">只被拉伸</span></h1>
         <p class="lede">
-          大多数方向被矩阵扭转了。少数方向不会：它们只改变长度，不改变方向。
-          拖动橙色向量 v，观察蓝色 Av 是否与它共线；当你找到这条“不转向的轴”，就找到了特征向量。
+          大多数方向都会被矩阵拧走。少数方向很固执：只肯变长或变短，不肯转弯。
+          拖动橙色 v，看蓝色 Av 是否和它排在同一条直线上；找到了，就找到了特征向量。
         </p>
       </div>
     </section>
@@ -67,7 +67,7 @@
 
         <div class="canvas-wrap" id="canvas-wrap">
           <canvas id="eigen-canvas" class="transform-canvas" role="img"
-            aria-label="特征向量可视化。橙色箭头是探测向量 v，蓝色箭头是它的像 Av；当两者共线时，v 是特征向量。">
+            aria-label="特征向量可视化。陶土色箭头是探测向量 v，蓝灰色箭头是它的像 Av；当两者共线时，v 是特征向量。">
             你的浏览器不支持 Canvas。请使用最新版 Edge、Chrome 或 Firefox。
           </canvas>
 
@@ -83,6 +83,14 @@
           </div>
 
           <p class="canvas-hint">拖动橙色箭头 v；找不到方向时，打开“特征方向”图层</p>
+        </div>
+
+        <div class="professor-strip" aria-live="polite">
+          <span class="professor-seal" aria-hidden="true">λ</span>
+          <div>
+            <p id="professor-strip-text">大多数方向都会被矩阵拧走；少数方向很固执，只肯变长或变短，不肯转弯。</p>
+            <p class="professor-strip-prompt" id="professor-strip-prompt">先别打开特征方向图层，自己把 v 转一圈试试。</p>
+          </div>
         </div>
 
         <div class="stage-foot">
@@ -109,6 +117,15 @@
         <div class="panel-head">
           <h2>矩阵 A</h2>
           <span class="pill pill-soft">2 × 2</span>
+        </div>
+
+        <div class="professor-note" aria-live="polite">
+          <div class="professor-head">
+            <span class="professor-seal" aria-hidden="true">λ</span>
+            <span>教授的批注</span>
+          </div>
+          <p id="professor-text">大多数方向都会被矩阵拧走；少数方向很固执，只肯变长或变短，不肯转弯。我们要找的就是它们。</p>
+          <p class="professor-prompt" id="professor-prompt">先别打开特征方向图层，自己把 v 转一圈试试。</p>
         </div>
 
         <div class="matrix-editor" role="group" aria-labelledby="matrix-caption">
@@ -219,6 +236,8 @@
             <button class="preset-btn" type="button" data-preset="rotate90">旋转 90°</button>
             <button class="preset-btn" type="button" data-preset="shear">剪切</button>
             <button class="preset-btn" type="button" data-preset="diagonal">对角</button>
+            <button class="preset-btn" type="button" data-preset="projection">投影</button>
+            <button class="preset-btn" type="button" data-preset="reflection">反射</button>
             <button class="preset-btn" type="button" data-preset="identity">单位</button>
           </div>
         </div>
@@ -292,7 +311,7 @@
           <h3>三种可能</h3>
           <p>两个不同实特征值：两条特征方向；重根：可能只有一条独立方向；复特征值：没有实特征方向。</p>
           <p class="formula">旋转 90°：λ = ±i</p>
-          <p>旋转 90° 把每个方向都扭转了，所以它没有实特征向量。剪切只有一个独立方向；单位矩阵所有方向都是。</p>
+          <p>旋转 90° 把每个方向都扭转了，所以它没有实特征向量。投影的特征值是 1 和 0；反射是 1 和 −1；剪切只有一个独立方向；单位矩阵所有方向都是。</p>
         </article>
 
         <article class="explain-card">
@@ -352,6 +371,7 @@
         <a href="04-eigenvector.html">特征向量</a>
         <a href="../RULES.md">规则</a>
         <a href="../MANUAL.md">手册</a>
+        <a href="../REFERENCES.md">参考</a>
         <a href="../ROADMAP.md">路线图</a>
       </nav>
       <p class="footer-disclaimer">
@@ -366,6 +386,7 @@
 
   <script src="../js/lib/math.js" defer></script>
   <script src="../js/lib/canvas-utils.js" defer></script>
+  <script src="../js/lib/narration.js" defer></script>
   <script src="../js/demos/eigenvector.js" defer></script>
 </body>
 </html>

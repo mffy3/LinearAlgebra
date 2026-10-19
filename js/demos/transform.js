@@ -144,6 +144,31 @@
     el.classList.toggle(className, !!on);
   }
 
+  function updateProfessor(m, det, rank) {
+    var textEl = document.getElementById('professor-text');
+    var promptEl = document.getElementById('professor-prompt');
+    if (!textEl || !promptEl || !window.LinAlgNarration) return;
+
+    var note = window.LinAlgNarration.transform({
+      a: m.a,
+      b: m.b,
+      c: m.c,
+      d: m.d,
+      det: det,
+      rank: rank,
+      identity: L.isIdentity(m),
+      scalar: L.isScalar(m)
+    });
+
+    if (textEl.textContent !== note.text) textEl.textContent = note.text;
+    if (promptEl.textContent !== note.prompt) promptEl.textContent = note.prompt;
+
+    var stripText = document.getElementById('professor-strip-text');
+    var stripPrompt = document.getElementById('professor-strip-prompt');
+    if (stripText && stripText.textContent !== note.text) stripText.textContent = note.text;
+    if (stripPrompt && stripPrompt.textContent !== note.prompt) stripPrompt.textContent = note.prompt;
+  }
+
   function updateReadouts() {
     var m = state.matrix;
     var det = L.determinant(m);
@@ -226,6 +251,8 @@
     els.challengeDet.textContent = L.formatFixed(det, 3);
     els.challengeFill.style.width = progress.toFixed(1) + '%';
     els.challengeMeter.setAttribute('aria-valuenow', String(Math.round(progress)));
+
+    updateProfessor(m, det, rank);
   }
 
   /* ------------------------------------------------------------------ *
@@ -272,7 +299,7 @@
     // 原始方格：虚线参考
     K.drawWorldPolygon(ctx, view, original, {
       closed: true,
-      stroke: 'rgba(29, 29, 31, 0.24)',
+      stroke: 'rgba(46, 49, 44, 0.24)',
       lineWidth: 1,
       dash: [4, 5]
     });
@@ -280,11 +307,11 @@
     var negative = det < -1E-9;
     K.drawWorldPolygon(ctx, view, transformed, {
       closed: true,
-      fill: negative ? 'rgba(180, 35, 24, 0.12)' : 'rgba(0, 102, 204, 0.12)',
+      fill: negative ? 'rgba(164, 92, 85, 0.12)' : 'rgba(116, 134, 118, 0.12)',
       stroke: negative ? K.PALETTE.squareNegative : K.PALETTE.square,
       lineWidth: 1.7,
       glow: 10,
-      glowColor: negative ? 'rgba(180, 35, 24, 0.45)' : 'rgba(0, 102, 204, 0.38)'
+      glowColor: negative ? 'rgba(164, 92, 85, 0.45)' : 'rgba(116, 134, 118, 0.38)'
     });
 
     // 四个顶点，帮助看清格点去了哪里
@@ -302,15 +329,15 @@
 
     K.drawWorldPolygon(ctx, view, circle, {
       closed: true,
-      stroke: 'rgba(180, 83, 9, 0.12)',
+      stroke: 'rgba(183, 141, 110, 0.12)',
       lineWidth: 1,
       dash: [4, 6]
     });
 
     K.drawWorldPolygon(ctx, view, transformed, {
       closed: true,
-      fill: rank === 2 ? 'rgba(180, 83, 9, 0.035)' : null,
-      stroke: 'rgba(180, 83, 9, 0.5)',
+      fill: rank === 2 ? 'rgba(183, 141, 110, 0.035)' : null,
+      stroke: 'rgba(183, 141, 110, 0.5)',
       lineWidth: 1.25,
       dash: [6, 6]
     });
@@ -340,7 +367,7 @@
       var near = L.scaleVec(v, -6.2);
 
       K.drawWorldLine(ctx, view, near, far, {
-        stroke: 'rgba(180, 35, 24, 0.55)',
+        stroke: 'rgba(164, 92, 85, 0.55)',
         lineWidth: 1.2,
         dash: [6, 6]
       });
@@ -349,9 +376,9 @@
       var screen = view.worldToScreen(labelPoint);
       if (view.contains(screen, 36)) {
         K.drawLabel(ctx, screen.x + 8, screen.y - 8, labels[i] + ' = ' + L.formatFixed(lambda, 2), {
-          color: '#b42318',
-          background: 'rgba(255, 255, 255, 0.76)',
-          border: 'rgba(180, 35, 24, 0.25)',
+          color: '#a45c55',
+          background: 'rgba(250, 246, 238, 0.76)',
+          border: 'rgba(164, 92, 85, 0.25)',
           font: '600 11px "Cascadia Code", Consolas, monospace',
           fontSize: 12
         });
@@ -366,14 +393,14 @@
 
     // 原始基向量：很淡的参考
     K.drawArrowWorld(ctx, view, origin, { x: 1, y: 0 }, {
-      color: 'rgba(0, 102, 204, 0.2)',
+      color: 'rgba(116, 134, 118, 0.2)',
       lineWidth: 1,
       dash: [3, 4],
       head: 7,
       headWidth: 4
     });
     K.drawArrowWorld(ctx, view, origin, { x: 0, y: 1 }, {
-      color: 'rgba(191, 72, 0, 0.2)',
+      color: 'rgba(176, 125, 110, 0.2)',
       lineWidth: 1,
       dash: [3, 4],
       head: 7,
@@ -404,7 +431,7 @@
 
     K.drawPointWorld(ctx, view, origin, {
       radius: 3.2,
-      fill: '#1d1d1f'
+      fill: '#2e312c'
     });
   }
 

@@ -46,8 +46,8 @@
         <p class="eyebrow">CHAPTER 01 · 矩阵 = 线性映射</p>
         <h1>看见矩阵，<span class="gradient-text">如何重排空间</span></h1>
         <p class="lede">
-          修改四个数字，或者直接拖动青色、紫色箭头的尖端。网格、单位方格和单位圆会一起连续形变——
-          没有剪辑，没有预设动画，只有同一个线性规则。
+          拖动 e₁、e₂ 的箭头，或者直接改四个数。别急着背公式：
+          先看这两个箭头搬到哪里，整张网格只是跟着它们走。
         </p>
       </div>
       <div class="intro-meta" aria-label="技术特性">
@@ -73,7 +73,7 @@
 
         <div class="canvas-wrap" id="canvas-wrap">
           <canvas id="transform-canvas" class="transform-canvas" role="img"
-            aria-label="二维矩阵变换网格。青色箭头是变换后的 e₁，紫色箭头是变换后的 e₂。修改右侧矩阵元素可观察网格形变。">
+            aria-label="二维矩阵变换网格。鼠尾草色箭头是变换后的 e₁，陶土色箭头是变换后的 e₂。修改右侧矩阵元素可观察网格形变。">
             你的浏览器不支持 Canvas。请使用最新版 Edge、Chrome 或 Firefox。
           </canvas>
 
@@ -96,6 +96,14 @@
           <p class="canvas-hint">拖动箭头尖端，或修改右侧数字</p>
         </div>
 
+        <div class="professor-strip" aria-live="polite">
+          <span class="professor-seal" aria-hidden="true">λ</span>
+          <div>
+            <p id="professor-strip-text">第一列是 e₁ 的新家，第二列是 e₂ 的新家。整张网格只是跟着它们走。</p>
+            <p class="professor-strip-prompt" id="professor-strip-prompt">先猜 b = 1 时网格往哪边倒，再改数字验证。</p>
+          </div>
+        </div>
+
         <div class="stage-foot">
           <div class="foot-item">
             <span class="foot-label">e₁′</span>
@@ -116,6 +124,15 @@
         <div class="panel-head">
           <h2>矩阵 A</h2>
           <span class="pill pill-soft">2 × 2</span>
+        </div>
+
+        <div class="professor-note" aria-live="polite">
+          <div class="professor-head">
+            <span class="professor-seal" aria-hidden="true">λ</span>
+            <span>教授的批注</span>
+          </div>
+          <p id="professor-text">第一列是 e₁ 的新家，第二列是 e₂ 的新家。先看这两个箭头搬到哪里，整张网格只是跟着它们走。</p>
+          <p class="professor-prompt" id="professor-prompt">先猜 b = 1 时网格往哪边倒，再改数字验证。</p>
         </div>
 
         <div class="matrix-editor" role="group" aria-labelledby="matrix-caption">
@@ -326,6 +343,7 @@
         <a href="04-eigenvector.html">特征向量</a>
         <a href="../RULES.md">规则</a>
         <a href="../MANUAL.md">手册</a>
+        <a href="../REFERENCES.md">参考</a>
         <a href="../ROADMAP.md">路线图</a>
       </nav>
       <p class="footer-disclaimer">
@@ -340,6 +358,7 @@
 
   <script src="../js/lib/math.js" defer></script>
   <script src="../js/lib/canvas-utils.js" defer></script>
+  <script src="../js/lib/narration.js" defer></script>
   <script src="../js/demos/transform.js" defer></script>
 </body>
 </html>

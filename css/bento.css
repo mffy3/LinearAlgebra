@@ -1,0 +1,558 @@
+/* ==========================================================================
+   Bento dashboard + chapter globe
+   ========================================================================== */
+
+.dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 28px 96px;
+}
+
+.dashboard-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(380px, 0.88fr);
+  align-items: stretch;
+  gap: 18px;
+}
+
+.bento-card {
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: 0 14px 40px rgba(46, 49, 44, 0.06);
+}
+
+.dashboard-intro {
+  display: flex;
+  flex-direction: column;
+  padding: 46px 46px 34px;
+}
+
+.dashboard-intro h1 {
+  margin-bottom: 22px;
+  font-size: clamp(3.2rem, 5.6vw, 5.3rem);
+  line-height: 0.98;
+  letter-spacing: -0.062em;
+}
+
+.dashboard-intro .lede {
+  max-width: 48ch;
+  font-size: 1.04rem;
+}
+
+.professor-quote {
+  margin: 30px 0 0;
+  padding-left: 18px;
+  border-left: 2px solid var(--accent);
+}
+
+.professor-quote p {
+  font-family: var(--font-serif);
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+
+.professor-quote cite {
+  display: block;
+  margin-top: 8px;
+  font-family: var(--font-sans);
+  font-size: 0.64rem;
+  font-style: normal;
+  color: var(--muted);
+}
+
+.method-capsules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 26px;
+}
+
+.method-capsules span {
+  padding: 4px 13px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+}
+
+.globe-card {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  background: linear-gradient(150deg, #e2e6dd 0%, #efe8dc 100%);
+}
+
+.bento-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.globe {
+  position: relative;
+  flex: 1;
+  min-height: 360px;
+  margin: 8px 0 0;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.globe.is-grabbing {
+  cursor: grabbing;
+}
+
+.globe-ring {
+  position: absolute;
+  pointer-events: none;
+  border: 1px solid rgba(46, 49, 44, 0.16);
+  border-radius: 50%;
+}
+
+.globe-ring-a {
+  inset: 10% 5%;
+  transform: rotate(-8deg);
+}
+
+.globe-ring-b {
+  inset: 24% 18%;
+  opacity: 0.65;
+}
+
+.globe-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--ink);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.globe-core span {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.globe-core small {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.45rem;
+  line-height: 1.3;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+.globe-item {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  text-decoration: none;
+  will-change: transform;
+}
+
+.globe-chip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  width: 88px;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 10px 6px;
+  border: 1px solid var(--hairline);
+  border-radius: 22px;
+  background: var(--surface);
+  box-shadow: 0 8px 22px rgba(46, 49, 44, 0.1);
+  transform: translate(-50%, -50%);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.globe-item:hover .globe-chip,
+.globe-item:focus-visible .globe-chip {
+  box-shadow: 0 14px 30px rgba(46, 49, 44, 0.16);
+  transform: translate(-50%, -50%) scale(1.16);
+}
+
+.globe-glyph {
+  width: 26px;
+  height: 26px;
+  color: var(--accent);
+}
+
+.globe-glyph svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+}
+
+.globe-glyph rect {
+  fill: currentColor;
+  stroke: none;
+}
+
+.globe-num {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+}
+
+.globe-name {
+  color: var(--ink);
+  font-size: 0.66rem;
+  white-space: nowrap;
+}
+
+.globe-caption {
+  color: var(--muted);
+  font-size: 0.66rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   Bento sections
+   -------------------------------------------------------------------------- */
+
+.dashboard-section {
+  margin-top: 72px;
+}
+
+.chapter-bento {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.chapter-tile {
+  position: relative;
+  display: flex;
+  min-height: 230px;
+  flex-direction: column;
+  grid-column: span 4;
+  overflow: hidden;
+  padding: 26px;
+  color: var(--ink);
+}
+
+.chapter-tile-wide {
+  grid-column: span 7;
+}
+
+.chapter-tile:hover {
+  color: var(--ink);
+  transform: translateY(-3px);
+  box-shadow: 0 18px 44px rgba(46, 49, 44, 0.1);
+}
+
+.chapter-index {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+}
+
+.chapter-tile h3 {
+  margin: 10px 0 8px;
+  font-size: 1.35rem;
+  font-weight: 500;
+}
+
+.chapter-tile p {
+  max-width: 44ch;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.65;
+}
+
+.chapter-link {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  padding-top: 18px;
+  color: var(--ink);
+  font-size: 0.74rem;
+  font-weight: 500;
+}
+
+.chapter-glyph {
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  width: 116px;
+  height: 88px;
+  color: var(--accent);
+  opacity: 0.58;
+  pointer-events: none;
+}
+
+.chapter-glyph svg {
+  width: 100%;
+  height: 100%;
+}
+
+.bento-lecture {
+  display: flex;
+  min-height: 230px;
+  flex-direction: column;
+  justify-content: center;
+  grid-column: span 5;
+  padding: 30px;
+  background: var(--surface-2);
+}
+
+.bento-lecture-mark {
+  margin-bottom: 4px;
+  color: var(--accent);
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.bento-lecture p {
+  max-width: 34ch;
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: 0.98rem;
+  line-height: 1.7;
+}
+
+.bento-lecture-sig {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 0.64rem;
+}
+
+.tone-sage { background: #e3e8dd; }
+.tone-rose { background: #f1e4e0; }
+.tone-clay { background: #efe7dc; }
+.tone-slate { background: #e4e8ec; }
+
+.domain-bento {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.domain-tile {
+  min-height: 190px;
+  padding: 24px;
+  border-radius: var(--radius-lg);
+}
+
+.domain-tile h3 {
+  margin: 10px 0 8px;
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.domain-tile p {
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.domain-tile .domain-formula {
+  margin-top: 14px;
+}
+
+.closing-section {
+  max-width: 1200px;
+  margin: 72px auto 0;
+  padding: 0 28px;
+}
+
+.closing-card {
+  padding: 56px 32px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-xl);
+  background: #dde3d9;
+  box-shadow: 0 14px 40px rgba(46, 49, 44, 0.06);
+  text-align: center;
+}
+
+.closing-card h2 {
+  max-width: 720px;
+  margin: 0 auto 26px;
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  letter-spacing: -0.05em;
+}
+
+@media (max-width: 1000px) {
+  .dashboard-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-intro {
+    padding: 36px 30px 30px;
+  }
+
+  .globe {
+    min-height: 320px;
+  }
+
+  .chapter-bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chapter-tile {
+    grid-column: auto;
+    min-height: 210px;
+  }
+
+  .chapter-tile-wide,
+  .bento-lecture {
+    grid-column: span 2;
+  }
+
+  .chapter-tile-wide {
+    min-height: 220px;
+  }
+
+  .domain-bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .dashboard {
+    padding: 18px 14px 64px;
+  }
+
+  .dashboard-intro h1 {
+    font-size: clamp(2.8rem, 11vw, 4rem);
+  }
+
+  .dashboard-section {
+    margin-top: 52px;
+  }
+
+  .chapter-bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .chapter-tile {
+    grid-column: span 1;
+    min-height: 190px;
+    padding: 20px;
+  }
+
+  .chapter-tile-wide,
+  .bento-lecture {
+    grid-column: span 2;
+  }
+
+  .chapter-tile h3 {
+    font-size: 1.12rem;
+  }
+
+  .chapter-tile p {
+    font-size: 0.78rem;
+  }
+
+  .chapter-glyph {
+    width: 92px;
+    height: 72px;
+    opacity: 0.42;
+  }
+
+  .domain-bento {
+    gap: 12px;
+  }
+
+  .closing-section {
+    margin-top: 52px;
+    padding: 0 14px;
+  }
+
+  .closing-card {
+    padding: 42px 22px;
+  }
+}
+
+@media (max-width: 520px) {
+  .dashboard-hero {
+    gap: 12px;
+  }
+
+  .dashboard-intro {
+    padding: 28px 22px 24px;
+  }
+
+  .dashboard-intro h1 {
+    font-size: clamp(2.45rem, 12vw, 3.2rem);
+  }
+
+  .professor-quote p {
+    font-size: 0.9rem;
+  }
+
+  .globe-card {
+    padding: 18px;
+  }
+
+  .globe {
+    min-height: 280px;
+  }
+
+  .globe-chip {
+    width: 74px;
+    padding: 8px 4px;
+    border-radius: 18px;
+  }
+
+  .globe-name {
+    font-size: 0.58rem;
+  }
+
+  .globe-glyph {
+    width: 22px;
+    height: 22px;
+  }
+
+  .globe-caption {
+    font-size: 0.6rem;
+  }
+
+  .chapter-bento {
+    grid-template-columns: 1fr;
+  }
+
+  .chapter-tile,
+  .chapter-tile-wide,
+  .bento-lecture {
+    grid-column: span 1;
+  }
+
+  .chapter-tile {
+    min-height: 180px;
+  }
+
+  .chapter-tile p {
+    max-width: 32ch;
+  }
+
+  .domain-bento {
+    grid-template-columns: 1fr;
+  }
+}

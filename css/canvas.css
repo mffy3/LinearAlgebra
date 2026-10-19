@@ -4,7 +4,7 @@
    ========================================================================== */
 
 .lab-page {
-  background: var(--bg-soft);
+  background: var(--bg);
 }
 
 .lab-main {
@@ -49,8 +49,9 @@
   min-width: 0;
   overflow: hidden;
   border: 1px solid var(--hairline);
-  border-radius: 20px;
+  border-radius: var(--radius-xl);
   background: var(--surface);
+  box-shadow: 0 14px 40px rgba(46, 49, 44, 0.06);
 }
 
 .stage-head {
@@ -82,8 +83,8 @@
   margin: 0 24px;
   overflow: hidden;
   border: 1px solid var(--hairline-soft);
-  border-radius: 14px;
-  background: #ffffff;
+  border-radius: 20px;
+  background: var(--surface);
 }
 
 .transform-canvas {
@@ -118,7 +119,7 @@
   border: 1px solid var(--hairline);
   border-radius: 9px;
   color: var(--ink);
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(250, 246, 238, 0.94);
   font-family: var(--font-mono);
   font-size: 0.72rem;
   pointer-events: none;
@@ -164,7 +165,7 @@
   border: 1px solid var(--hairline-soft);
   border-radius: 8px;
   color: var(--muted);
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(250, 246, 238, 0.92);
   font-family: var(--font-mono);
   font-size: 0.56rem;
   pointer-events: none;
@@ -194,7 +195,7 @@
   height: 9px;
   border: 1px solid var(--accent);
   border-radius: 2px;
-  background: rgba(0, 102, 204, 0.08);
+  background: rgba(116, 134, 118, 0.10);
 }
 
 .legend-dash {
@@ -274,8 +275,9 @@
 .control-panel {
   padding: 22px;
   border: 1px solid var(--hairline);
-  border-radius: 20px;
+  border-radius: var(--radius-xl);
   background: var(--surface);
+  box-shadow: 0 14px 40px rgba(46, 49, 44, 0.06);
 }
 
 .panel-head {
@@ -289,6 +291,67 @@
 .panel-head h2 {
   font-size: 0.96rem;
   font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   Professor's immediate note
+   -------------------------------------------------------------------------- */
+
+.professor-note {
+  margin-bottom: 16px;
+  padding: 15px 16px 13px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  background: #efe8dd;
+}
+
+.professor-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.05em;
+}
+
+.professor-seal {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 50%;
+  color: #fbf8f1;
+  background: var(--accent);
+  font-family: var(--font-serif);
+  font-size: 0.92rem;
+  line-height: 1;
+}
+
+.professor-note p {
+  margin-top: 9px;
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  line-height: 1.65;
+}
+
+.professor-prompt {
+  padding-top: 9px;
+  border-top: 1px solid var(--hairline);
+  color: var(--muted) !important;
+  font-family: var(--font-sans) !important;
+  font-size: 0.65rem !important;
+  line-height: 1.55 !important;
+}
+
+.professor-prompt::before {
+  content: "教授的小问题：";
+  color: var(--accent);
+}
+
+.professor-strip {
+  display: none;
 }
 
 .matrix-editor {
@@ -320,7 +383,7 @@
 
 .matrix-cell:focus-within {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+  box-shadow: 0 0 0 3px rgba(116, 134, 118, 0.16);
 }
 
 .matrix-var {
@@ -634,7 +697,7 @@
   flex: none;
   border: 1px solid var(--hairline);
   border-radius: 999px;
-  background: #e5e5ea;
+  background: #ded7ca;
   transition: background 160ms ease, border-color 160ms ease;
 }
 
@@ -645,7 +708,7 @@
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background: #ffffff;
+  background: var(--surface);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
   transition: transform 160ms ease;
 }
@@ -717,7 +780,7 @@
   margin: 12px 0 8px;
   overflow: hidden;
   border-radius: 999px;
-  background: #e5e5ea;
+  background: #ded7ca;
 }
 
 .challenge-meter span {
@@ -741,8 +804,8 @@
 }
 
 .challenge-card.is-complete {
-  border-color: rgba(0, 102, 204, 0.28);
-  background: rgba(0, 102, 204, 0.055);
+  border-color: rgba(116, 134, 118, 0.28);
+  background: rgba(116, 134, 118, 0.07);
 }
 
 .challenge-card.is-complete .challenge-state {
@@ -826,8 +889,9 @@
   gap: 28px;
   padding: 30px;
   border: 1px solid var(--hairline);
-  border-radius: 20px;
+  border-radius: var(--radius-xl);
   background: var(--surface);
+  box-shadow: 0 14px 40px rgba(46, 49, 44, 0.06);
 }
 
 .quiz-copy h2 {
@@ -921,7 +985,7 @@
   border: 1px solid var(--hairline);
   border-radius: 999px;
   color: var(--ink);
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(250, 246, 238, 0.92);
   font-family: var(--font-mono);
   font-size: 0.66rem;
   letter-spacing: 0.03em;
@@ -949,8 +1013,9 @@
   margin: 64px auto 0;
   padding: 30px 32px;
   border: 1px solid var(--hairline);
-  border-radius: 20px;
+  border-radius: var(--radius-xl);
   background: var(--surface);
+  box-shadow: 0 14px 40px rgba(46, 49, 44, 0.06);
 }
 
 .next-strip h2 {
@@ -977,6 +1042,51 @@
 
   .canvas-wrap {
     height: clamp(420px, 56vh, 660px);
+  }
+
+  .professor-strip {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin: 0 24px 14px;
+    padding: 12px 14px;
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-md);
+    background: #efe8dd;
+  }
+
+  .professor-strip .professor-seal {
+    flex: none;
+  }
+
+  .professor-strip p {
+    color: var(--ink);
+    font-family: var(--font-serif);
+    font-size: 0.82rem;
+    line-height: 1.6;
+  }
+
+  .professor-strip-prompt {
+    margin-top: 6px;
+    color: var(--muted) !important;
+    font-family: var(--font-sans) !important;
+    font-size: 0.62rem !important;
+  }
+
+  .professor-strip-prompt::before {
+    content: "教授的小问题：";
+    color: var(--accent);
+  }
+
+  .control-panel .professor-note {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .professor-strip {
+    margin: 0 14px 12px;
+    padding: 11px 12px;
   }
 }
 
@@ -1018,7 +1128,7 @@
 
 @media (max-width: 720px) {
   .canvas-wrap {
-    height: clamp(360px, 76vw, 520px);
+    height: clamp(300px, 66vw, 440px);
     margin: 0 14px;
   }
 

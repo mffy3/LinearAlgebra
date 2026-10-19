@@ -46,8 +46,8 @@
         <p class="eyebrow">CHAPTER 02 · 行列式 = 带符号的面积</p>
         <h1>面积，<span class="gradient-text">如何被放大</span></h1>
         <p class="lede">
-          单位正方形原本面积是 1。矩阵把它送成一个平行四边形：底乘高就是新面积，
-          而行列式正好等于这个“带符号的面积”。拖到压扁、拖到翻转，看数字和图形一起回答。
+          行列式听起来吓人，其实只问一件事：单位正方形被放大成了几倍？
+          底乘高已经说完了大半；拖到压扁、拖到翻面，数字和图形会一起回答。
         </p>
       </div>
       <div class="intro-meta" aria-label="技术特性">
@@ -100,6 +100,14 @@
           <p class="canvas-hint">拖动箭头尖端，或修改右侧数字</p>
         </div>
 
+        <div class="professor-strip" aria-live="polite">
+          <span class="professor-seal" aria-hidden="true">λ</span>
+          <div>
+            <p id="professor-strip-text">行列式不咬人。它只是在问：单位正方形被放大成了几倍？底乘高，已经说完了大半。</p>
+            <p class="professor-strip-prompt" id="professor-strip-prompt">先猜 det = 0 时方格会变成什么，再动手。</p>
+          </div>
+        </div>
+
         <div class="stage-foot">
           <div class="foot-item">
             <span class="foot-label">底 b</span>
@@ -124,6 +132,15 @@
         <div class="panel-head">
           <h2>矩阵 A</h2>
           <span class="pill pill-soft">2 × 2</span>
+        </div>
+
+        <div class="professor-note" aria-live="polite">
+          <div class="professor-head">
+            <span class="professor-seal" aria-hidden="true">λ</span>
+            <span>教授的批注</span>
+          </div>
+          <p id="professor-text">行列式不咬人。它只是在问：单位正方形被放大成了几倍？底乘高，已经说完了大半。</p>
+          <p class="professor-prompt" id="professor-prompt">先猜 det = 0 时方格会变成什么，再动手。</p>
         </div>
 
         <div class="matrix-editor" role="group" aria-labelledby="matrix-caption">
@@ -353,6 +370,7 @@
         <a href="04-eigenvector.html">特征向量</a>
         <a href="../RULES.md">规则</a>
         <a href="../MANUAL.md">手册</a>
+        <a href="../REFERENCES.md">参考</a>
         <a href="../ROADMAP.md">路线图</a>
       </nav>
       <p class="footer-disclaimer">
@@ -367,6 +385,7 @@
 
   <script src="../js/lib/math.js" defer></script>
   <script src="../js/lib/canvas-utils.js" defer></script>
+  <script src="../js/lib/narration.js" defer></script>
   <script src="../js/demos/determinant.js" defer></script>
 </body>
 </html>

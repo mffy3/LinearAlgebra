@@ -206,6 +206,28 @@
    * 读数
    * ------------------------------------------------------------------ */
 
+  function updateProfessor(geometry) {
+    var textEl = document.getElementById('professor-text');
+    var promptEl = document.getElementById('professor-prompt');
+    if (!textEl || !promptEl || !window.LinAlgNarration) return;
+
+    var note = window.LinAlgNarration.determinant({
+      det: geometry.det,
+      area: geometry.area,
+      base: geometry.base,
+      height: geometry.height,
+      rank: geometry.rank
+    });
+
+    if (textEl.textContent !== note.text) textEl.textContent = note.text;
+    if (promptEl.textContent !== note.prompt) promptEl.textContent = note.prompt;
+
+    var stripText = document.getElementById('professor-strip-text');
+    var stripPrompt = document.getElementById('professor-strip-prompt');
+    if (stripText && stripText.textContent !== note.text) stripText.textContent = note.text;
+    if (stripPrompt && stripPrompt.textContent !== note.prompt) stripPrompt.textContent = note.prompt;
+  }
+
   function updateReadouts() {
     var m = state.matrix;
     var geometry = computeGeometry(m);
@@ -263,6 +285,8 @@
     els.challengeArea.textContent = L.formatFixed(area, 3);
     els.challengeFill.style.width = progress.toFixed(1) + '%';
     els.challengeMeter.setAttribute('aria-valuenow', String(Math.round(progress)));
+
+    updateProfessor(geometry);
   }
 
   /* ------------------------------------------------------------------ *
@@ -313,7 +337,7 @@
   function drawOriginalSquare(ctx) {
     K.drawWorldPolygon(ctx, view, L.unitSquarePoints(), {
       closed: true,
-      stroke: 'rgba(29, 29, 31, 0.3)',
+      stroke: 'rgba(46, 49, 44, 0.3)',
       lineWidth: 1.1,
       dash: [4, 5]
     });
@@ -322,11 +346,11 @@
   function drawParallelogram(ctx, geometry) {
     K.drawWorldPolygon(ctx, view, geometry.square, {
       closed: true,
-      fill: geometry.isNegative ? 'rgba(180, 35, 24, 0.16)' : (geometry.isZero ? 'rgba(180, 83, 9, 0.1)' : 'rgba(0, 102, 204, 0.16)'),
+      fill: geometry.isNegative ? 'rgba(164, 92, 85, 0.16)' : (geometry.isZero ? 'rgba(183, 141, 110, 0.1)' : 'rgba(116, 134, 118, 0.16)'),
       stroke: geometry.accent,
       lineWidth: 2,
       glow: 14,
-      glowColor: geometry.isNegative ? 'rgba(180, 35, 24, 0.42)' : (geometry.isZero ? 'rgba(180, 83, 9, 0.32)' : 'rgba(0, 102, 204, 0.42)')
+      glowColor: geometry.isNegative ? 'rgba(164, 92, 85, 0.42)' : (geometry.isZero ? 'rgba(183, 141, 110, 0.32)' : 'rgba(116, 134, 118, 0.42)')
     });
 
     // 四个顶点，帮助看清“角去了哪里”
@@ -359,7 +383,7 @@
 
     var size = 9;
     ctx.save();
-    ctx.strokeStyle = 'rgba(180, 83, 9, 0.62)';
+    ctx.strokeStyle = 'rgba(183, 141, 110, 0.62)';
     ctx.lineWidth = 1.1;
     ctx.beginPath();
     ctx.moveTo(foot.x + ux * size, foot.y + uy * size);
@@ -373,7 +397,7 @@
     if (!state.showHeight || geometry.base <= EPS || geometry.area <= EPS) return;
 
     K.drawWorldLine(ctx, view, geometry.otherVec, geometry.projection, {
-      stroke: 'rgba(180, 83, 9, 0.72)',
+      stroke: 'rgba(183, 141, 110, 0.72)',
       lineWidth: 1.5,
       dash: [6, 5]
     });
@@ -386,9 +410,9 @@
     var screen = view.worldToScreen(mid);
     if (view.contains(screen, 40)) {
       K.drawLabel(ctx, screen.x + 9, screen.y - 7, 'h', {
-        color: '#b45309',
-        background: 'rgba(255, 255, 255, 0.86)',
-        border: 'rgba(180, 83, 9, 0.18)',
+        color: '#b78d6e',
+        background: 'rgba(250, 246, 238, 0.86)',
+        border: 'rgba(183, 141, 110, 0.18)',
         font: '500 10px "Cascadia Code", Consolas, monospace',
         fontSize: 11
       });
@@ -401,9 +425,9 @@
     var baseScreen = view.worldToScreen(labelPoint);
     if (view.contains(baseScreen, 40)) {
       K.drawLabel(ctx, baseScreen.x, baseScreen.y, 'b', {
-        color: '#b45309',
-        background: 'rgba(255, 255, 255, 0.86)',
-        border: 'rgba(180, 83, 9, 0.18)',
+        color: '#b78d6e',
+        background: 'rgba(250, 246, 238, 0.86)',
+        border: 'rgba(183, 141, 110, 0.18)',
         align: 'center',
         font: '500 10px "Cascadia Code", Consolas, monospace',
         fontSize: 11
@@ -415,14 +439,14 @@
     var origin = { x: 0, y: 0 };
 
     K.drawArrowWorld(ctx, view, origin, { x: 1, y: 0 }, {
-      color: 'rgba(0, 102, 204, 0.18)',
+      color: 'rgba(116, 134, 118, 0.18)',
       lineWidth: 1,
       dash: [3, 4],
       head: 7,
       headWidth: 4
     });
     K.drawArrowWorld(ctx, view, origin, { x: 0, y: 1 }, {
-      color: 'rgba(191, 72, 0, 0.18)',
+      color: 'rgba(176, 125, 110, 0.18)',
       lineWidth: 1,
       dash: [3, 4],
       head: 7,
@@ -452,7 +476,7 @@
 
     K.drawPointWorld(ctx, view, origin, {
       radius: 3.2,
-      fill: '#1d1d1f'
+      fill: '#2e312c'
     });
   }
 

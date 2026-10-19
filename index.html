@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Linear Algebra：一个可拖动的线性代数可视化实验室。从 2×2 矩阵变换出发，走向物理、经济、计算机软件与硬件的底层应用。">
-  <meta name="theme-color" content="#fbfbfd">
-  <title>Linear Algebra · 看见空间本身</title>
+  <meta name="description" content="Linear Algebra：一个可拖动的线性代数可视化讲义。像老教授一样，先看空间怎么动，再问公式为什么长这样。">
+  <meta name="theme-color" content="#efeae1">
+  <title>Linear Algebra · 矩阵是看出来的</title>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/bento.css">
 </head>
 <body class="home-page">
   <a class="skip-link" href="#main">跳到主要内容</a>
@@ -39,162 +40,193 @@
     </div>
   </header>
 
-  <main id="main">
-    <section class="home-hero">
-      <div class="hero-copy">
-        <p class="eyebrow">INTERACTIVE LINEAR ALGEBRA</p>
-        <h1>看见<br><span class="gradient-text">空间本身。</span></h1>
+  <main id="main" class="dashboard">
+    <section class="dashboard-hero">
+      <article class="bento-card dashboard-intro">
+        <p class="eyebrow">LINEAR ALGEBRA · 可视化讲义</p>
+        <h1>矩阵不是<br>算出来的，<br><span class="gradient-text">是看出来的。</span></h1>
         <p class="lede">
-          不是一个公式，而是一张会呼吸的网格。拖动基向量，看矩阵如何拉伸、旋转、
-          压扁整个平面；然后走进物理、经济、软件与硬件里的同一个动作。
+          先看空间怎么动，再问公式为什么长这样。这里没有进度条，也没有倒计时；
+          你可以把一个矩阵翻来覆去地玩，直到它变得不陌生。
         </p>
         <div class="hero-actions">
-          <a class="btn btn-primary btn-large" href="pages/01-transform.html">开始探索</a>
-          <a class="text-link" href="ROADMAP.md">查看路线图 <span aria-hidden="true">→</span></a>
+          <a class="btn btn-primary btn-large" href="pages/01-transform.html">从矩阵变换开始</a>
+          <a class="text-link" href="ROADMAP.md">先翻翻路线图 <span aria-hidden="true">→</span></a>
         </div>
-      </div>
+        <blockquote class="professor-quote">
+          <p>“四个数，说的是 e₁ 和 e₂ 搬到哪里。整张网格只是跟着它们走。先看见这一件事，剩下的都好说。”</p>
+          <cite>—— 一位老教授的批注</cite>
+        </blockquote>
+        <div class="method-capsules" aria-label="学习方式">
+          <span>看</span>
+          <span>猜</span>
+          <span>动</span>
+          <span>算</span>
+        </div>
+      </article>
 
-      <div class="hero-visual" aria-hidden="true">
-        <div class="hero-card-head">
-          <span>2 × 2 MATRIX</span>
-          <span>DET 1.44</span>
+      <aside class="bento-card globe-card" aria-labelledby="globe-title">
+        <div class="bento-label">
+          <span id="globe-title">展厅地图</span>
+          <span>拖动旋转</span>
         </div>
-        <div class="hero-plane">
-          <div class="hero-grid"></div>
-          <svg class="hero-shape" viewBox="0 0 400 400" role="presentation">
-            <line x1="200" y1="24" x2="200" y2="376" stroke="#d2d2d7" stroke-width="1"></line>
-            <line x1="24" y1="200" x2="376" y2="200" stroke="#d2d2d7" stroke-width="1"></line>
-            <polygon points="200,200 365,145 300,30 135,85"
-              fill="#0066cc" fill-opacity="0.07" stroke="#0066cc" stroke-width="1.4"></polygon>
-            <line x1="200" y1="200" x2="365" y2="145" stroke="#0066cc" stroke-width="2.4" stroke-linecap="round"></line>
-            <line x1="200" y1="200" x2="135" y2="85" stroke="#bf4800" stroke-width="2.4" stroke-linecap="round"></line>
-            <circle cx="365" cy="145" r="4" fill="#0066cc"></circle>
-            <circle cx="135" cy="85" r="4" fill="#bf4800"></circle>
-            <circle cx="200" cy="200" r="3" fill="#1d1d1f"></circle>
-            <text x="374" y="140" fill="#0066cc" font-family="monospace" font-size="11">e₁′</text>
-            <text x="96" y="80" fill="#bf4800" font-family="monospace" font-size="11">e₂′</text>
-          </svg>
+
+        <div class="globe" id="chapter-globe" aria-label="章节地球仪：拖动旋转，点击图标进入展厅">
+          <div class="globe-ring globe-ring-a" aria-hidden="true"></div>
+          <div class="globe-ring globe-ring-b" aria-hidden="true"></div>
+          <div class="globe-core" aria-hidden="true">
+            <span>λ</span>
+            <small>Linear<br>Algebra</small>
+          </div>
+
+          <a class="globe-item" href="pages/01-transform.html" aria-label="进入第 01 展厅：矩阵变换">
+            <span class="globe-chip">
+              <span class="globe-glyph" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5" opacity=".45"></rect><rect x="3" y="14" width="7" height="7" rx="1.5" opacity=".45"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg>
+              </span>
+              <span class="globe-num">01</span>
+              <span class="globe-name">矩阵变换</span>
+            </span>
+          </a>
+
+          <a class="globe-item" href="pages/02-determinant.html" aria-label="进入第 02 展厅：行列式">
+            <span class="globe-chip">
+              <span class="globe-glyph" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><polygon points="4,10 12,4 20,10 12,16" fill="none" stroke="currentColor" stroke-width="1.5"></polygon><line x1="12" y1="4" x2="12" y2="16" stroke="currentColor" stroke-width="1" opacity=".45"></line></svg>
+              </span>
+              <span class="globe-num">02</span>
+              <span class="globe-name">行列式</span>
+            </span>
+          </a>
+
+          <a class="globe-item" href="pages/03-rank.html" aria-label="进入第 03 展厅：秩与零空间">
+            <span class="globe-chip">
+              <span class="globe-glyph" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><line x1="3" y1="4" x2="21" y2="20" stroke="currentColor" stroke-width="1.5"></line><line x1="3" y1="20" x2="21" y2="4" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 3"></line><circle cx="12" cy="12" r="2.2" fill="currentColor"></circle></svg>
+              </span>
+              <span class="globe-num">03</span>
+              <span class="globe-name">秩与零空间</span>
+            </span>
+          </a>
+
+          <a class="globe-item" href="pages/04-eigenvector.html" aria-label="进入第 04 展厅：特征向量">
+            <span class="globe-chip">
+              <span class="globe-glyph" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><line x1="3" y1="21" x2="21" y2="3" stroke="currentColor" stroke-width="1.5"></line><path d="M13 11l8-8M16 3h5v5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><circle cx="3" cy="21" r="1.8" fill="currentColor"></circle></svg>
+              </span>
+              <span class="globe-num">04</span>
+              <span class="globe-name">特征向量</span>
+            </span>
+          </a>
         </div>
-        <p class="hero-caption">拖动基向量，整张网格会跟着形变。</p>
-      </div>
+
+        <p class="globe-caption">把地球仪转到你想去的地方；指针停下的图标会变大。</p>
+      </aside>
     </section>
 
-    <section class="home-section exhibits-section" aria-labelledby="exhibits-title">
+    <section class="dashboard-section" aria-labelledby="chapters-title">
       <div class="section-heading section-heading-row">
         <div>
           <p class="eyebrow">EXHIBITS</p>
-          <h2 id="exhibits-title">四个展厅</h2>
-          <p>同一个 2D 沙盒，四种看法：空间怎么动、面积怎么变、哪些方向被留下、哪些方向不转向。</p>
+          <h2 id="chapters-title">四个展厅</h2>
+          <p>一次只讲一件事。看懂了，再往下一间走；没懂，就退回来再转一圈。</p>
         </div>
         <span class="section-note">04 / 05 已开放</span>
       </div>
 
-      <div class="exhibit-list">
-        <a class="exhibit-row" href="pages/01-transform.html">
-          <span class="exhibit-number">01</span>
-          <div class="exhibit-body">
-            <h3>矩阵变换</h3>
-            <p>拖动 e₁、e₂，整张网格连续形变。先看见“矩阵在重排空间”，再谈公式。</p>
-          </div>
-          <span class="exhibit-meta">
-            <span class="exhibit-status">可体验</span>
-            <span class="exhibit-arrow" aria-hidden="true">↗</span>
+      <div class="chapter-bento">
+        <a class="bento-card chapter-tile tone-sage" href="pages/01-transform.html">
+          <span class="chapter-index">01</span>
+          <h3>矩阵变换</h3>
+          <p>把 e₁、e₂ 搬到新位置，看看整张网格怎么跟。矩阵不是四个孤立的数，它是空间的搬家方案。</p>
+          <span class="chapter-link">进去看看 <span aria-hidden="true">→</span></span>
+          <span class="chapter-glyph" aria-hidden="true">
+            <svg viewBox="0 0 120 90"><path d="M10 70h100M10 10v60" stroke="currentColor" stroke-width="1" opacity=".35"></path><path d="M10 70L58 22M10 70l30-8" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path><path d="M10 70l48-48 28 8-28 48z" fill="currentColor" opacity=".08"></path></svg>
           </span>
         </a>
 
-        <a class="exhibit-row" href="pages/02-determinant.html">
-          <span class="exhibit-number">02</span>
-          <div class="exhibit-body">
-            <h3>行列式</h3>
-            <p>单位正方形被送成平行四边形。面积、底、高与符号，同时被看见。</p>
-          </div>
-          <span class="exhibit-meta">
-            <span class="exhibit-status">可体验</span>
-            <span class="exhibit-arrow" aria-hidden="true">↗</span>
+        <a class="bento-card chapter-tile tone-rose" href="pages/02-determinant.html">
+          <span class="chapter-index">02</span>
+          <h3>行列式</h3>
+          <p>单位正方形被放大成了几倍？符号又为什么像一次翻面？底乘高，已经说完了大半。</p>
+          <span class="chapter-link">进去看看 <span aria-hidden="true">→</span></span>
+          <span class="chapter-glyph" aria-hidden="true">
+            <svg viewBox="0 0 120 90"><path d="M20 68h70v-44H20z" fill="none" stroke="currentColor" stroke-width="1" opacity=".35"></path><path d="M30 66l44-8 14-30-44 8z" fill="currentColor" opacity=".1" stroke="currentColor" stroke-width="1.5"></path></svg>
           </span>
         </a>
 
-        <a class="exhibit-row" href="pages/03-rank.html">
-          <span class="exhibit-number">03</span>
-          <div class="exhibit-body">
-            <h3>秩与零空间</h3>
-            <p>拖动探测向量 x，看 Ax 如何变短；当它归零，你就找到了被压掉的方向。</p>
-          </div>
-          <span class="exhibit-meta">
-            <span class="exhibit-status">可体验</span>
-            <span class="exhibit-arrow" aria-hidden="true">↗</span>
+        <a class="bento-card chapter-tile tone-clay" href="pages/03-rank.html">
+          <span class="chapter-index">03</span>
+          <h3>秩与零空间</h3>
+          <p>有些矩阵会把平面压成一条线。别急着算秩，先看哪条线被压没了；剩下的那条，就是零空间。</p>
+          <span class="chapter-link">进去看看 <span aria-hidden="true">→</span></span>
+          <span class="chapter-glyph" aria-hidden="true">
+            <svg viewBox="0 0 120 90"><line x1="12" y1="18" x2="108" y2="72" stroke="currentColor" stroke-width="1.6"></line><line x1="12" y1="72" x2="108" y2="18" stroke="currentColor" stroke-width="1.4" stroke-dasharray="4 5"></line><circle cx="60" cy="45" r="3" fill="currentColor"></circle></svg>
           </span>
         </a>
 
-        <a class="exhibit-row" href="pages/04-eigenvector.html">
-          <span class="exhibit-number">04</span>
-          <div class="exhibit-body">
-            <h3>特征向量</h3>
-            <p>拖动 v，寻找方向不变、只被拉伸的轴；复特征值时，空间在旋转。</p>
-          </div>
-          <span class="exhibit-meta">
-            <span class="exhibit-status">可体验</span>
-            <span class="exhibit-arrow" aria-hidden="true">↗</span>
+        <a class="bento-card chapter-tile tone-slate chapter-tile-wide" href="pages/04-eigenvector.html">
+          <span class="chapter-index">04</span>
+          <h3>特征向量</h3>
+          <p>大多数方向都会被拧走；少数方向很固执，只肯变长或变短，不肯转弯。把 v 慢慢转一圈，你会遇见它们。</p>
+          <span class="chapter-link">进去看看 <span aria-hidden="true">→</span></span>
+          <span class="chapter-glyph" aria-hidden="true">
+            <svg viewBox="0 0 120 90"><line x1="8" y1="78" x2="112" y2="14" stroke="currentColor" stroke-width="1.4" opacity=".45"></line><path d="M40 58l42-26M72 30h12v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path><circle cx="22" cy="68" r="2.5" fill="currentColor"></circle></svg>
           </span>
         </a>
 
-        <div class="exhibit-row is-locked">
-          <span class="exhibit-number">05</span>
-          <div class="exhibit-body">
-            <h3>线性方程组</h3>
-            <p>交点、平行与重合，如何变成解的存在性。</p>
-          </div>
-          <span class="exhibit-meta">
-            <span class="exhibit-status">即将开放</span>
-          </span>
-        </div>
+        <aside class="bento-card bento-lecture">
+          <span class="bento-lecture-mark">“</span>
+          <p>如果你现在只会算 det，不妨先停一下，问自己：它为什么刚好是面积？算对了，不等于看懂了。</p>
+          <span class="bento-lecture-sig">—— 教授的提醒</span>
+        </aside>
       </div>
     </section>
 
-    <section class="domains-section" aria-labelledby="domains-title">
-      <div class="home-section">
-        <div class="section-heading">
-          <p class="eyebrow">BEYOND THE MATH</p>
-          <h2 id="domains-title">同一套矩阵，四个世界。</h2>
-          <p>线性代数不是一章习题。它是旋转、平衡、滤镜与纠错，是同一个动作在不同学科里的名字。</p>
-        </div>
+    <section class="dashboard-section domains-bento-section" aria-labelledby="domains-title">
+      <div class="section-heading">
+        <p class="eyebrow">BEYOND THE MATH</p>
+        <h2 id="domains-title">同一套矩阵，很多个世界。</h2>
+        <p>现在先把四个基础展厅做好。等直觉稳了，我们再去看物理、经济、计算机、美术、音乐与社会科学里的同一条线。</p>
+      </div>
 
-        <div class="domains-grid">
-          <article class="domain-column">
-            <span class="domain-phase">P2 · 物理</span>
-            <h3>物理学</h3>
-            <p>力可以分解，刚体旋转是正交矩阵，量子态是复向量。</p>
-            <p class="domain-formula">F = αu + βv</p>
-          </article>
+      <div class="domain-bento">
+        <article class="bento-card domain-tile tone-sage">
+          <span class="domain-phase">P2 · 物理</span>
+          <h3>物理学</h3>
+          <p>力可以分解，刚体旋转是正交矩阵，量子态是复向量。</p>
+          <p class="domain-formula">F = αu + βv</p>
+        </article>
 
-          <article class="domain-column">
-            <span class="domain-phase">P3 · 经济</span>
-            <h3>经济学</h3>
-            <p>产业互相消耗，风险共同波动；投入产出与协方差都是线性系统。</p>
-            <p class="domain-formula">(I − A)x = d</p>
-          </article>
+        <article class="bento-card domain-tile tone-rose">
+          <span class="domain-phase">P3 · 经济</span>
+          <h3>经济学</h3>
+          <p>产业互相消耗，风险共同波动；投入产出与协方差都是线性系统。</p>
+          <p class="domain-formula">(I − A)x = d</p>
+        </article>
 
-          <article class="domain-column">
-            <span class="domain-phase">P4 · 软件</span>
-            <h3>计算机软件</h3>
-            <p>图像是像素矩阵，卷积是滤镜，PCA 是寻找最重要的方向。</p>
-            <p class="domain-formula">Σv = λv</p>
-          </article>
+        <article class="bento-card domain-tile tone-slate">
+          <span class="domain-phase">P4 · 软件</span>
+          <h3>计算机</h3>
+          <p>图像是像素矩阵，卷积是滤镜，PCA 是寻找最重要的方向。</p>
+          <p class="domain-formula">Σv = λv</p>
+        </article>
 
-          <article class="domain-column">
-            <span class="domain-phase">P5 · 硬件</span>
-            <h3>计算机硬件</h3>
-            <p>滤波器是系数，纠错码是校验矩阵；信号在噪声里靠线性运算找回原样。</p>
-            <p class="domain-formula">Hc = 0</p>
-          </article>
-        </div>
+        <article class="bento-card domain-tile tone-clay">
+          <span class="domain-phase">P5 · 硬件</span>
+          <h3>硬件</h3>
+          <p>滤波器是系数，纠错码是校验矩阵；信号在噪声里靠线性运算找回原样。</p>
+          <p class="domain-formula">Hc = 0</p>
+        </article>
       </div>
     </section>
 
     <section class="closing-section" aria-labelledby="closing-title">
-      <p class="eyebrow">START WITH ONE MATRIX</p>
-      <h2 id="closing-title">从一个 2×2 矩阵开始。</h2>
-      <a class="btn btn-primary btn-large" href="pages/01-transform.html">打开矩阵变换</a>
+      <div class="closing-card">
+        <p class="eyebrow">ONE MATRIX AT A TIME</p>
+        <h2 id="closing-title">先看，再算。<br>慢一点，反而更快。</h2>
+        <a class="btn btn-primary btn-large" href="pages/01-transform.html">从矩阵变换开始</a>
+      </div>
     </section>
   </main>
 
@@ -211,6 +243,7 @@
         <a href="pages/04-eigenvector.html">特征向量</a>
         <a href="RULES.md">规则</a>
         <a href="MANUAL.md">手册</a>
+        <a href="REFERENCES.md">参考</a>
         <a href="ROADMAP.md">路线图</a>
       </nav>
       <p class="footer-disclaimer">
@@ -223,5 +256,7 @@
   <noscript>
     <div class="noscript-warning">这个页面需要 JavaScript 才能绘制交互。请启用 JavaScript 后刷新。</div>
   </noscript>
+
+  <script src="js/lib/chapter-globe.js" defer></script>
 </body>
 </html>

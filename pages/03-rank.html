@@ -46,8 +46,8 @@
         <p class="eyebrow">CHAPTER 03 · 秩与零空间</p>
         <h1>哪些方向，<span class="gradient-text">被空间压掉了</span></h1>
         <p class="lede">
-          行列式告诉我们“面积少了多少”，秩和零空间告诉我们“哪些方向被压没了”。
-          拖动橙色探测向量 x，观察 Ax 如何变短；当 Ax 归零时，你就找到了零空间。
+          面积只是前菜。秩问的是“还剩下几个独立方向”，零空间问的是“哪些方向被压没了”。
+          拖动橙色 x，看 Ax 怎样变短；它归零时，你就站在零空间里。
         </p>
       </div>
       <div class="intro-meta" aria-label="技术特性">
@@ -73,7 +73,7 @@
 
         <div class="canvas-wrap" id="canvas-wrap">
           <canvas id="rank-canvas" class="transform-canvas" role="img"
-            aria-label="秩与零空间可视化。青色实线是列空间，玫瑰色虚线是零空间，橙色箭头是探测向量 x，蓝色箭头是它的像 Ax。">
+            aria-label="秩与零空间可视化。鼠尾草色实线是列空间，玫瑰色虚线是零空间，陶土色箭头是探测向量 x，蓝灰色箭头是它的像 Ax。">
             你的浏览器不支持 Canvas。请使用最新版 Edge、Chrome 或 Firefox。
           </canvas>
 
@@ -100,6 +100,14 @@
           <p class="canvas-hint">拖动橙色箭头 x；改动矩阵看空间如何塌缩</p>
         </div>
 
+        <div class="professor-strip" aria-live="polite">
+          <span class="professor-seal" aria-hidden="true">λ</span>
+          <div>
+            <p id="professor-strip-text">秩不是“非零元素的个数”。秩问的是：输出空间还剩下几个独立方向？</p>
+            <p class="professor-strip-prompt" id="professor-strip-prompt">先把 x 拖到玫瑰色虚线上，看看 Ax 会不会归零。</p>
+          </div>
+        </div>
+
         <div class="stage-foot">
           <div class="foot-item">
             <span class="foot-label">秩</span>
@@ -124,6 +132,15 @@
         <div class="panel-head">
           <h2>矩阵 A</h2>
           <span class="pill pill-soft">2 × 2</span>
+        </div>
+
+        <div class="professor-note" aria-live="polite">
+          <div class="professor-head">
+            <span class="professor-seal" aria-hidden="true">λ</span>
+            <span>教授的批注</span>
+          </div>
+          <p id="professor-text">秩不是“非零元素的个数”，那是另一门手艺。秩问的是：输出空间还剩下几个独立方向？</p>
+          <p class="professor-prompt" id="professor-prompt">先把 x 拖到玫瑰色虚线上，看看 Ax 会不会归零。</p>
         </div>
 
         <div class="matrix-editor" role="group" aria-labelledby="matrix-caption">
@@ -372,6 +389,7 @@
         <a href="04-eigenvector.html">特征向量</a>
         <a href="../RULES.md">规则</a>
         <a href="../MANUAL.md">手册</a>
+        <a href="../REFERENCES.md">参考</a>
         <a href="../ROADMAP.md">路线图</a>
       </nav>
       <p class="footer-disclaimer">
@@ -386,6 +404,7 @@
 
   <script src="../js/lib/math.js" defer></script>
   <script src="../js/lib/canvas-utils.js" defer></script>
+  <script src="../js/lib/narration.js" defer></script>
   <script src="../js/demos/rank.js" defer></script>
 </body>
 </html>
