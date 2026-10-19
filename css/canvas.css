@@ -208,6 +208,10 @@
   border-top-color: var(--danger);
 }
 
+.legend-dash-eigen {
+  border-top-color: var(--danger);
+}
+
 .legend-probe {
   display: inline-block;
   width: 14px;
@@ -253,6 +257,10 @@
   font-size: 0.7rem;
   font-weight: 500;
   white-space: nowrap;
+}
+
+.foot-item b.is-positive {
+  color: var(--accent);
 }
 
 .foot-item-wide {

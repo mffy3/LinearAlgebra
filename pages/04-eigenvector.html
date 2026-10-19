@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="特征向量可视化：拖动探测向量 v，寻找方向不变、只被拉伸的轴；实特征值、复特征值与重根都能被看见。">
+  <meta name="theme-color" content="#fbfbfd">
+  <title>特征向量 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/canvas.css">
+</head>
+<body class="lab-page">
+  <a class="skip-link" href="#lab-main">跳到主要内容</a>
+
+  <header class="site-header lab-header">
+    <div class="header-inner">
+      <a class="brand" href="../index.html" aria-label="Linear Algebra 首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="01-transform.html">矩阵变换</a>
+        <a href="02-determinant.html">行列式</a>
+        <a href="03-rank.html">秩与零空间</a>
+        <a href="04-eigenvector.html" aria-current="page">特征向量</a>
+        <a href="../ROADMAP.md">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="lab-main" class="lab-main">
+    <section class="lab-intro">
+      <div class="lab-intro-copy">
+        <p class="eyebrow">CHAPTER 04 · 特征向量 = 方向不变的轴</p>
+        <h1>哪些方向，<span class="gradient-text">只被拉伸</span></h1>
+        <p class="lede">
+          大多数方向被矩阵扭转了。少数方向不会：它们只改变长度，不改变方向。
+          拖动橙色向量 v，观察蓝色 Av 是否与它共线；当你找到这条“不转向的轴”，就找到了特征向量。
+        </p>
+      </div>
+    </section>
+
+    <div class="workspace">
+      <section class="stage-card" id="stage-card" aria-labelledby="stage-title">
+        <div class="stage-head">
+          <div>
+            <p class="stage-kicker">LIVE CANVAS</p>
+            <h2 id="stage-title">寻找不转向的方向</h2>
+          </div>
+          <div class="stage-actions">
+            <button id="btn-replay" class="btn btn-small btn-ghost" type="button">回放变形</button>
+            <button id="btn-reset" class="btn btn-small btn-ghost" type="button">重置</button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap" id="canvas-wrap">
+          <canvas id="eigen-canvas" class="transform-canvas" role="img"
+            aria-label="特征向量可视化。橙色箭头是探测向量 v，蓝色箭头是它的像 Av；当两者共线时，v 是特征向量。">
+            你的浏览器不支持 Canvas。请使用最新版 Edge、Chrome 或 Firefox。
+          </canvas>
+
+          <div class="det-chip" id="canvas-eigen-chip">
+            <span>λ</span>
+            <strong id="canvas-eigen">3.00, 1.00</strong>
+          </div>
+
+          <div class="canvas-legend" aria-hidden="true">
+            <span class="legend-item"><i class="legend-dash legend-dash-eigen"></i>特征方向</span>
+            <span class="legend-item"><i class="legend-probe"></i>v</span>
+            <span class="legend-item"><i class="legend-image"></i>Av</span>
+          </div>
+
+          <p class="canvas-hint">拖动橙色箭头 v；找不到方向时，打开“特征方向”图层</p>
+        </div>
+
+        <div class="stage-foot">
+          <div class="foot-item">
+            <span class="foot-label">v</span>
+            <b id="foot-probe">(1.00, 0.00)</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">Av</span>
+            <b id="foot-image">(2.00, 1.00)</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">拉伸比</span>
+            <b id="foot-ratio">2.24</b>
+          </div>
+          <div class="foot-item foot-item-wide">
+            <span class="foot-label">状态</span>
+            <b id="foot-status">未对齐</b>
+          </div>
+        </div>
+      </section>
+
+      <aside class="control-panel" aria-label="矩阵与探测向量控制">
+        <div class="panel-head">
+          <h2>矩阵 A</h2>
+          <span class="pill pill-soft">2 × 2</span>
+        </div>
+
+        <div class="matrix-editor" role="group" aria-labelledby="matrix-caption">
+          <span class="matrix-bracket matrix-bracket-left" aria-hidden="true"></span>
+          <div class="matrix-fields">
+            <label class="matrix-cell">
+              <span class="matrix-var">a</span>
+              <input id="matrix-a" class="matrix-input" type="number" value="2"
+                min="-8" max="8" step="0.1" inputmode="decimal"
+                aria-label="矩阵元素 a，第一行第一列">
+            </label>
+            <label class="matrix-cell">
+              <span class="matrix-var">b</span>
+              <input id="matrix-b" class="matrix-input" type="number" value="1"
+                min="-8" max="8" step="0.1" inputmode="decimal"
+                aria-label="矩阵元素 b，第一行第二列">
+            </label>
+            <label class="matrix-cell">
+              <span class="matrix-var">c</span>
+              <input id="matrix-c" class="matrix-input" type="number" value="1"
+                min="-8" max="8" step="0.1" inputmode="decimal"
+                aria-label="矩阵元素 c，第二行第一列">
+            </label>
+            <label class="matrix-cell">
+              <span class="matrix-var">d</span>
+              <input id="matrix-d" class="matrix-input" type="number" value="2"
+                min="-8" max="8" step="0.1" inputmode="decimal"
+                aria-label="矩阵元素 d，第二行第二列">
+            </label>
+          </div>
+          <span class="matrix-bracket matrix-bracket-right" aria-hidden="true"></span>
+        </div>
+
+        <p class="matrix-note" id="matrix-caption">
+          对称矩阵 [[2,1],[1,2]] 有两个实特征方向。先自己拖 v 找，找不到再打开特征方向图层。
+        </p>
+
+        <div class="probe-editor" aria-label="探测向量 v">
+          <div class="probe-head">
+            <span>探测向量 v</span>
+            <span class="probe-hint">拖动橙色箭头也可</span>
+          </div>
+          <div class="probe-fields">
+            <label class="probe-field">
+              <span>x</span>
+              <input id="probe-x" type="number" value="1" min="-6" max="6" step="0.1"
+                inputmode="decimal" aria-label="探测向量 v 的第一个分量">
+            </label>
+            <label class="probe-field">
+              <span>y</span>
+              <input id="probe-y" type="number" value="0" min="-6" max="6" step="0.1"
+                inputmode="decimal" aria-label="探测向量 v 的第二个分量">
+            </label>
+          </div>
+        </div>
+
+        <div class="readout-grid">
+          <div class="readout">
+            <span class="readout-label">λ₁</span>
+            <strong class="readout-value" id="readout-eigen1">3.00</strong>
+            <small>较大的特征值</small>
+          </div>
+          <div class="readout">
+            <span class="readout-label">λ₂</span>
+            <strong class="readout-value" id="readout-eigen2">1.00</strong>
+            <small>较小的特征值</small>
+          </div>
+          <div class="readout">
+            <span class="readout-label">v 与 Av 夹角</span>
+            <strong class="readout-value" id="readout-angle">26.6°</strong>
+            <small>0° 或 180° 即共线</small>
+          </div>
+          <div class="readout">
+            <span class="readout-label">拉伸比</span>
+            <strong class="readout-value" id="readout-ratio">2.24</strong>
+            <small>|Av| / |v|</small>
+          </div>
+          <div class="readout">
+            <span class="readout-label">det(A)</span>
+            <strong class="readout-value" id="readout-det">3.00</strong>
+            <small>λ₁ · λ₂</small>
+          </div>
+          <div class="readout">
+            <span class="readout-label">trace(A)</span>
+            <strong class="readout-value" id="readout-trace">4.00</strong>
+            <small>λ₁ + λ₂</small>
+          </div>
+        </div>
+
+        <div class="formula-panel" aria-label="特征方向验算">
+          <p><span>v</span><b id="calc-v">(1.00, 0.00)</b></p>
+          <p><span>Av</span><b id="calc-av">(2.00, 1.00)</b></p>
+          <p><span>|Av| / |v|</span><b id="calc-ratio">2.24</b></p>
+          <p><span>Av × v</span><b id="calc-cross">1.00</b></p>
+        </div>
+
+        <p class="eigen-note" id="eigen-note">
+          有两条实特征方向。打开图层，或把 v 拖到与 Av 共线。
+        </p>
+
+        <div class="control-block">
+          <div class="block-head">
+            <h3>预设</h3>
+            <span class="block-hint">看特征值怎么变</span>
+          </div>
+          <div class="preset-row" role="group" aria-label="矩阵预设">
+            <button class="preset-btn" type="button" data-preset="symmetric">对称</button>
+            <button class="preset-btn" type="button" data-preset="rotate90">旋转 90°</button>
+            <button class="preset-btn" type="button" data-preset="shear">剪切</button>
+            <button class="preset-btn" type="button" data-preset="diagonal">对角</button>
+            <button class="preset-btn" type="button" data-preset="identity">单位</button>
+          </div>
+        </div>
+
+        <div class="control-block">
+          <div class="block-head">
+            <h3>显示图层</h3>
+            <span class="block-hint">只影响画面，不影响数学</span>
+          </div>
+          <div class="toggle-list">
+            <label class="toggle-row">
+              <input id="toggle-grid" type="checkbox" checked>
+              <span class="toggle-track" aria-hidden="true"><span class="toggle-thumb"></span></span>
+              <span class="toggle-text">网格</span>
+            </label>
+            <label class="toggle-row">
+              <input id="toggle-eigen" type="checkbox">
+              <span class="toggle-track" aria-hidden="true"><span class="toggle-thumb"></span></span>
+              <span class="toggle-text">特征方向</span>
+            </label>
+            <label class="toggle-row">
+              <input id="toggle-basis" type="checkbox">
+              <span class="toggle-track" aria-hidden="true"><span class="toggle-thumb"></span></span>
+              <span class="toggle-text">基向量</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="challenge-card" id="challenge-card">
+          <div class="challenge-head">
+            <span class="challenge-kicker">小挑战</span>
+            <span class="challenge-state" id="challenge-state" role="status" aria-live="polite">进行中</span>
+          </div>
+          <h3>找到一条不转向的方向</h3>
+          <p class="challenge-copy">拖动 v，使 v 与 Av 共线（夹角 &lt; 1°，或 Av = 0）。</p>
+          <div class="challenge-meter" id="challenge-meter" role="progressbar"
+            aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="挑战进度">
+            <span id="challenge-meter-fill"></span>
+          </div>
+          <p class="challenge-current">当前夹角 = <b id="challenge-angle">26.6°</b></p>
+        </div>
+      </aside>
+    </div>
+
+    <section class="explain-section" aria-labelledby="explain-title">
+      <div class="section-heading">
+        <p class="eyebrow">WHY IT LOOKS LIKE THIS</p>
+        <h2 id="explain-title">方向不变的轴</h2>
+        <p>特征向量回答的不是“空间被压成什么”，而是“哪些方向没有被扭转”。</p>
+      </div>
+
+      <div class="explain-grid">
+        <article class="explain-card">
+          <span class="explain-index">01</span>
+          <h3>定义：Av = λv</h3>
+          <p>矩阵作用在 v 上，结果仍然落在 v 所在的直线上；λ 是拉伸倍数。</p>
+          <p class="formula">A v = λ v</p>
+          <p>λ 可以是负数：方向仍然不变，但箭头会指向反方向。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">02</span>
+          <h3>怎么找：det(A − λI) = 0</h3>
+          <p>把 Av = λv 改写成 (A − λI)v = 0。要有非零解，这个矩阵必须不可逆。</p>
+          <p class="formula">det(A − λI) = 0</p>
+          <p>2×2 时，λ 由 trace 和 det 决定：λ² − tr(A)λ + det(A) = 0。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">03</span>
+          <h3>三种可能</h3>
+          <p>两个不同实特征值：两条特征方向；重根：可能只有一条独立方向；复特征值：没有实特征方向。</p>
+          <p class="formula">旋转 90°：λ = ±i</p>
+          <p>旋转 90° 把每个方向都扭转了，所以它没有实特征向量。剪切只有一个独立方向；单位矩阵所有方向都是。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">04</span>
+          <h3>特征值告诉你什么</h3>
+          <p><b>|λ| &gt; 1</b> 拉伸，<b>|λ| &lt; 1</b> 压缩，<b>λ &lt; 0</b> 反向；<b>λ = 0</b> 直接把方向压成 0。</p>
+          <p class="formula">det(A) = λ₁ λ₂</p>
+          <p>所以行列式是“所有特征方向拉伸倍数的乘积”，这和面积缩放是同一件事。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="quiz-section">
+      <div class="quiz-card" aria-labelledby="quiz-title">
+        <div class="quiz-copy">
+          <p class="eyebrow">先猜后验</p>
+          <h2 id="quiz-title">旋转 90° 的矩阵，有几个实特征方向？</h2>
+          <p>先想：矩阵 [[0, −1], [1, 0]] 会把方向留住吗？再用按钮验证，看 λ 和画布怎么回答。</p>
+          <div class="quiz-options" role="group" aria-labelledby="quiz-title">
+            <button class="quiz-option" type="button" data-quiz-eigen="0">0 个</button>
+            <button class="quiz-option" type="button" data-quiz-eigen="1">1 个</button>
+            <button class="quiz-option" type="button" data-quiz-eigen="2">2 个</button>
+          </div>
+          <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></p>
+          <div class="quiz-actions">
+            <button id="btn-quiz-apply" class="btn btn-ghost" type="button">用旋转矩阵验证 →</button>
+          </div>
+        </div>
+        <div class="quiz-visual" aria-hidden="true">
+          <div class="quiz-mini-grid"></div>
+          <div class="quiz-mini-label">λ = ± i</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-strip" aria-labelledby="next-title">
+      <div>
+        <p class="eyebrow">NEXT</p>
+        <h2 id="next-title">下一站：线性方程组，交点在哪里</h2>
+        <p>特征方向是“不转向”的方向；方程组要问的是：哪些 x 会被送到指定的 b。</p>
+      </div>
+      <a class="btn btn-primary" href="../ROADMAP.md">查看路线图 <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>看见空间本身。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../index.html">首页</a>
+        <a href="01-transform.html">矩阵变换</a>
+        <a href="02-determinant.html">行列式</a>
+        <a href="03-rank.html">秩与零空间</a>
+        <a href="04-eigenvector.html">特征向量</a>
+        <a href="../RULES.md">规则</a>
+        <a href="../MANUAL.md">手册</a>
+        <a href="../ROADMAP.md">路线图</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+      </p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">这个页面需要 JavaScript 才能绘制 Canvas。请启用 JavaScript 后刷新。</div>
+  </noscript>
+
+  <script src="../js/lib/math.js" defer></script>
+  <script src="../js/lib/canvas-utils.js" defer></script>
+  <script src="../js/demos/eigenvector.js" defer></script>
+</body>
+</html>

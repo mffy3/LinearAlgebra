@@ -851,6 +851,24 @@ button {
   }
 }
 
+@media (max-width: 420px) {
+  .header-inner {
+    padding: 0 14px;
+  }
+
+  .brand-text strong {
+    font-size: 0.76rem;
+  }
+
+  .site-nav {
+    gap: 8px;
+  }
+
+  .site-nav a {
+    font-size: 0.62rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
