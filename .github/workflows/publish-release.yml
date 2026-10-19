@@ -2,8 +2,7 @@ name: publish release
 
 on:
   push:
-    branches: [main]
-  workflow_dispatch:
+    tags: ['v*']
 
 permissions:
   contents: write
@@ -12,27 +11,29 @@ jobs:
   publish:
     if: github.repository == 'mffy3/LinearAlgebra'
     runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.ref_name }}
     steps:
       - name: Check out full history and tags
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Build the v1.0.0 archive
+      - name: Build the tagged archive
         run: |
-          git archive --format=zip --prefix=LinearAlgebra-v1.0.0/ v1.0.0 -o LinearAlgebra-v1.0.0.zip
-          sha256sum LinearAlgebra-v1.0.0.zip > SHA256SUMS.txt
+          git archive --format=zip --prefix="LinearAlgebra-${TAG}/" "$TAG" -o "LinearAlgebra-${TAG}.zip"
+          sha256sum "LinearAlgebra-${TAG}.zip" > SHA256SUMS.txt
 
       - name: Create the GitHub Release if needed
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if gh release view v1.0.0 >/dev/null 2>&1; then
-            echo "Release v1.0.0 already exists; leave it unchanged."
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; leave it unchanged."
             exit 0
           fi
-          gh release create v1.0.0 \
-            LinearAlgebra-v1.0.0.zip \
+          gh release create "$TAG" \
+            "LinearAlgebra-${TAG}.zip" \
             SHA256SUMS.txt \
-            --title "Linear Algebra v1.0.0" \
+            --title "Linear Algebra $TAG" \
             --notes-file RELEASE_NOTES.md
