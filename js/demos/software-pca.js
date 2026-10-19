@@ -474,6 +474,16 @@
     if (!state.dragging) canvas.classList.remove('is-grabbable');
   });
 
+  canvas.addEventListener('keydown', function (event) {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      setTheta(state.theta + (event.key === 'ArrowRight' ? 1 : -1) * (event.shiftKey ? 5 : 1));
+    } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      setStretch(state.stretch + (event.key === 'ArrowUp' ? 0.05 : -0.05));
+    }
+  });
+
   /* ------------------------------------------------------------------ *
    * 控件
    * ------------------------------------------------------------------ */

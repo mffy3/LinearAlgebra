@@ -46,7 +46,9 @@
     },
     weight: INITIAL.weight,
     showDecompose: true,
-    dragging: null
+    dragging: null,
+    keyboardAnchor: 'A',
+    keyboardFocused: false
   };
 
   var els = {
@@ -332,6 +334,17 @@
         stroke: 'rgba(250, 246, 238, 0.96)',
         strokeWidth: 2
       });
+      if (state.keyboardFocused && state.keyboardAnchor === (index === 0 ? 'A' : 'B')) {
+        var screen = view.worldToScreen(anchor);
+        ctx.save();
+        ctx.strokeStyle = 'rgba(191, 163, 106, 0.8)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.arc(screen.x, screen.y, 13, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
       drawLabelAt(anchor, index === 0 ? 'A' : 'B', anchorColors[index], 9, -12);
     });
   }
@@ -675,6 +688,39 @@
   canvas.addEventListener('pointercancel', endDrag);
   canvas.addEventListener('pointerleave', function () {
     if (!state.dragging) canvas.classList.remove('is-grabbable');
+  });
+
+  canvas.addEventListener('focus', function () {
+    state.keyboardFocused = true;
+    updateReadouts();
+  });
+
+  canvas.addEventListener('blur', function () {
+    state.keyboardFocused = false;
+    updateReadouts();
+  });
+
+  canvas.addEventListener('keydown', function (event) {
+    if (event.key === '1' || event.key === '2') {
+      event.preventDefault();
+      state.keyboardAnchor = event.key === '1' ? 'A' : 'B';
+      updateReadouts();
+      return;
+    }
+    var dx = 0;
+    var dy = 0;
+    if (event.key === 'ArrowLeft') dx = -0.25;
+    else if (event.key === 'ArrowRight') dx = 0.25;
+    else if (event.key === 'ArrowUp') dy = 0.25;
+    else if (event.key === 'ArrowDown') dy = -0.25;
+    else return;
+    event.preventDefault();
+    var anchor = state.anchors[state.keyboardAnchor];
+    state.anchors[state.keyboardAnchor] = clampAnchor({
+      x: anchor.x + dx,
+      y: anchor.y + dy
+    });
+    updateReadouts();
   });
 
   /* ------------------------------------------------------------------ *

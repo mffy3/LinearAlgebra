@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Linear Algebra 发布检查：数学测试、交互、键盘可访问性与已知限制。">
+  <meta name="theme-color" content="#efeae1">
+  <title>发布检查 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/atlas.css">
+</head>
+<body class="home-page atlas-page">
+  <a class="skip-link" href="#release-main">跳到主要内容</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Linear Algebra 入口">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../../index.html">入口</a>
+        <a href="../library.html">全部展厅</a>
+        <a href="atlas.html">应用地图</a>
+        <a href="../../ROADMAP.md">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="release-main" class="atlas-main">
+    <section class="atlas-hero">
+      <div>
+        <p class="eyebrow">P6 · 发布检查</p>
+        <h1>发布前，<br><span class="gradient-text">先核对。</span></h1>
+        <p class="lede">
+          这不是一张“进度 100%”的海报，而是一份当前可交付状态的说明：
+          哪些已经验证，哪些只是可用，哪些还明确没有做。
+        </p>
+      </div>
+      <aside class="atlas-count-card" aria-label="交付状态">
+        <strong>45 / 45</strong>
+        <span>数学测试通过 · 9 个应用 · 0 Console 错误</span>
+      </aside>
+    </section>
+
+    <section class="release-grid" aria-label="发布检查项">
+      <article class="release-card">
+        <p class="eyebrow">01 · 数学</p>
+        <h2>公式可复算</h2>
+        <ul class="release-list">
+          <li>所有 2×2 运算共用 `math.js`</li>
+          <li>45 个单元测试通过</li>
+          <li>应用页结果由同一套公式计算</li>
+          <li>未使用伪造数据或外部 API</li>
+        </ul>
+      </article>
+
+      <article class="release-card">
+        <p class="eyebrow">02 · 交互</p>
+        <h2>能拖、能点、能复位</h2>
+        <ul class="release-list">
+          <li>九个应用均有可操作控件</li>
+          <li>应用检查选项都会给出反馈</li>
+          <li>关键画布支持键盘方向键</li>
+          <li>重置按钮恢复初始状态</li>
+        </ul>
+      </article>
+
+      <article class="release-card">
+        <p class="eyebrow">03 · 可访问性</p>
+        <h2>键盘与焦点</h2>
+        <ul class="release-list">
+          <li>全站原生按钮 / 链接 / 滑杆</li>
+          <li>可见 `:focus-visible` 轮廓</li>
+          <li>支持 `prefers-reduced-motion`</li>
+          <li>页面均有 skip link 与唯一 h1</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="release-limits" aria-labelledby="limits-title">
+      <p class="eyebrow">KNOWN LIMITS</p>
+      <h2 id="limits-title">明确还没有做的事</h2>
+      <ul>
+        <li>只做 2D 线性代数；没有 3D 旋转、四元数或 WebGL。</li>
+        <li>音频页使用合成信号，不播放真实声音，也不上传音频。</li>
+        <li>Hamming(7,4) 只保证纠正单比特错误；多比特错误会显示异常状态，但不保证恢复。</li>
+        <li>Canvas 图形本身没有完整的数据表替代；读屏用户可通过旁边的数值和控件理解主要结论。</li>
+        <li>没有后端、账号、云同步或数据库；所有内容在本地运行。</li>
+        <li>不是 WCAG 认证；当前是人工键盘 / 焦点 / 对比度检查。</li>
+      </ul>
+
+      <div class="release-actions">
+        <a class="btn btn-primary" href="atlas.html">回到应用地图</a>
+        <a class="btn btn-ghost" href="../../ROADMAP.md">查看路线图</a>
+        <a class="btn btn-ghost" href="../../MANUAL.md">查看手册</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>从箭头开始。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../../index.html">入口</a>
+        <a href="../library.html">全部展厅</a>
+        <a href="atlas.html">应用地图</a>
+        <a href="release.html">发布检查</a>
+        <a href="../../ROADMAP.md">路线图</a>
+        <a href="../../RULES.md">规则</a>
+        <a href="../../MANUAL.md">手册</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+        项目内容为原创，参考来源仅以链接与出处形式标注。
+      </p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">这个页面是静态说明，不需要 JavaScript 也能阅读。</div>
+  </noscript>
+</body>
+</html>

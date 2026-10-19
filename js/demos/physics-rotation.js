@@ -461,6 +461,14 @@
     if (!state.dragging) canvas.classList.remove('is-grabbable');
   });
 
+  canvas.addEventListener('keydown', function (event) {
+    var direction = event.key === 'ArrowRight' || event.key === 'ArrowUp' ? 1 :
+      (event.key === 'ArrowLeft' || event.key === 'ArrowDown' ? -1 : 0);
+    if (!direction) return;
+    event.preventDefault();
+    setAngle(state.angle + direction * (event.shiftKey ? 5 : 1));
+  });
+
   /* ------------------------------------------------------------------ *
    * 先猜后验
    * ------------------------------------------------------------------ */

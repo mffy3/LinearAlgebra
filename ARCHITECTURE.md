@@ -186,6 +186,7 @@ pages/applications/software-pca.html # 已完成：PCA 降维
 pages/applications/hardware-audio.html # 已完成：音频 FIR
 pages/applications/hardware-ecc.html # 已完成：Hamming 纠错
 pages/applications/atlas.html # 已完成：跨域应用地图
+pages/applications/release.html # 已完成：发布检查
 pages/applications/economics.html      # 规划中
 pages/applications/computer.html       # 规划中
 ...
