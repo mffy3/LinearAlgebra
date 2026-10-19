@@ -35,7 +35,10 @@
   var state = {
     weight: 0.5,
     rho: 0.25,
-    dragging: false
+    dragging: false,
+    dragMode: null,
+    dragStartX: 0,
+    dragStartRho: 0.25
   };
 
   var els = {
@@ -149,7 +152,7 @@
     if (data.achieved) {
       els.hint.textContent = '最小风险组合：再降 ρ，看看它还能往左走多少';
     } else {
-      els.hint.textContent = '拖动图上的金点，或调权重条 / ρ';
+      els.hint.textContent = '拖金点调权重；左右拖协方差椭圆调 ρ';
     }
   }
 
@@ -474,7 +477,7 @@
     arrow(u1, r1 * scale, K.PALETTE.e2, 'λ₁');
     arrow(u2, r2 * scale, K.PALETTE.e1, 'λ₂');
 
-    K.drawLabel(ctx, cx, cy + ry + 22, '协方差椭圆', {
+    K.drawLabel(ctx, cx, cy + ry + 22, '协方差椭圆 · 左右拖动调 ρ', {
       color: K.PALETTE.muted,
       background: 'rgba(250, 246, 238, 0.9)',
       border: 'rgba(46, 49, 44, 0.1)',
@@ -623,6 +626,25 @@
       p.y >= plot.y && p.y <= plot.y + plot.h;
   }
 
+  function hitEllipse(event) {
+    var p = view.pointerPosition(event);
+    var layout = plotLayout().ellipse;
+    var data = compute();
+    var eigen = data.eigen;
+    var lambda1 = Math.max(1e-9, eigen.values[0].re);
+    var lambda2 = Math.max(1e-9, eigen.values[1].re);
+    var u1 = eigen.vectors[0] || { x: 1, y: 0 };
+    var u2 = eigen.vectors[1] || { x: 0, y: 1 };
+    var r1 = Math.sqrt(lambda1);
+    var r2 = Math.sqrt(lambda2);
+    var scale = Math.min(layout.rx / r1, layout.ry / r1);
+    var dx = p.x - layout.cx;
+    var dy = layout.cy - p.y;
+    var u = (dx * u1.x + dy * u1.y) / (r1 * scale);
+    var v = (dx * u2.x + dy * u2.y) / (r2 * scale);
+    return u * u + v * v <= 1.45;
+  }
+
   function nearestWeight(event) {
     var p = view.pointerPosition(event);
     var plot = plotLayout().plot;
@@ -646,6 +668,7 @@
 
   function endDrag(event) {
     state.dragging = false;
+    state.dragMode = null;
     canvas.classList.remove('is-dragging');
     canvas.classList.remove('is-grabbable');
     if (event && canvas.hasPointerCapture && canvas.hasPointerCapture(event.pointerId)) {
@@ -654,22 +677,33 @@
   }
 
   canvas.addEventListener('pointerdown', function (event) {
-    if (!hitCurrent(event) && !hitPlot(event)) return;
+    var mode = hitEllipse(event) ? 'ellipse' :
+      ((hitCurrent(event) || hitPlot(event)) ? 'plot' : null);
+    if (!mode) return;
     event.preventDefault();
     state.dragging = true;
+    state.dragMode = mode;
+    state.dragStartX = event.clientX;
+    state.dragStartRho = state.rho;
     if (canvas.setPointerCapture) canvas.setPointerCapture(event.pointerId);
     canvas.classList.add('is-dragging');
     canvas.classList.remove('is-grabbable');
-    setWeight(nearestWeight(event));
+    if (mode === 'plot') setWeight(nearestWeight(event));
   });
 
   canvas.addEventListener('pointermove', function (event) {
     if (state.dragging) {
       event.preventDefault();
-      setWeight(nearestWeight(event));
+      if (state.dragMode === 'ellipse') {
+        var next = state.dragStartRho + (event.clientX - state.dragStartX) / 180 * 1.6;
+        setRho(next);
+      } else {
+        setWeight(nearestWeight(event));
+      }
       return;
     }
-    canvas.classList.toggle('is-grabbable', hitCurrent(event) || hitPlot(event));
+    canvas.classList.toggle('is-grabbable',
+      hitEllipse(event) || hitCurrent(event) || hitPlot(event));
   });
 
   canvas.addEventListener('pointerup', endDrag);
