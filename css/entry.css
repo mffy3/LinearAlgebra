@@ -61,6 +61,13 @@
 }
 
 .entry-top .brand,
+.entry-top-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  pointer-events: auto;
+}
+
 .entry-top-link {
   pointer-events: auto;
 }

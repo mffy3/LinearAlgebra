@@ -3,7 +3,7 @@
 > 写给老板的“公司使用说明书”。
 > 不需要懂前端工程，也能知道每个文件夹是干什么的、想加功能时该怎么说、改崩了怎么救。
 >
-> 当前版本：v2.2（3D 入口 + 水平选择 + 路线提示 + 零基础向量课 + 五个基础展厅 + 物理三页 + 经济两页 + 软件两页 + 硬件两页）
+> 当前版本：v2.3（3D 入口 + 水平选择 + 路线提示 + 零基础向量课 + 五个基础展厅 + 九个应用 + 应用地图）
 > 配套文件：`RULES.md`（纪律）、`ROADMAP.md`（路线图）、`README.md`（对外介绍）、`ARCHITECTURE.md`（分区与迭代）
 
 ---
@@ -57,7 +57,8 @@ Linear Algebra/
 │       ├── software-convolution.js 软件应用：3×3 核与滑动窗口
 │       ├── software-pca.js 软件应用：协方差主方向与投影
 │       ├── hardware-audio.js 硬件应用：FIR 与 5 个 tap
-│       └── hardware-ecc.js 硬件应用：GF(2) syndrome 与纠错
+│       ├── hardware-ecc.js 硬件应用：GF(2) syndrome 与纠错
+│       └── atlas.js           应用地图筛选
 │
 ├── pages/                     各个独立展厅
 │   ├── library.html           全部展厅：地球仪与便当盒目录
@@ -76,7 +77,8 @@ Linear Algebra/
 │       ├── software-convolution.html 软件：图像卷积（当前开放）
 │       ├── software-pca.html 软件：PCA 降维（当前开放）
 │       ├── hardware-audio.html 硬件：音频 FIR（当前开放）
-│       └── hardware-ecc.html 硬件：Hamming 纠错（当前开放）
+│       ├── hardware-ecc.html 硬件：Hamming 纠错（当前开放）
+│       └── atlas.html         应用地图 / 跨域索引
 │
 ├── assets/
 │   └── images/                仓库：图标、演示图片等静态素材
@@ -324,6 +326,7 @@ Uncaught TypeError: ...
 - **软件 · PCA 降维**：拖动主轴端点或调拉伸；看主方向、一维投影与 λ₁/(λ₁+λ₂)。
 - **硬件 · 音频 FIR**：拖播放头和下方 tap；看 5 个权重怎样改变波形与峰值。
 - **硬件 · 纠错码**：点码字位注入错误，再点“纠正”；syndrome 的二进制值就是出错位。
+- **应用地图**：按领域筛选九个应用；入口、全部展厅和页脚都可进入。
 - 零基础向量课、五个基础展厅和物理应用都有“先猜后验”选择题，支持桌面 / 手机 / `file://` 直接打开。
 
 ## 附录 B：当前版本不包含什么

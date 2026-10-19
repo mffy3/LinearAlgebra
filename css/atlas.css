@@ -1,0 +1,289 @@
+/**
+ * atlas.css · 应用地图：P6 的跨域索引
+ */
+.atlas-main {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 96px 28px 120px;
+}
+
+.atlas-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+  gap: 40px;
+  align-items: end;
+  margin-bottom: 34px;
+}
+
+.atlas-hero h1 {
+  margin: 12px 0 18px;
+  font-size: clamp(3rem, 6.4vw, 5.6rem);
+  line-height: 0.96;
+  letter-spacing: -0.06em;
+}
+
+.atlas-hero .lede {
+  max-width: 58ch;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.atlas-count {\n  margin: 0 0 18px;\n  color: var(--muted);\n  font-size: 0.68rem;\n}\n\n.atlas-count-card {
+  padding: 18px 20px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  background: rgba(250, 246, 238, 0.6);
+}
+
+.atlas-count-card strong {
+  display: block;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.atlas-count-card span {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.atlas-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0 0 22px;
+}
+
+.atlas-filter {
+  padding: 7px 13px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(250, 246, 238, 0.45);
+  font-size: 0.7rem;
+}
+
+.atlas-filter[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  background: rgba(227, 232, 221, 0.75);
+}
+
+.atlas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.atlas-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 230px;
+  padding: 18px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  color: var(--ink);
+  background: rgba(250, 246, 238, 0.64);
+  text-decoration: none;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.atlas-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(116, 134, 118, 0.5);
+  background: rgba(250, 246, 238, 0.92);
+}
+
+.atlas-card[hidden] {
+  display: none;
+}
+
+.atlas-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.atlas-domain {
+  color: var(--accent-ink);
+  font-family: var(--font-mono);
+  font-size: 0.54rem;
+  letter-spacing: 0.04em;
+}
+
+.atlas-index {
+  color: var(--faint);
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+}
+
+.atlas-card h2 {
+  margin: 20px 0 8px;
+  font-size: 1.22rem;
+  letter-spacing: -0.03em;
+}
+
+.atlas-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.65;
+}
+
+.atlas-formula {
+  display: inline-block;
+  align-self: flex-start;
+  margin: 14px 0 12px;
+  padding: 5px 8px;
+  border: 1px solid rgba(46, 49, 44, 0.12);
+  border-radius: 7px;
+  color: var(--ink);
+  background: rgba(250, 246, 238, 0.7);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+}
+
+.atlas-concepts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.atlas-concepts span {
+  padding: 2px 7px;
+  border: 1px solid rgba(46, 49, 44, 0.1);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.56rem;
+}
+
+.atlas-card[data-domain="physics"] {
+  border-top-color: rgba(176, 125, 110, 0.55);
+}
+
+.atlas-card[data-domain="economics"] {
+  border-top-color: rgba(191, 163, 106, 0.6);
+}
+
+.atlas-card[data-domain="software"] {
+  border-top-color: rgba(116, 134, 118, 0.6);
+}
+
+.atlas-card[data-domain="hardware"] {
+  border-top-color: rgba(46, 49, 44, 0.35);
+}
+
+.atlas-concepts-section {
+  margin-top: 44px;
+  padding: 24px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  background: rgba(227, 232, 221, 0.35);
+}
+
+.atlas-concepts-section h2 {
+  margin-bottom: 12px;
+  font-size: 1.5rem;
+}
+
+.atlas-concept-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.atlas-concept {
+  padding: 6px 10px;
+  border: 1px solid rgba(46, 49, 44, 0.12);
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(250, 246, 238, 0.6);
+  font-size: 0.64rem;
+}
+
+.atlas-release {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
+  gap: 20px;
+  align-items: center;
+  margin-top: 12px;
+  padding: 22px 24px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  background: rgba(250, 246, 238, 0.6);
+}
+
+.atlas-release h2 {
+  margin-bottom: 8px;
+  font-size: 1.4rem;
+}
+
+.atlas-release p {
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.65;
+}
+
+.atlas-release-status {
+  display: grid;
+  gap: 6px;
+}
+
+.atlas-release-status span {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--hairline);
+  color: var(--muted);
+  font-size: 0.62rem;
+}
+
+.atlas-release-status b {
+  color: var(--accent-ink);
+  font-weight: 500;
+}
+
+.atlas-empty {
+  display: none;
+  padding: 26px;
+  border: 1px dashed var(--hairline);
+  border-radius: var(--radius-md);
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.atlas-empty.is-visible {
+  display: block;
+}
+
+@media (max-width: 960px) {
+  .atlas-hero {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .atlas-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .atlas-main {
+    padding: 64px 14px 80px;
+  }
+
+  .atlas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .atlas-release {
+    grid-template-columns: 1fr;
+  }
+}

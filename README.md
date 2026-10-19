@@ -16,7 +16,7 @@
 
 屏幕上是坐标网格和两个基向量。修改 2×2 矩阵的四个数字，或者直接拖动箭头尖端，整个网格、单位方格、单位圆会连续形变；旁边实时显示行列式、面积缩放、秩、定向与特征方向。
 
-当前是 **v2.2**：带水平选择的 3D 入口 + 零基础向量课 + 五个基础展厅 + 物理三页 + 经济两页 + 软件两页 + 硬件两页（音频 FIR、Hamming 纠错）。P1–P5 完成。
+当前是 **v2.3**：带水平选择的 3D 入口 + 零基础向量课 + 五个基础展厅 + 九个跨域应用 + 应用地图。P1–P5 完成，P6 收尾进行中。
 
 ### 现在能玩
 
@@ -36,6 +36,7 @@
 - **软件 · PCA 降维**：拖动主轴 / 调拉伸；看点云主方向、一维投影和协方差矩阵特征向量
 - **硬件 · 音频 FIR**：拖动播放头和 5 个 tap，看时间轴上的加权和怎样改变波形
 - **硬件 · 纠错码**：点码字位注入错误，用 Hamming(7,4) 的 syndrome 定位并纠正
+- **应用地图**：按物理 / 经济 / 软件 / 硬件筛选九个入口，一页看完跨域索引
 - 零基础向量课和五个展厅都带“先猜后验”选择题与小挑战；右侧“边做边看”会跟着你的每一次拖动即时解释，不用往下翻
 - 选了哪条路线，页面顶部就会出现对应的“第 N 站”提示、下一站链接和“这一站怎么学”的提示
 - “有扎实的基础”路线会隐藏基础 quiz、提高挑战精度；零基础路线会多给一条读图提示，挑战容差也更宽松
@@ -68,6 +69,8 @@
 ![硬件 · 音频 FIR](assets/images/audio-demo.png)
 
 ![硬件 · 纠错码](assets/images/ecc-demo.png)
+
+![应用地图](assets/images/atlas-demo.png)
 
 ![全部展厅](assets/images/library-demo.png)
 
@@ -123,14 +126,16 @@ python -m http.server 8000
 │       ├── software-convolution.html 软件 · 图像卷积
 │       ├── software-pca.html 软件 · PCA 降维
 │       ├── hardware-audio.html 硬件 · 音频 FIR
-│       └── hardware-ecc.html 硬件 · 纠错码
+│       ├── hardware-ecc.html 硬件 · 纠错码
+│       └── atlas.html          应用地图 / 跨域索引
 │       └── physics.html        物理 · 受力分解
 ├── css/
 │   ├── main.css                全站样式与莫兰迪色板
 │   ├── entry.css               3D 入口、水平选择
 │   ├── bento.css               全部展厅便当盒、章节地球仪
 │   ├── canvas.css              画布页、即时旁白
-│   └── applications.css        应用篇布局、物理控制
+│   ├── applications.css        应用篇布局、物理控制
+│   └── atlas.css               应用地图与跨域索引
 ├── js/
 │   ├── lib/
 │   │   ├── math.js             纯数学函数（无 DOM）
@@ -156,7 +161,8 @@ python -m http.server 8000
 │       ├── software-convolution.js 图像卷积控制器
 │       ├── software-pca.js PCA 降维控制器
 │       ├── hardware-audio.js 音频 FIR 控制器
-│       └── hardware-ecc.js Hamming 纠错控制器
+│       ├── hardware-ecc.js Hamming 纠错控制器
+│       └── atlas.js            应用地图筛选
 ├── assets/images/              静态素材
 ├── tests/math.test.js          数学基准测试（Node）
 ├── RULES.md                    项目纪律与安全红线
@@ -193,7 +199,7 @@ node tests/math.test.js
 | P3 | 经济：列昂惕夫投入产出 ✅、投资组合 ✅ | ✅ |
 | P4 | 软件：图像卷积 ✅、PCA 降维 ✅ | ✅ |
 | P5 | 硬件：音频滤波 ✅、纠错码 ✅ | ✅ |
-| P6 | 整合、无障碍、开源发布 | ⬜ |
+| P6 | 跨域索引 ✅、无障碍、性能、许可、发布 | 🚧 |
 
 完整验收口径见 [ROADMAP.md](ROADMAP.md)。
 
