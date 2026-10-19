@@ -1,6 +1,6 @@
-# Linear Algebra v1.0.0
+# Linear Algebra v1.0.1
 
-First public release of the interactive linear algebra visualizer.
+Patch release: documentation links now open rendered GitHub pages instead of raw Markdown. The visualizer itself is unchanged.
 
 ## What is included
 
