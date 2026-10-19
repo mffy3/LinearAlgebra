@@ -18,13 +18,13 @@
       id: 'some',
       label: '略有了解',
       start: '02-determinant',
-      pages: ['02-determinant', '03-rank', '04-eigenvector', '05-solve', 'physics', 'physics-rotation', 'physics-quantum']
+      pages: ['02-determinant', '03-rank', '04-eigenvector', '05-solve', 'physics', 'physics-rotation', 'physics-quantum', 'economics-leontief']
     },
     learned: {
       id: 'learned',
       label: '有扎实的基础',
       start: 'physics',
-      pages: ['physics', 'physics-rotation', 'physics-quantum', 'economics', 'computer', 'art', 'music', 'social']
+      pages: ['physics', 'physics-rotation', 'physics-quantum', 'economics-leontief', 'economics', 'computer', 'art', 'music', 'social']
     }
   };
 
@@ -38,6 +38,7 @@
     'physics': '物理',
     'physics-rotation': '刚体旋转',
     'physics-quantum': '量子态',
+    'economics-leontief': '投入产出',
     'economics': '经济',
     'computer': '计算机',
     'art': '美术',
@@ -53,7 +54,8 @@
     '05-solve': 'rank A = rank[A|b]',
     physics: 'T₁u + T₂v = −W',
     'physics-rotation': 'R(θ)ᵀR(θ) = I，det R = 1',
-    'physics-quantum': '|α|² + |β|² = 1'
+    'physics-quantum': '|α|² + |β|² = 1',
+    'economics-leontief': 'x = (I − A)⁻¹ d'
   };
 
   var checklists = {
@@ -170,7 +172,7 @@
         body: '正交矩阵保长、保角；用 RᵀR = I 和 det = 1 检查。'
       },
       learned: {
-        title: '应用 2 / 8 · 刚体旋转',
+        title: '应用 2 / 9 · 刚体旋转',
         body: '直接看 R(θ)ᵀR(θ) = I；长度、夹角、det 都不变。'
       }
     },
@@ -184,8 +186,22 @@
         body: '先抓住归一化：|α|² + |β|² = 1；相位 φ 不改变概率。'
       },
       learned: {
-        title: '应用 3 / 8 · 量子态',
+        title: '应用 3 / 9 · 量子态',
         body: '直接看 |ψ⟩ = α|0⟩ + β|1⟩ 与 Born 规则 p = |α|²。'
+      }
+    },
+    'economics-leontief': {
+      zero: {
+        title: '应用篇 · 投入产出',
+        body: '每个行业都要先买别人的产品，再满足最终需求；解 (I − A)x = d。'
+      },
+      some: {
+        title: '应用篇 · 投入产出',
+        body: '直接看 (I − A)⁻¹ d：A 是中间投入，逆矩阵把间接需求也算进去。'
+      },
+      learned: {
+        title: '应用 4 / 9 · 投入产出',
+        body: '直接解 (I − A)x = d；x = (I − A)⁻¹d，列是总需求乘数。'
       }
     },
     physics: {
@@ -198,7 +214,7 @@
         body: '把前面学的 Ax = b 用起来：两股张力就是两个未知数。'
       },
       learned: {
-        title: '应用 1 / 8 · 物理',
+        title: '应用 1 / 9 · 物理',
         body: '直接从方程开始：T₁u + T₂v = −W；不用再复习定义。'
       }
     }

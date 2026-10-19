@@ -93,6 +93,33 @@
   white-space: nowrap;
 }
 
+.matrix-readout {
+  display: grid;
+  gap: 7px;
+  margin: 12px 0;
+  padding: 10px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  background: rgba(250, 246, 238, 0.5);
+}
+
+.matrix-readout-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.62rem;
+}
+
+.matrix-readout-row b {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 500;
+  text-align: right;
+}
+
 /* --------------------------------------------------------------------------
    Physics controls
    -------------------------------------------------------------------------- */

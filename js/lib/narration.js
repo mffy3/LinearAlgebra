@@ -304,6 +304,27 @@
     };
   }
 
+  function economics(s) {
+    if (Math.abs(s.x2 - 50) < 0.5) {
+      return {
+        text: '制造业总产出正好 50。为了这个 50，农业不仅生产 d₁，还要生产制造业需要的原料，所以 x₁ 也跟着变。',
+        prompt: '看看逆矩阵：它把“直接需求”和“为生产这些需求所需要的投入”一起算进去了。'
+      };
+    }
+
+    if (s.d2 > s.d1) {
+      return {
+        text: '制造业的最终需求更高，拉动了制造业产出；制造业又要用农业的原料，所以农业产出也被带着上涨。',
+        prompt: '试着只增加 d₁，看看哪个行业涨得更快。'
+      };
+    }
+
+    return {
+      text: 'A 记录“每生产 1 元，要消耗别人多少”；最终需求 d 是最后被消费掉的部分。x = (I − A)⁻¹d 把中间投入的连锁反应一次算完。',
+      prompt: '先增加制造业的最终需求，看农业的产出会不会跟着涨。'
+    };
+  }
+
   global.LinAlgNarration = {
     transform: transform,
     determinant: determinant,
@@ -313,6 +334,7 @@
     physics: physics,
     combination: combination,
     rotation: rotation,
-    quantum: quantum
+    quantum: quantum,
+    economics: economics
   };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

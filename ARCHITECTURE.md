@@ -179,6 +179,7 @@ const eig = L.eigen2(state.matrix);
 pages/applications/physics.html        # 已完成：受力分解
 pages/applications/physics-rotation.html # 已完成：刚体旋转
 pages/applications/physics-quantum.html # 已完成：量子态叠加
+pages/applications/economics-leontief.html # 已完成：投入产出
 pages/applications/economics.html      # 规划中
 pages/applications/computer.html       # 规划中
 ...

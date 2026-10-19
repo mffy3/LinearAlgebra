@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="经济应用：列昂惕夫投入产出模型。用 (I − A)x = d 求两个行业的总产出。">
+  <meta name="theme-color" content="#efeae1">
+  <title>投入产出 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/canvas.css">
+  <link rel="stylesheet" href="../../css/applications.css">
+</head>
+<body class="lab-page application-page application-economics">
+  <a class="skip-link" href="#lab-main">跳到主要内容</a>
+
+  <header class="site-header lab-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Linear Algebra 入口">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../../index.html">入口</a>
+        <a href="physics.html">物理</a>
+        <a href="physics-quantum.html">量子态</a>
+        <a href="economics-leontief.html" aria-current="page">投入产出</a>
+        <a href="../../ROADMAP.md">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="lab-main" class="lab-main">
+    <section class="lab-intro application-intro" data-zone="intro">
+      <div class="lab-intro-copy">
+        <p class="eyebrow">APPLICATION 04 · 经济 · 投入产出</p>
+        <div class="application-title-row">
+          <span class="application-badge">ECONOMICS</span>
+          <h1>先满足彼此，<span class="gradient-text">再满足需求</span></h1>
+        </div>
+        <p class="lede">
+          农业需要制造业的机器，制造业需要农业的原料。每个行业的总产出，既要够自己用，
+          也要够别人用，最后才轮到最终需求。把这些“互相消耗”写成矩阵，就是
+          <b>(I − A)x = d</b>。
+        </p>
+        <div class="intro-pills" aria-label="本章关键词">
+          <span class="pill">中间投入</span>
+          <span class="pill">最终需求</span>
+          <span class="pill">逆矩阵</span>
+          <span class="pill pill-accent">可调需求</span>
+        </div>
+      </div>
+
+      <aside class="application-formula" aria-label="列昂惕夫模型">
+        <p class="formula-label">投入产出</p>
+        <p class="formula-main">x = Ax + d</p>
+        <p class="formula-sub">移项得 <b>(I − A)x = d</b>；解 <b>x = (I − A)⁻¹d</b>。A 的列是每个行业每 1 元产出需要的中间投入。</p>
+      </aside>
+    </section>
+
+    <div class="workspace" data-zone="workspace">
+      <section class="stage-card" id="stage-card" data-zone="canvas" aria-labelledby="stage-title">
+        <div class="stage-head">
+          <div>
+            <p class="stage-kicker">LIVE ECONOMY</p>
+            <h2 id="stage-title">两个行业，互相供货</h2>
+          </div>
+          <div class="stage-actions">
+            <button class="btn btn-small btn-ghost" id="btn-reset" type="button">重置</button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="economics-canvas" class="transform-canvas" width="900" height="620"
+            aria-label="两个行业的投入产出流：农业和制造业互相供货，并满足最终需求。">
+            你的浏览器不支持 Canvas，请换一个现代浏览器。
+          </canvas>
+
+          <div class="det-chip solve-chip" id="economics-chip">
+            <span>状态</span>
+            <strong id="canvas-status">正产出</strong>
+          </div>
+
+          <p class="canvas-hint" id="economics-hint">调 d₁、d₂，看两个行业的总产出怎么变</p>
+        </div>
+
+        <div class="professor-strip" aria-live="polite">
+          <span class="professor-seal" aria-hidden="true">λ</span>
+          <div>
+            <p id="professor-strip-text">A 记录“每生产 1 元，要消耗别人多少”；最终需求 d 是最后被消费掉的部分。</p>
+            <p class="professor-strip-prompt" id="professor-strip-prompt">先增加制造业的最终需求，看农业的产出会不会跟着涨。</p>
+          </div>
+        </div>
+
+        <div class="stage-foot">
+          <div class="foot-item">
+            <span class="foot-label">x₁ · 农业</span>
+            <b id="readout-x1">49.2</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">x₂ · 制造</span>
+            <b id="readout-x2">31.1</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">d₁</span>
+            <b id="readout-d1">30</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">d₂</span>
+            <b id="readout-d2">20</b>
+          </div>
+        </div>
+      </section>
+
+      <aside class="control-panel" data-zone="controls" aria-label="最终需求与投入矩阵">
+        <div class="panel-head">
+          <h2>需求与产出</h2>
+          <span class="pill pill-soft">2 个行业</span>
+        </div>
+
+        <div class="professor-note" aria-live="polite">
+          <div class="professor-head">
+            <span class="professor-seal" aria-hidden="true">λ</span>
+            <span>边做边看</span>
+          </div>
+          <p id="professor-text">A 记录“每生产 1 元，要消耗别人多少”；最终需求 d 是最后被消费掉的部分。</p>
+          <p class="professor-prompt" id="professor-prompt">先增加制造业的最终需求，看农业的产出会不会跟着涨。</p>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>d₁ · 农业最终需求</span>
+            <span class="probe-hint">最终消费</span>
+          </div>
+          <div class="weight-row">
+            <input id="d1-range" class="weight-range" type="range" min="0" max="60" step="1" value="30"
+              aria-label="农业最终需求">
+            <label class="weight-number">
+              <input id="d1" type="number" min="0" max="60" step="1" value="30" inputmode="decimal"
+                aria-label="农业最终需求数值">
+              <span>元</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>d₂ · 制造最终需求</span>
+            <span class="probe-hint">最终消费</span>
+          </div>
+          <div class="weight-row">
+            <input id="d2-range" class="weight-range" type="range" min="0" max="60" step="1" value="20"
+              aria-label="制造最终需求">
+            <label class="weight-number">
+              <input id="d2" type="number" min="0" max="60" step="1" value="20" inputmode="decimal"
+                aria-label="制造最终需求数值">
+              <span>元</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <p class="panel-label">预设</p>
+          <div class="preset-grid">
+            <button class="preset-btn" type="button" data-preset="balanced">均衡</button>
+            <button class="preset-btn" type="button" data-preset="agri">偏农业</button>
+            <button class="preset-btn" type="button" data-preset="manufacturing">偏制造</button>
+          </div>
+        </div>
+
+        <div class="matrix-readout" aria-label="投入矩阵和逆矩阵">
+          <div class="matrix-readout-row">
+            <span>A</span>
+            <b>[[0.20, 0.30], [0.10, 0.20]]</b>
+          </div>
+          <div class="matrix-readout-row">
+            <span>(I − A)⁻¹</span>
+            <b>1.64 · [[0.80, 0.30], [0.10, 0.80]]</b>
+          </div>
+        </div>
+
+        <div class="challenge-card" id="challenge-card">
+          <div class="challenge-head">
+            <span>小挑战</span>
+            <strong id="challenge-state">进行中</strong>
+          </div>
+          <p>让制造业总产出达到 x₂ = 50：调 d₁、d₂。</p>
+          <div class="challenge-metric">
+            <span>与 50 的差</span>
+            <b id="challenge-distance">18.9</b>
+          </div>
+          <div class="challenge-meter" id="challenge-meter" role="progressbar"
+            aria-label="制造业产出达到 50 的挑战进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="challenge-meter-fill"></span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="explain-section" data-zone="lecture" aria-labelledby="explain-title">
+      <div class="section-heading">
+        <p class="eyebrow">WHY IT LOOKS LIKE THIS</p>
+        <h2 id="explain-title">为什么不是直接乘 A</h2>
+        <p>因为 A 的产出里还有一部分要拿回去继续生产；逆矩阵把间接需求一轮一轮算完。</p>
+      </div>
+
+      <div class="explain-grid explain-grid-three">
+        <article class="explain-card">
+          <span class="explain-index">01</span>
+          <h3>中间投入：A x</h3>
+          <p>A 的列告诉你：每个行业每生产 1 元，需要农业和制造业各投入多少。</p>
+          <p class="formula">Ax = 中间投入</p>
+          <p>总产出 x 先要满足 Ax，剩下的才是最终需求 d。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">02</span>
+          <h3>Leontief 逆：直接 + 间接</h3>
+          <p>把 x = Ax + d 移项，得到 (I − A)x = d；解出 x 就把所有轮次的需求都算进去了。</p>
+          <p class="formula">(I − A)⁻¹ = I + A + A² + …</p>
+          <p>只要 A 的谱半径小于 1，这个级数收敛，经济能产出正数。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">03</span>
+          <h3>为什么需要逆矩阵</h3>
+          <p>如果只算 Ax + d，你会漏掉“为生产 Ax 所需要的投入”背后的投入。</p>
+          <p class="formula">x = (I − A)⁻¹ d</p>
+          <p>逆矩阵的列就是最终需求每增加 1 单位时，各行业总产出的增量。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="quiz-section" data-zone="quiz">
+      <div class="quiz-card" aria-labelledby="quiz-title">
+        <div class="quiz-copy">
+          <p class="eyebrow">先猜后验</p>
+          <h2 id="quiz-title">x = Ax + d 可以改写成什么？</h2>
+          <p>先想：把 Ax 移到左边，x 的系数是谁？</p>
+          <div class="quiz-options" role="group" aria-label="选择答案">
+            <button class="quiz-option" type="button" data-quiz-economics="a">(I + A)x = d</button>
+            <button class="quiz-option" type="button" data-quiz-economics="b">(I − A)x = d</button>
+            <button class="quiz-option" type="button" data-quiz-economics="c">Ax = d</button>
+          </div>
+          <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></p>
+          <button class="btn btn-primary" id="btn-quiz-apply" type="button">调到 x₂ = 50 验证 <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="quiz-visual" aria-hidden="true">
+          <canvas id="quiz-canvas" width="360" height="260"></canvas>
+          <span class="quiz-mini-label" id="quiz-mini-label">Ax + d = x</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-strip" data-zone="next" aria-labelledby="next-title">
+      <div>
+        <p class="eyebrow">NEXT APPLICATION</p>
+        <h2 id="next-title">下一站：投资组合，风险与收益</h2>
+        <p>把协方差矩阵的特征向量看成“互不相关的风险方向”，用线性代数做资产配置。</p>
+      </div>
+      <a class="btn btn-primary" href="../../ROADMAP.md">查看应用篇路线 <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>从箭头开始。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../../index.html">入口</a>
+        <a href="physics.html">物理</a>
+        <a href="physics-quantum.html">量子态</a>
+        <a href="economics-leontief.html">投入产出</a>
+        <a href="../../ROADMAP.md">路线图</a>
+        <a href="../../RULES.md">规则</a>
+        <a href="../../MANUAL.md">手册</a>
+        <a href="../../REFERENCES.md">参考</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+        项目内容为原创，参考来源仅以链接与出处形式标注。
+      </p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">这个页面需要 JavaScript 才能绘制交互。请启用 JavaScript 后刷新。</div>
+  </noscript>
+
+  <script src="../../js/lib/math.js" defer></script>
+  <script src="../../js/lib/canvas-utils.js" defer></script>
+  <script src="../../js/lib/paths.js" defer></script>
+  <script src="../../js/lib/level-ui.js" defer></script>
+  <script src="../../js/lib/narration.js" defer></script>
+  <script src="../../js/demos/economics-leontief.js" defer></script>
+</body>
+</html>
