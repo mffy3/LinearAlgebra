@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="可拖动的 2D 矩阵变换可视化：修改四个数字，实时观察网格、单位方格、基向量与特征方向如何形变。">
-  <meta name="theme-color" content="#fbfbfd">
+  <meta name="theme-color" content="#efeae1">
   <title>矩阵变换 · Linear Algebra</title>
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
   <link rel="stylesheet" href="../css/main.css">
@@ -35,13 +35,14 @@
         <a href="02-determinant.html">行列式</a>
         <a href="03-rank.html">秩与零空间</a>
         <a href="04-eigenvector.html">特征向量</a>
+        <a href="05-solve.html">线性方程组</a>
         <a href="../ROADMAP.md">路线图</a>
       </nav>
     </div>
   </header>
 
   <main id="lab-main" class="lab-main">
-    <section class="lab-intro">
+    <section class="lab-intro" data-zone="intro">
       <div class="lab-intro-copy">
         <p class="eyebrow">CHAPTER 01 · 矩阵 = 线性映射</p>
         <h1>看见矩阵，<span class="gradient-text">如何重排空间</span></h1>
@@ -58,8 +59,8 @@
       </div>
     </section>
 
-    <div class="workspace">
-      <section class="stage-card" id="stage-card" aria-labelledby="stage-title">
+    <div class="workspace" data-zone="workspace">
+      <section class="stage-card" id="stage-card" data-zone="canvas" aria-labelledby="stage-title">
         <div class="stage-head">
           <div>
             <p class="stage-kicker">LIVE CANVAS</p>
@@ -120,7 +121,7 @@
         </div>
       </section>
 
-      <aside class="control-panel" aria-label="矩阵与显示控制">
+      <aside class="control-panel" data-zone="controls" aria-label="矩阵与显示控制">
         <div class="panel-head">
           <h2>矩阵 A</h2>
           <span class="pill pill-soft">2 × 2</span>
@@ -254,7 +255,7 @@
       </aside>
     </div>
 
-    <section class="explain-section" aria-labelledby="explain-title">
+    <section class="explain-section" data-zone="lecture" aria-labelledby="explain-title">
       <div class="section-heading">
         <p class="eyebrow">WHY IT LOOKS LIKE THIS</p>
         <h2 id="explain-title">你看到的四件事</h2>
@@ -296,7 +297,7 @@
       </div>
     </section>
 
-    <section class="quiz-section">
+    <section class="quiz-section" data-zone="quiz">
       <div class="quiz-card" aria-labelledby="quiz-title">
         <div class="quiz-copy">
           <p class="eyebrow">先猜后验</p>
@@ -319,7 +320,7 @@
       </div>
     </section>
 
-    <section class="next-strip" aria-labelledby="next-title">
+    <section class="next-strip" data-zone="next" aria-labelledby="next-title">
       <div>
         <p class="eyebrow">NEXT</p>
         <h2 id="next-title">下一站：行列式，面积的放大器</h2>
@@ -341,6 +342,7 @@
         <a href="02-determinant.html">行列式</a>
         <a href="03-rank.html">秩与零空间</a>
         <a href="04-eigenvector.html">特征向量</a>
+        <a href="05-solve.html">线性方程组</a>
         <a href="../RULES.md">规则</a>
         <a href="../MANUAL.md">手册</a>
         <a href="../REFERENCES.md">参考</a>

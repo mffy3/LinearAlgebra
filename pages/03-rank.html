@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="秩与零空间可视化：看矩阵把平面压成线或点，拖动探测向量找到被压掉的方向，实时验证 rank + nullity = 2。">
-  <meta name="theme-color" content="#fbfbfd">
+  <meta name="theme-color" content="#efeae1">
   <title>秩与零空间 · Linear Algebra</title>
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
   <link rel="stylesheet" href="../css/main.css">
@@ -35,13 +35,14 @@
         <a href="02-determinant.html">行列式</a>
         <a href="03-rank.html" aria-current="page">秩与零空间</a>
         <a href="04-eigenvector.html">特征向量</a>
+        <a href="05-solve.html">线性方程组</a>
         <a href="../ROADMAP.md">路线图</a>
       </nav>
     </div>
   </header>
 
   <main id="lab-main" class="lab-main">
-    <section class="lab-intro">
+    <section class="lab-intro" data-zone="intro">
       <div class="lab-intro-copy">
         <p class="eyebrow">CHAPTER 03 · 秩与零空间</p>
         <h1>哪些方向，<span class="gradient-text">被空间压掉了</span></h1>
@@ -58,8 +59,8 @@
       </div>
     </section>
 
-    <div class="workspace">
-      <section class="stage-card" id="stage-card" aria-labelledby="stage-title">
+    <div class="workspace" data-zone="workspace">
+      <section class="stage-card" id="stage-card" data-zone="canvas" aria-labelledby="stage-title">
         <div class="stage-head">
           <div>
             <p class="stage-kicker">LIVE CANVAS</p>
@@ -128,7 +129,7 @@
         </div>
       </section>
 
-      <aside class="control-panel" aria-label="矩阵与探测向量控制">
+      <aside class="control-panel" data-zone="controls" aria-label="矩阵与探测向量控制">
         <div class="panel-head">
           <h2>矩阵 A</h2>
           <span class="pill pill-soft">2 × 2</span>
@@ -300,7 +301,7 @@
       </aside>
     </div>
 
-    <section class="explain-section" aria-labelledby="explain-title">
+    <section class="explain-section" data-zone="lecture" aria-labelledby="explain-title">
       <div class="section-heading">
         <p class="eyebrow">WHY IT LOOKS LIKE THIS</p>
         <h2 id="explain-title">秩与零空间，一对搭档</h2>
@@ -342,7 +343,7 @@
       </div>
     </section>
 
-    <section class="quiz-section">
+    <section class="quiz-section" data-zone="quiz">
       <div class="quiz-card" aria-labelledby="quiz-title">
         <div class="quiz-copy">
           <p class="eyebrow">先猜后验</p>
@@ -365,7 +366,7 @@
       </div>
     </section>
 
-    <section class="next-strip" aria-labelledby="next-title">
+    <section class="next-strip" data-zone="next" aria-labelledby="next-title">
       <div>
         <p class="eyebrow">NEXT</p>
         <h2 id="next-title">下一站：特征向量，方向不动的轴</h2>
@@ -387,6 +388,7 @@
         <a href="02-determinant.html">行列式</a>
         <a href="03-rank.html">秩与零空间</a>
         <a href="04-eigenvector.html">特征向量</a>
+        <a href="05-solve.html">线性方程组</a>
         <a href="../RULES.md">规则</a>
         <a href="../MANUAL.md">手册</a>
         <a href="../REFERENCES.md">参考</a>

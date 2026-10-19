@@ -371,6 +371,62 @@ test('插值端点与中点', () => {
 });
 
 /* ------------------------------------------------------------------ */
+console.log('\n线性方程组 Ax = b');
+
+test('唯一解：2x2 满秩系统', () => {
+  const result = L.solve2(L.mat2(2, 1, 1, 3), { x: 3, y: 5 });
+  assert.equal(result.status, 'unique');
+  assert.equal(result.unique, true);
+  assert.equal(result.rankA, 2);
+  assert.equal(result.rankAugmented, 2);
+  close(result.det, 5);
+  closeVec(result.particular, { x: 0.8, y: 1.4 });
+  closeVec(result.residual, { x: 0, y: 0 });
+});
+
+test('平行无解：增广秩大于系数秩', () => {
+  const result = L.solve2(L.mat2(1, 2, 2, 4), { x: 1, y: 0 });
+  assert.equal(result.status, 'none');
+  assert.equal(result.consistent, false);
+  assert.equal(result.rankA, 1);
+  assert.equal(result.rankAugmented, 2);
+  assert.equal(result.particular, null);
+});
+
+test('重合无穷多解：给出特解与零空间方向', () => {
+  const result = L.solve2(L.mat2(1, 2, 2, 4), { x: 1, y: 2 });
+  assert.equal(result.status, 'infinite');
+  assert.equal(result.rankA, 1);
+  assert.equal(result.rankAugmented, 1);
+  closeVec(result.particular, { x: 1, y: 0 });
+  closeVec(result.residual, { x: 0, y: 0 });
+  assert.equal(result.dimension, 1);
+  close(L.dot({ x: 1, y: 2 }, result.freeDirection), 0);
+  close(L.length(result.freeDirection), 1);
+});
+
+test('零矩阵：b=0 时整个平面都是解，b≠0 时无解', () => {
+  const homogeneous = L.solve2(L.zero(), { x: 0, y: 0 });
+  assert.equal(homogeneous.status, 'infinite');
+  assert.equal(homogeneous.dimension, 2);
+  closeVec(homogeneous.particular, { x: 0, y: 0 });
+
+  const inconsistent = L.solve2(L.zero(), { x: 1, y: 0 });
+  assert.equal(inconsistent.status, 'none');
+  assert.equal(inconsistent.rankA, 0);
+  assert.equal(inconsistent.rankAugmented, 1);
+});
+
+test('秩 1 且有一个零行时仍能给出特解', () => {
+  const result = L.solve2(L.mat2(0, 1, 0, 0), { x: 2, y: 0 });
+  assert.equal(result.status, 'infinite');
+  closeVec(result.particular, { x: 0, y: 2 });
+  closeVec(result.residual, { x: 0, y: 0 });
+  close(Math.abs(result.freeDirection.x), 1);
+  close(result.freeDirection.y, 0);
+});
+
+/* ------------------------------------------------------------------ */
 console.log('\n格式化与工具');
 
 test('formatFixed 不输出 -0.00', () => {

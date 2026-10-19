@@ -747,13 +747,16 @@ button {
     gap: 16px;
   }
 
+  .site-nav a:not([aria-current="page"]):not([href$="ROADMAP.md"]) {
+    display: none;
+  }
+
   .site-nav a,
   .site-nav .nav-soon {
     font-size: 0.72rem;
   }
 
-  .site-nav .nav-soon,
-  .site-nav a[href$="ROADMAP.md"] {
+  .site-nav .nav-soon {
     display: none;
   }
 

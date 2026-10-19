@@ -32,9 +32,10 @@
 
     var rx = Math.max(84, width * 0.33);
     var ry = Math.max(66, height * 0.29);
+    var step = (Math.PI * 2) / items.length;
 
     items.forEach(function (item, index) {
-      var angle = Math.PI / 2 + index * (Math.PI / 2) + rotation;
+      var angle = Math.PI / 2 + index * step + rotation;
       var x = Math.cos(angle) * rx;
       var y = Math.sin(angle) * ry;
       var depth = (Math.sin(angle) + 1) / 2; // 1 = 前方，0 = 后方

@@ -152,10 +152,44 @@
     };
   }
 
+  function solve(s) {
+    if (s.status === 'none') {
+      return {
+        text: s.view === 'row'
+          ? '两条线平行，永远不会碰面。行视角里你看不到交点；列视角里，b 已经跑到两列张成的线外面去了。'
+          : 'b 不在两列张成的空间里。无论怎么组合 c₁、c₂，都拼不出它；所以方程组不相容。',
+        prompt: s.view === 'row'
+          ? '把 b 往上或往下挪一点，看看两条线什么时候重新相交。'
+          : '把 b 拖回那条虚线（列空间）上，看看“无解”怎样变成“无穷多解”。'
+      };
+    }
+
+    if (s.status === 'infinite') {
+      return {
+        text: s.dimension === 2
+          ? '零矩阵把一切都抹平了，b 也是 0；于是整个平面都是解。这不是“一个答案”，而是一整片答案。'
+          : '两条线重合了，或者 b 落在列空间里：解不止一个，而是一整条线。特解加零空间方向，就是全部答案。',
+        prompt: s.view === 'row'
+          ? '把 b 稍微挪开一点，重合的两条线就会变成平行，解也随之消失。'
+          : '观察 b 和两列共线时，组合方式为什么突然不唯一了。'
+      };
+    }
+
+    return {
+      text: s.view === 'row'
+        ? '两条线交于一点，说明这个方程组只有一个解。把交点拖到别处，b 会跟着变——行视角里，解就是那个交点。'
+        : 'b 正好是两列的唯一组合。x、y 就是组合系数；两列独立，所以这个表示没有第二种可能。',
+      prompt: s.view === 'row'
+        ? '先猜：把 b 往上移，交点会往哪边跑？'
+        : '把 b 拖到两列中间，看看两个组合系数怎样一起变。'
+    };
+  }
+
   global.LinAlgNarration = {
     transform: transform,
     determinant: determinant,
     rank: rank,
-    eigen: eigen
+    eigen: eigen,
+    solve: solve
   };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

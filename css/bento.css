@@ -315,7 +315,7 @@
   min-height: 230px;
   flex-direction: column;
   justify-content: center;
-  grid-column: span 5;
+  grid-column: span 4;
   padding: 30px;
   background: var(--surface-2);
 }

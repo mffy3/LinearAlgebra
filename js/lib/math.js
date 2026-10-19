@@ -518,6 +518,85 @@
   }
 
   /* ------------------------------------------------------------------ *
+   * 线性方程组 Ax = b（2×2）
+   * ------------------------------------------------------------------ */
+
+  function solveRank1Particular(m, b, tol) {
+    var row1 = { a: m.a, b: m.b, rhs: b.x };
+    var row2 = { a: m.c, b: m.d, rhs: b.y };
+    var row = Math.hypot(row2.a, row2.b) > Math.hypot(row1.a, row1.b) ? row2 : row1;
+
+    // 优先让 x 非零，读数更像“解”；若该行 x 的系数为 0，再解 y。
+    if (Math.abs(row.a) > tol) {
+      return { x: row.rhs / row.a, y: 0 };
+    }
+    if (Math.abs(row.b) > tol) {
+      return { x: 0, y: row.rhs / row.b };
+    }
+    return { x: 0, y: 0 };
+  }
+
+  /**
+   * 解 2×2 方程组 A x = b，并给出几何分类。
+   *
+   * 返回：
+   * - status: 'unique' | 'none' | 'infinite'
+   * - particular: 一个特解（无解时为 null）
+   * - nullspace: nullSpace2 的结果（包含维数与方向）
+   * - rankA / rankAugmented: 系数矩阵与增广矩阵的秩
+   * - det: 系数矩阵行列式
+   * - residual: A(particular) - b（用于核对）
+   */
+  function solve2(m, b, eps) {
+    var tol = eps == null ? EPS : eps;
+    var rhs = { x: b.x, y: b.y };
+    var det = determinant(m);
+    var rankA = rank(m, tol);
+    var c1 = { x: m.a, y: m.c };
+    var c2 = { x: m.b, y: m.d };
+    var rankAugmented = rankA;
+
+    if (rankA < 2) {
+      var off1 = Math.abs(cross(c1, rhs));
+      var off2 = Math.abs(cross(c2, rhs));
+      if (off1 > tol || off2 > tol) {
+        rankAugmented = 2;
+      } else if (rankA === 0 && length(rhs) > tol) {
+        rankAugmented = 1;
+      }
+    }
+
+    var consistent = rankAugmented === rankA;
+    var status = rankA === 2 ? 'unique' : (consistent ? 'infinite' : 'none');
+    var particular = null;
+
+    if (status === 'unique') {
+      var inv = inverse(m, tol);
+      particular = inv ? applyMat(inv, rhs) : null;
+    } else if (status === 'infinite') {
+      particular = rankA === 0 ? { x: 0, y: 0 } : solveRank1Particular(m, rhs, tol);
+    }
+
+    var nullspace = nullSpace2(m, tol);
+    var residual = particular ? subVec(applyMat(m, particular), rhs) : null;
+
+    return {
+      status: status,
+      consistent: consistent,
+      unique: status === 'unique',
+      particular: particular,
+      solution: particular,
+      nullspace: nullspace,
+      freeDirection: nullspace.direction,
+      dimension: nullspace.dimension,
+      det: det,
+      rankA: rankA,
+      rankAugmented: rankAugmented,
+      residual: residual
+    };
+  }
+
+  /* ------------------------------------------------------------------ *
    * 多边形（用于行列式 = 面积）
    * ------------------------------------------------------------------ */
 
@@ -653,6 +732,9 @@
     // 列空间 / 零空间
     columnSpace2: columnSpace2,
     nullSpace2: nullSpace2,
+
+    // 线性方程组
+    solve2: solve2,
 
     // 多边形 / 角度
     polygonArea: polygonArea,

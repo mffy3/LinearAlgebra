@@ -354,6 +354,58 @@
   display: none;
 }
 
+.view-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-top: 14px;
+  padding: 4px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: var(--bg-soft);
+}
+
+.view-btn {
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--muted);
+  background: transparent;
+  font: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: color 150ms ease, background 150ms ease, box-shadow 150ms ease;
+}
+
+.view-btn:hover {
+  color: var(--ink);
+}
+
+.view-btn.is-active {
+  color: var(--ink);
+  background: var(--surface);
+  box-shadow: 0 2px 8px rgba(46, 49, 44, 0.08);
+}
+
+.solve-chip {
+  min-width: 116px;
+}
+
+.solve-chip strong.is-unique,
+.foot-item b.is-unique {
+  color: var(--accent-ink);
+}
+
+.solve-chip strong.is-infinite,
+.foot-item b.is-infinite {
+  color: var(--warm);
+}
+
+.solve-chip strong.is-none,
+.foot-item b.is-none {
+  color: var(--danger);
+}
+
 .matrix-editor {
   display: flex;
   align-items: stretch;
@@ -832,6 +884,13 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0 40px;
   border-top: 1px solid var(--hairline-soft);
+}
+
+@media (min-width: 900px) {
+  .explain-grid-three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0 26px;
+  }
 }
 
 .explain-card {
