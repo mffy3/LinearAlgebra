@@ -1,8 +1,8 @@
 /**
- * narration.js · 教授的即时批注
+ * narration.js · 即时旁白
  *
  * 纯文本生成器：输入当前页面状态，返回 { text, prompt }。
- * 不碰 DOM，不碰 Canvas；页面控制器负责把结果写进教授批注卡。
+ * 不碰 DOM，不碰 Canvas；页面控制器负责把结果写进旁白卡。
  */
 (function (global) {
   'use strict';
@@ -185,11 +185,54 @@
     };
   }
 
+  function physics(s) {
+    if (s.status === 'none') {
+      return {
+        text: '两根绳子共线，只能提供同一个方向的力；重力又不在那条线上，所以托不住。几何上叫“无解”，物理上叫“掉下来”。',
+        prompt: '把其中一个锚点拖到物体的另一侧，让两根绳子重新张开。'
+      };
+    }
+
+    if (s.status === 'infinite') {
+      return {
+        text: '两根绳子共线，重力也正好在这条线上。方程有无穷多组张力分配；数学上说得通，物理上还得看绳子能不能承受。',
+        prompt: '把锚点稍微挪开一点，让列向量不再共线。'
+      };
+    }
+
+    if (s.negative) {
+      return {
+        text: '数学给了你一个负的张力。可是绳子只会拉，不会推；所以这个几何下没有物理平衡——除非其中一根其实是撑杆。',
+        prompt: '把在“错误一侧”的锚点拖到物体的另一边，看看张力怎样重新变正。'
+      };
+    }
+
+    if (s.slack) {
+      return {
+        text: '一根绳子的张力降到 0，它刚好松弛；从这一刻起，另一根绳子独自承担全部重量。',
+        prompt: '再往另一边挪一点，松弛的绳子会重新绷紧吗？'
+      };
+    }
+
+    if (s.symmetric) {
+      return {
+        text: '对称的挂法，两根绳子的张力相等。这不是巧合，是方程的对称性：两列互为镜像，右端项也正好在中间。',
+        prompt: '把左边锚点往外拖，猜猜哪根绳子的张力会变大？'
+      };
+    }
+
+    return {
+      text: '灯没有掉下来，说明两股拉力的合力刚好抵消重力。T₁ ≈ ' + f(s.t1) + '，T₂ ≈ ' + f(s.t2) + '；你刚刚解的是一个 2×2 方程组。',
+      prompt: '把锚点往外拖，张力的方向变了，数字会怎么变？'
+    };
+  }
+
   global.LinAlgNarration = {
     transform: transform,
     determinant: determinant,
     rank: rank,
     eigen: eigen,
-    solve: solve
+    solve: solve,
+    physics: physics
   };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

@@ -375,6 +375,40 @@
   margin-top: 14px;
 }
 
+.domain-tile.is-open {
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.domain-tile.is-open:hover {
+  color: var(--ink);
+  box-shadow: 0 16px 38px rgba(46, 49, 44, 0.1);
+  transform: translateY(-3px);
+}
+
+.domain-open-tag {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  padding: 3px 8px;
+  border: 1px solid rgba(46, 49, 44, 0.16);
+  border-radius: 999px;
+  color: var(--accent-ink);
+  background: rgba(250, 246, 238, 0.65);
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.05em;
+}
+
+.domain-open-arrow {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--ink);
+  font-size: 0.72rem;
+}
+
 .closing-section {
   max-width: 1200px;
   margin: 72px auto 0;

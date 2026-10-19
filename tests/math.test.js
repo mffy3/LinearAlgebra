@@ -426,6 +426,19 @@ test('秩 1 且有一个零行时仍能给出特解', () => {
   close(result.freeDirection.y, 0);
 });
 
+test('物理：把力分解到非正交基上', () => {
+  // u = (1,0), v = (2,1) 作为两列；F = (3,1) = 1*u + 1*v
+  const u = { x: 1, y: 0 };
+  const v = { x: 2, y: 1 };
+  const force = { x: 3, y: 1 };
+  const basis = L.mat2(u.x, v.x, u.y, v.y);
+  const result = L.solve2(basis, force);
+  assert.equal(result.status, 'unique');
+  closeVec(result.particular, { x: 1, y: 1 });
+  closeVec(result.residual, { x: 0, y: 0 });
+  close(result.det, 1);
+});
+
 /* ------------------------------------------------------------------ */
 console.log('\n格式化与工具');
 

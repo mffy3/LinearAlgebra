@@ -1,0 +1,446 @@
+/* ==========================================================================
+   entry.css · 入口场景
+   一张 3D 画面 + 三个起点。不是全站目录，是第一屏的引导。
+   ========================================================================== */
+
+.entry-page {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 72% 42%, rgba(116, 134, 118, 0.17), transparent 30%),
+    radial-gradient(circle at 22% 78%, rgba(176, 125, 110, 0.12), transparent 36%),
+    linear-gradient(150deg, #f2ede4 0%, #e9e3d8 100%);
+}
+
+.entry-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(90deg, rgba(239, 234, 225, 0.92) 0%, rgba(239, 234, 225, 0.48) 32%, rgba(239, 234, 225, 0) 62%);
+  pointer-events: none;
+}
+
+.entry-page::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(239, 234, 225, 0.12) 0%, rgba(239, 234, 225, 0) 45%, rgba(239, 234, 225, 0.55) 100%);
+  pointer-events: none;
+}
+
+#entry-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+#entry-canvas.is-dragging {
+  cursor: grabbing;
+}
+
+.entry-top {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 42px;
+  pointer-events: none;
+}
+
+.entry-top .brand,
+.entry-top-link {
+  pointer-events: auto;
+}
+
+.entry-top-link {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+}
+
+.entry-top-link:hover {
+  color: var(--ink);
+}
+
+.entry-main {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  min-height: 100svh;
+  max-width: 1320px;
+  grid-template-columns: minmax(0, 1fr) minmax(420px, 0.78fr);
+  align-items: end;
+  gap: 44px;
+  margin: 0 auto;
+  padding: 120px 44px 42px;
+  pointer-events: none;
+}
+
+.entry-copy {
+  align-self: center;
+  max-width: 620px;
+  pointer-events: auto;
+}
+
+.entry-copy h1 {
+  margin: 0 0 24px;
+  font-size: clamp(3.6rem, 6.2vw, 5.8rem);
+  font-weight: 600;
+  line-height: 0.92;
+  letter-spacing: -0.065em;
+}
+
+.entry-copy .lede {
+  max-width: 34ch;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.entry-choice {
+  align-self: end;
+  width: 100%;
+  max-width: 560px;
+  justify-self: end;
+  padding: 22px;
+  border: 1px solid rgba(46, 49, 44, 0.14);
+  border-radius: 30px;
+  background: rgba(250, 246, 238, 0.78);
+  box-shadow: 0 24px 70px rgba(46, 49, 44, 0.1);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  pointer-events: auto;
+}
+
+.entry-choice-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.entry-choice-head h2 {
+  font-size: 0.96rem;
+  font-weight: 500;
+}
+
+.entry-choice-head span {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.54rem;
+  letter-spacing: 0.04em;
+}
+
+.level-picker {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.level-option {
+  display: flex;
+  min-height: 92px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 14px;
+  border: 1px solid rgba(46, 49, 44, 0.15);
+  border-radius: 20px;
+  color: var(--ink);
+  background: rgba(250, 246, 238, 0.66);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: color 160ms ease, background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.level-option:hover {
+  border-color: rgba(116, 134, 118, 0.65);
+  transform: translateY(-2px);
+}
+
+.level-option:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.level-option.is-selected {
+  color: #fbf8f1;
+  border-color: var(--ink);
+  background: var(--ink);
+}
+
+.level-no {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.04em;
+}
+
+.level-option.is-selected .level-no {
+  color: rgba(251, 248, 241, 0.55);
+}
+
+.level-title {
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.entry-path {
+  margin-top: 16px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(46, 49, 44, 0.13);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 260ms ease, transform 260ms ease;
+}
+
+.entry-path.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.path-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.path-label {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.05em;
+}
+
+.path-level {
+  padding: 3px 9px;
+  border: 1px solid rgba(46, 49, 44, 0.14);
+  border-radius: 999px;
+  color: var(--accent-ink);
+  font-size: 0.56rem;
+}
+
+.path-title {
+  margin: 8px 0 5px;
+  font-size: 1.28rem;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+}
+
+.path-desc {
+  max-width: 46ch;
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.6;
+}
+
+.path-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 12px;
+}
+
+.path-step {
+  padding: 4px 9px;
+  border: 1px solid rgba(46, 49, 44, 0.14);
+  border-radius: 999px;
+  color: var(--ink);
+  background: rgba(250, 246, 238, 0.55);
+  font-size: 0.62rem;
+}
+
+.path-step.is-muted {
+  color: var(--faint);
+  border-color: rgba(46, 49, 44, 0.08);
+}
+
+.path-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.path-all {
+  color: var(--muted);
+  font-size: 0.62rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.path-all:hover {
+  color: var(--ink);
+}
+
+.path-change {
+  padding: 0;
+  border: 0;
+  color: var(--muted);
+  background: transparent;
+  font: inherit;
+  font-size: 0.62rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.path-change:hover {
+  color: var(--ink);
+}
+
+.entry-foot {
+  position: absolute;
+  right: 42px;
+  bottom: 18px;
+  left: 42px;
+  z-index: 4;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.54rem;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+}
+
+.entry-foot span:last-child {
+  text-align: right;
+}
+
+@media (max-width: 1000px) {
+  .entry-main {
+    grid-template-columns: 1fr;
+    align-content: end;
+    gap: 24px;
+    padding: 90px 24px 54px;
+  }
+
+  .entry-copy {
+    align-self: end;
+    max-width: 560px;
+  }
+
+  .entry-copy h1 {
+    font-size: clamp(3.4rem, 10vw, 6rem);
+  }
+
+  .entry-choice {
+    max-width: none;
+    justify-self: stretch;
+  }
+
+  .entry-foot {
+    right: 24px;
+    left: 24px;
+  }
+}
+
+@media (max-width: 720px) {
+  .entry-page {
+    min-height: 100svh;
+    overflow: auto;
+  }
+
+  .entry-top {
+    padding: 18px 18px;
+  }
+
+  .entry-page::before {
+    background: linear-gradient(180deg, rgba(239, 234, 225, 0.8) 0%, rgba(239, 234, 225, 0.22) 48%, rgba(239, 234, 225, 0) 70%);
+  }
+
+  .entry-main {
+    display: flex;
+    min-height: 100svh;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 22px;
+    padding: 92px 16px 58px;
+  }
+
+  .entry-copy h1 {
+    margin-bottom: 14px;
+    font-size: clamp(3.2rem, 13vw, 4.4rem);
+  }
+
+  .entry-copy .lede {
+    font-size: 0.9rem;
+  }
+
+  .entry-choice {
+    padding: 16px;
+    border-radius: 24px;
+    background: rgba(250, 246, 238, 0.9);
+  }
+
+  .entry-choice-head span {
+    display: none;
+  }
+
+  .level-picker {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .level-option {
+    min-height: 58px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 16px;
+  }
+
+  .level-no {
+    min-width: 18px;
+  }
+
+  .level-title {
+    font-size: 0.86rem;
+  }
+
+  .entry-path {
+    margin-top: 12px;
+  }
+
+  .path-title {
+    font-size: 1.12rem;
+  }
+
+  .entry-foot {
+    position: static;
+    padding: 0 18px 20px;
+    font-size: 0.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .level-option,
+  .entry-path {
+    transition: none;
+  }
+}

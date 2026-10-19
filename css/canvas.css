@@ -346,7 +346,7 @@
 }
 
 .professor-prompt::before {
-  content: "教授的小问题：";
+  content: "先想一想：";
   color: var(--accent);
 }
 
@@ -1133,7 +1133,7 @@
   }
 
   .professor-strip-prompt::before {
-    content: "教授的小问题：";
+    content: "先想一想：";
     color: var(--accent);
   }
 

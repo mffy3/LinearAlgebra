@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="物理应用：把重力分解到两根绳子的方向，解一个 2×2 方程组，看张力、夹角与负张力意味着什么。">
+  <meta name="theme-color" content="#efeae1">
+  <title>物理 · 受力分解 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/canvas.css">
+  <link rel="stylesheet" href="../../css/applications.css">
+</head>
+<body class="lab-page application-page application-physics">
+  <a class="skip-link" href="#lab-main">跳到主要内容</a>
+
+  <header class="site-header lab-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Linear Algebra 首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../library.html">五个展厅</a>
+        <a href="physics.html" aria-current="page">物理</a>
+        <a href="../../ROADMAP.md">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="lab-main" class="lab-main">
+    <section class="lab-intro application-intro" data-zone="intro">
+      <div class="lab-intro-copy">
+        <p class="eyebrow">APPLICATION 01 · 物理 · 静力平衡</p>
+        <div class="application-title-row">
+          <span class="application-badge">PHYSICS</span>
+          <h1>两根绳子，<span class="gradient-text">解一个方程组</span></h1>
+        </div>
+        <p class="lede">
+          灯没有掉下来，说明两股拉力的合力刚好抵消重力。问题是：每根绳子各出多少力？
+          这不是物理的专利——把两列方向排成矩阵，你得到的正是一个 2×2 方程组。
+        </p>
+        <div class="intro-pills" aria-label="本章关键词">
+          <span class="pill">静力平衡</span>
+          <span class="pill">非正交基</span>
+          <span class="pill">2×2 方程组</span>
+          <span class="pill pill-accent">可拖拽</span>
+        </div>
+      </div>
+
+      <aside class="application-formula" aria-label="平衡方程">
+        <p class="formula-label">平衡条件</p>
+        <p class="formula-main">T₁u + T₂v = −W</p>
+        <p class="formula-sub">u、v 是两根绳子的方向；T₁、T₂ 是要求解的系数。两列排成矩阵，就是 <b>[u v] · [T₁ T₂]ᵀ = −W</b>。</p>
+      </aside>
+    </section>
+
+    <div class="workspace" data-zone="workspace">
+      <section class="stage-card" id="stage-card" data-zone="canvas" aria-labelledby="stage-title">
+        <div class="stage-head">
+          <div>
+            <p class="stage-kicker">LIVE PHYSICS</p>
+            <h2 id="stage-title">受力分解</h2>
+          </div>
+          <div class="stage-actions">
+            <button class="btn btn-small btn-ghost" id="btn-reset" type="button">重置</button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="physics-canvas" class="transform-canvas" width="900" height="620"
+            aria-label="物理受力分解。一个重物由两根绳子悬挂；金色箭头是重力，鼠尾草色与陶土色箭头是两根绳子的张力，虚线围成平行四边形。">
+            你的浏览器不支持 Canvas，请换一个现代浏览器。
+          </canvas>
+
+          <div class="det-chip solve-chip" id="physics-chip">
+            <span>状态</span>
+            <strong id="canvas-status">唯一平衡</strong>
+          </div>
+
+          <p class="canvas-hint" id="physics-hint">拖动锚点，或拖动金色重物改变重量</p>
+        </div>
+
+        <div class="professor-strip" aria-live="polite">
+          <span class="professor-seal" aria-hidden="true">λ</span>
+          <div>
+            <p id="professor-strip-text">灯没有掉下来，说明两股拉力的合力刚好抵消重力。先看看两根绳子的方向，再读张力。</p>
+            <p class="professor-strip-prompt" id="professor-strip-prompt">先猜：把左边锚点往外拖，哪根绳子的张力会变大？</p>
+          </div>
+        </div>
+
+        <div class="stage-foot">
+          <div class="foot-item">
+            <span class="foot-label">T₁</span>
+            <b id="readout-t1">3.00</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">T₂</span>
+            <b id="readout-t2">3.00</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">W</span>
+            <b id="readout-weight">5.00</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">det [u v]</span>
+            <b id="readout-det">0.88</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">状态</span>
+            <b id="readout-status">唯一平衡</b>
+          </div>
+        </div>
+      </section>
+
+      <aside class="control-panel" data-zone="controls" aria-label="绳索、重力与显示控制">
+        <div class="panel-head">
+          <h2>绳索与重力</h2>
+          <span class="pill pill-soft">2 × 2</span>
+        </div>
+
+        <div class="professor-note" aria-live="polite">
+          <div class="professor-head">
+            <span class="professor-seal" aria-hidden="true">λ</span>
+            <span>边做边看</span>
+          </div>
+          <p id="professor-text">灯没有掉下来，说明两股拉力的合力刚好抵消重力。先看看两根绳子的方向，再读张力。</p>
+          <p class="professor-prompt" id="professor-prompt">先猜：把左边锚点往外拖，哪根绳子的张力会变大？</p>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>重力 W</span>
+            <span class="probe-hint">拖动金色重物也可</span>
+          </div>
+          <div class="weight-row">
+            <input id="weight-range" class="weight-range" type="range" min="1" max="10" step="0.1" value="5"
+              aria-label="重力大小">
+            <label class="weight-number">
+              <input id="weight" type="number" min="1" max="10" step="0.1" value="5" inputmode="decimal"
+                aria-label="重力数值">
+              <span>N</span>
+            </label>
+          </div>
+        </div>
+
+        <label class="toggle-row">
+          <input id="toggle-decompose" type="checkbox" checked>
+          <span class="toggle-track" aria-hidden="true"><span class="toggle-thumb"></span></span>
+          <span class="toggle-text">显示分解</span>
+        </label>
+
+        <div class="panel-section">
+          <p class="panel-label">预设</p>
+          <div class="preset-grid">
+            <button class="preset-btn" type="button" data-preset="symmetric">对称</button>
+            <button class="preset-btn" type="button" data-preset="offset">偏挂</button>
+            <button class="preset-btn" type="button" data-preset="slack">单绳</button>
+            <button class="preset-btn" type="button" data-preset="collinear">共线</button>
+          </div>
+        </div>
+
+        <div class="challenge-card" id="challenge-card">
+          <div class="challenge-head">
+            <span>小挑战</span>
+            <strong id="challenge-state">进行中</strong>
+          </div>
+          <p>让其中一根绳子刚好松弛：它的张力降到 0，另一根独自承担重量。</p>
+          <div class="challenge-metric">
+            <span>最小张力</span>
+            <b id="challenge-det">3.00</b>
+          </div>
+          <div class="challenge-meter" id="challenge-meter" role="progressbar"
+            aria-label="松弛挑战进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="challenge-meter-fill"></span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="explain-section" data-zone="lecture" aria-labelledby="explain-title">
+      <div class="section-heading">
+        <p class="eyebrow">WHY IT LOOKS LIKE THIS</p>
+        <h2 id="explain-title">力，怎么写成一个矩阵方程</h2>
+        <p>把“每根绳子出多少力”看成两个未知数，物理题就变成了线性代数题。</p>
+      </div>
+
+      <div class="explain-grid explain-grid-three">
+        <article class="explain-card">
+          <span class="explain-index">01</span>
+          <h3>两列方向，两个未知数</h3>
+          <p>两根绳子的方向是 u、v，张力是 T₁、T₂。它们的合力必须等于 −W：</p>
+          <p class="formula">T₁u + T₂v = −W</p>
+          <p>把 u、v 作为两列排成矩阵，未知数排成向量，这就是 <b>Ax = b</b>。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">02</span>
+          <h3>为什么正好是 2×2</h3>
+          <p>水平方向一个方程，竖直方向一个方程；两个未知数，两个约束。</p>
+          <p class="formula">[u v] [T₁ T₂]ᵀ = −W</p>
+          <p>det[u v] = u × v。两列不共线，行列式不为 0，张力就唯一确定。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">03</span>
+          <h3>负张力是什么意思</h3>
+          <p>数学会老实地给出负数；但绳子只能拉，不能推。负张力意味着这个几何下没有物理平衡。</p>
+          <p class="formula">T &lt; 0 → 需要撑杆，<br>而不是绳子</p>
+          <p>张力为 0 则是“刚好松弛”：这根绳子不再出力，另一根独自承担全部重量。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="quiz-section" data-zone="quiz">
+      <div class="quiz-card" aria-labelledby="quiz-title">
+        <div class="quiz-copy">
+          <p class="eyebrow">先猜后验</p>
+          <h2 id="quiz-title">两根绳子方向共线时，张力能唯一确定吗？</h2>
+          <p>先想：两列共线，矩阵还可逆吗？再用“共线”预设验证。</p>
+          <div class="quiz-options" role="group" aria-label="选择答案">
+            <button class="quiz-option" type="button" data-quiz-physics="yes">能，重力已知就够了</button>
+            <button class="quiz-option" type="button" data-quiz-physics="no">不能，两列共线</button>
+            <button class="quiz-option" type="button" data-quiz-physics="none">一定无解</button>
+          </div>
+          <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></p>
+          <button class="btn btn-primary" id="btn-quiz-apply" type="button">用共线预设验证 <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="quiz-visual" aria-hidden="true">
+          <canvas id="quiz-canvas" width="360" height="260"></canvas>
+          <span class="quiz-mini-label" id="quiz-mini-label">共线 · 不可逆</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-strip" data-zone="next" aria-labelledby="next-title">
+      <div>
+        <p class="eyebrow">NEXT APPLICATION</p>
+        <h2 id="next-title">下一站：经济，投入产出</h2>
+        <p>同一个 <b>Ax = b</b>，在经济学里会变成“每个行业要生产多少，才能满足最终需求”。</p>
+      </div>
+      <a class="btn btn-primary" href="../../ROADMAP.md">查看应用篇路线 <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>看见空间本身。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../../index.html">首页</a>
+        <a href="physics.html">物理</a>
+        <a href="../../ROADMAP.md">路线图</a>
+        <a href="../../RULES.md">规则</a>
+        <a href="../../MANUAL.md">手册</a>
+        <a href="../../REFERENCES.md">参考</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+        项目内容为原创，参考来源仅以链接与出处形式标注。
+      </p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">这个页面需要 JavaScript 才能绘制交互。请启用 JavaScript 后刷新。</div>
+  </noscript>
+
+  <script src="../../js/lib/math.js" defer></script>
+  <script src="../../js/lib/canvas-utils.js" defer></script>
+  <script src="../../js/lib/narration.js" defer></script>
+  <script src="../../js/demos/physics-force.js" defer></script>
+</body>
+</html>

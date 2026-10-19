@@ -1,10 +1,10 @@
 # Linear Algebra · 线性代数可视化实验室
 
-> 把矩阵，看成一次空间的呼吸。
->
-> 一个纯前端、零依赖、可拖动的线性代数可视化实验室。目标不是“讲完一章”，而是让你在 10 分钟内对“矩阵到底做了什么”形成可触摸的直觉。
+一个纯前端、零依赖的线性代数可视化实验室。先选一个起点，再从平面和空间里理解矩阵。
 
-![Linear Algebra 首页：莫兰迪便当盒与章节地球仪](assets/images/home-bento.png)
+![Linear Algebra 入口：3D 平面与水平选择](assets/images/entry-demo.png)
+
+![选择水平后显示的路线](assets/images/entry-selected.png)
 
 ![矩阵变换演示](assets/images/transform-demo.png)
 
@@ -14,7 +14,7 @@
 
 屏幕上是坐标网格和两个基向量。修改 2×2 矩阵的四个数字，或者直接拖动箭头尖端，整个网格、单位方格、单位圆会连续形变；旁边实时显示行列式、面积缩放、秩、定向与特征方向。
 
-当前是 **v1.0**：五个基础展厅 + 莫兰迪便当盒界面 + 可拖动的章节地球仪 + 随操作即时更新的教授批注。P1 核心直觉闭环已完成。
+当前是 **v1.1**：带水平选择的 3D 入口 + 五个基础展厅 + 物理受力分解 + 莫兰迪便当盒界面 + 随操作即时更新的旁白。P1 已完成，P2 物理应用已开第一页。
 
 ### 现在能玩
 
@@ -23,8 +23,10 @@
 - **秩与零空间**：看平面被压成线或点；拖动橙色探测向量 x，观察 Ax 如何变短；当 Ax = 0 时找到零空间；实时验证 `rank + nullity = 2`
 - **特征向量**：拖动橙色探测向量 v，寻找与 Av 共线的“不转向方向”；实特征值、复特征值、重根与全部方向都有各自的显示
 - **线性方程组**：行视角看两条约束线的交点，列视角看两列如何组合出 b；唯一解、无解、无穷多解用同一个状态机解释
-- 五页都带“先猜后验”选择题与小挑战；右侧“教授的批注”会跟着你的每一次拖动即时解释，不用往下翻
-- 首页把五个展厅装进一个可拖动的地球仪：指针停下的图标会放大，点一下就进去
+- **入口**：先选「完全零基础 / 略有了解 / 已经学会」，入口的 3D 平面会跟着指针与选择变化，再显示对应路线
+- **物理 · 受力分解**：两根绳子悬挂重物，把力分解成 `T₁u + T₂v = −W`；拖动锚点或重物，观察张力、负张力和松弛
+- 五页都带“先猜后验”选择题与小挑战；右侧“边做边看”会跟着你的每一次拖动即时解释，不用往下翻
+- 全部展厅收在 `pages/library.html`：可拖动的地球仪，指针停下的图标会放大
 - 支持桌面 / 手机 / `file://` 直接打开
 
 ![行列式演示](assets/images/determinant-demo.png)
@@ -35,10 +37,15 @@
 
 ![线性方程组演示](assets/images/solve-demo.png)
 
+![物理 · 受力分解](assets/images/physics-demo.png)
+
+![全部展厅](assets/images/library-demo.png)
+
 ### 现在还没有
 
-- 3D、后端、账号、数据库
-- 物理、经济、计算机、美术、音乐、社会科学应用页
+- 后端、账号、数据库
+- 经济、计算机、美术、音乐、社会科学应用页
+- 真实 WebGL / 3D 渲染；入口的空间感来自 Canvas 2D 透视投影
 
 这些都在 [ROADMAP.md](ROADMAP.md) 里分阶段排期。参考来源与使用边界见 [REFERENCES.md](REFERENCES.md)；想改某一块，先看 [ARCHITECTURE.md](ARCHITECTURE.md) 的分区表。
 
@@ -68,30 +75,37 @@ python -m http.server 8000
 
 ```text
 .
-├── index.html                  首页 / 展厅总目录
+├── index.html                  3D 入口 / 水平选择
 ├── pages/
+│   ├── library.html            全部展厅 / 章节地球仪
 │   ├── 01-transform.html       矩阵变换
 │   ├── 02-determinant.html     行列式 = 面积
 │   ├── 03-rank.html            秩与零空间
 │   ├── 04-eigenvector.html      特征向量
 │   ├── 05-solve.html           线性方程组
-│   └── applications/           专题应用区（预留：物理、经济、计算机、美术、音乐、社会科学）
+│   └── applications/
+│       └── physics.html        物理 · 受力分解
 ├── css/
 │   ├── main.css                全站样式与莫兰迪色板
-│   ├── bento.css               首页便当盒、章节地球仪
-│   └── canvas.css              画布页、教授批注卡
+│   ├── entry.css               3D 入口、水平选择
+│   ├── bento.css               全部展厅便当盒、章节地球仪
+│   ├── canvas.css              画布页、即时旁白
+│   └── applications.css        应用篇布局、物理控制
 ├── js/
 │   ├── lib/
 │   │   ├── math.js             纯数学函数（无 DOM）
 │   │   ├── canvas-utils.js     绘图工具（无矩阵公式）
-│   │   ├── narration.js        教授批注文案生成器
-│   │   └── chapter-globe.js    可拖动章节地球仪
+│   │   ├── narration.js        即时旁白文案生成器
+│   │   ├── chapter-globe.js    可拖动章节地球仪
+│   │   ├── entry-scene.js      入口 3D 透视图
+│   │   └── entry-flow.js       水平选择与路线
 │   └── demos/
 │       ├── transform.js        矩阵变换页控制器
 │       ├── determinant.js      行列式页控制器
 │       ├── rank.js             秩与零空间页控制器
 │       ├── eigenvector.js      特征向量页控制器
-│       └── solve.js            线性方程组页控制器
+│       ├── solve.js            线性方程组页控制器
+│       └── physics-force.js    物理受力分解控制器
 ├── assets/images/              静态素材
 ├── tests/math.test.js          数学基准测试（Node）
 ├── RULES.md                    项目纪律与安全红线
@@ -124,7 +138,7 @@ node tests/math.test.js
 |---|---|---|
 | P0 | 基建 + 2D 矩阵变换 | ✅ |
 | P1 | 行列式 ✅、秩/零空间 ✅、特征向量 ✅、方程组 ✅ | ✅ |
-| P2 | 物理：受力分解、刚体旋转、量子态叠加 | ⬜ |
+| P2 | 物理：受力分解 ✅、刚体旋转、量子态叠加 | 🚧 |
 | P3 | 经济：列昂惕夫投入产出、投资组合 | ⬜ |
 | P4 | 软件：图像卷积、PCA 降维 | ⬜ |
 | P5 | 硬件：音频滤波、纠错码 | ⬜ |
