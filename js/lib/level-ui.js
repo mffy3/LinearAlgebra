@@ -32,7 +32,7 @@
   document.body.dataset.level = level;
   var data = P.levels[level];
   var key = P.pageKey(window.location.pathname);
-  if (key !== 'physics' && key !== 'physics-rotation' && key !== 'physics-quantum' && key !== 'economics-leontief' && key !== 'economics-portfolio' && key !== 'software-convolution' && key !== 'software-pca' && key !== 'hardware-audio') document.body.classList.add('level-core');
+  if (key !== 'physics' && key !== 'physics-rotation' && key !== 'physics-quantum' && key !== 'economics-leontief' && key !== 'economics-portfolio' && key !== 'software-convolution' && key !== 'software-pca' && key !== 'hardware-audio' && key !== 'hardware-ecc') document.body.classList.add('level-core');
   var index = P.indexOf(level, key);
   var inPath = index >= 0;
   var total = data.pages.length;
@@ -66,6 +66,7 @@
     else if (keyName === 'software-convolution') root = 'pages/applications/software-convolution.html';
     else if (keyName === 'software-pca') root = 'pages/applications/software-pca.html';
     else if (keyName === 'hardware-audio') root = 'pages/applications/hardware-audio.html';
+    else if (keyName === 'hardware-ecc') root = 'pages/applications/hardware-ecc.html';
     else if (/^(economics|computer|art|music|social)$/.test(keyName)) return null;
     else root = 'pages/' + keyName + '.html';
     var query = '?level=' + level;

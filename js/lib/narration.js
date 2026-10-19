@@ -325,6 +325,34 @@
     };
   }
 
+  function ecc(s) {
+    if (s.corrected) {
+      return {
+        text: 'syndrome 指向了出错位；翻转它之后，H r = 0。单比特错误被纠正，原始码字恢复。',
+        prompt: '再注入一位错误，看 syndrome 是否变成新的列地址。'
+      };
+    }
+
+    if (s.diff === 1) {
+      return {
+        text: '收到了一位翻转的码字。syndrome 不为 0，它的二进制值就是 H 的对应列，也就是出错位置。',
+        prompt: '点“纠正”，看 H 的列怎样把错误翻回去。'
+      };
+    }
+
+    if (s.syndrome === 0) {
+      return {
+        text: 'H r = 0，当前码字在码空间里；没有检测到错误。',
+        prompt: '点任意一位，让 syndrome 变成非零。'
+      };
+    }
+
+    return {
+      text: 'Hamming(7,4) 用 3 个校验位保护 4 个信息位；syndrome 是错误地址，不是原始信息。',
+      prompt: '点一位码字，或注入一个单比特错误。'
+    };
+  }
+
   function audio(s) {
     if (s.filter === 'identity') {
       return {
@@ -444,6 +472,7 @@
     portfolio: portfolio,
     convolution: convolution,
     pca: pca,
-    audio: audio
+    audio: audio,
+    ecc: ecc
   };
 })(typeof globalThis !== 'undefined' ? globalThis : window);
