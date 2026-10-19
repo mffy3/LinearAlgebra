@@ -1,0 +1,48 @@
+name: Feature request
+description: Suggest a page, application, or interaction
+title: "feature: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This project stays dependency-free and deliberately small. Explain the
+        learner problem before the implementation.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Which page or application does it affect?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Core chapter
+        - Physics
+        - Economics
+        - Software
+        - Hardware
+        - Navigation / accessibility
+        - Documentation
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: This can work without a backend or new runtime dependency.
+          required: true
+        - label: I checked that this is not already covered by the roadmap.
+          required: true

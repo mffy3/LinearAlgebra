@@ -1,0 +1,43 @@
+Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+
+Canonical license text:
+https://creativecommons.org/licenses/by-sa/4.0/legalcode
+
+Human-readable summary:
+https://creativecommons.org/licenses/by-sa/4.0/
+
+This file is a license notice for the original prose, diagrams, exercises,
+and screenshots of the Linear Algebra project. It is not a substitute for the
+canonical legal text linked above. If this notice and the canonical text
+differ, the canonical text controls.
+
+You are free to:
+
+  Share — copy and redistribute the material in any medium or format.
+  Adapt — remix, transform, and build upon the material for any purpose,
+  even commercially.
+
+Under the following terms:
+
+  Attribution — Give appropriate credit, provide a link to the license, and
+  indicate if changes were made. You may do so in any reasonable manner, but
+  not in any way that suggests the licensor endorses you or your use.
+
+  ShareAlike — If you remix, transform, or build upon the material, you must
+  distribute your contributions under the same license as the original.
+
+  No additional restrictions — You may not apply legal terms or technological
+  measures that legally restrict others from doing anything the license
+  permits.
+
+Suggested attribution for this project:
+
+  "Linear Algebra — interactive linear algebra visualizer",
+  by Linear Algebra contributors, licensed under CC BY-SA 4.0.
+  Include a link to the published repository and to
+  https://creativecommons.org/licenses/by-sa/4.0/ when redistributing.
+
+Scope note: this notice covers original project content. Third-party names,
+links, and references remain the property of their respective owners and are
+not relicensed here. Source code is licensed separately under the MIT License
+in the repository root.

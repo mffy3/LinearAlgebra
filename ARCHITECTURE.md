@@ -114,7 +114,7 @@ index.html
 5. **脚本**：按顺序加载四个脚本。
 6. **导航**：`pages/library.html` 的 nav、五个旧展厅 nav、页脚、全部展厅卡片、`ROADMAP.md`、`README.md`。
 7. **测试**：`node tests/math.test.js`，再用 `screenshots/cdp-check.js` 跑 1440 / 390 / `file://`。
-8. **提交**：同步到 `D:\线性代数开源项目`，本地 commit，不 push。
+8. **提交**：同步到仓库工作副本，本地 commit，不 push。
 
 ---
 
@@ -207,3 +207,11 @@ pages/applications/computer.html       # 规划中
 
 **页面按 `data-zone` 分区，数学只进 `math.js`，图形只进 `canvas-utils.js`，语气只进 `narration.js`，交互只进 `demos/*.js`。**  
 以后想改哪一块，就只动那一层；这样迭代不会把别的展厅带崩。
+
+## 许可与发布文件
+
+- `LICENSE`：代码 MIT。
+- `LICENSES/CC-BY-SA-4.0.txt`：原创内容的 CC BY-SA 4.0 许可说明。
+- `NOTICE`：第三方引用、商标与素材归属。
+- `CONTRIBUTING.md` / `CODE_OF_CONDUCT.md` / `SECURITY.md`：贡献、行为与安全入口。
+- `.github/`：issue / PR 模板与只跑数学测试的 CI。

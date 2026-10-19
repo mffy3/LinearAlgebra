@@ -1,0 +1,63 @@
+name: Bug report
+description: Report a broken page, canvas, or interaction
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please include a real page path and the smallest
+        reproduction you can. Do not include secrets or private data.
+  - type: input
+    id: page
+    attributes:
+      label: Page or file
+      description: The URL path or file, for example pages/applications/software-pca.html
+      placeholder: pages/applications/...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead?
+      description: Include console errors if there are any.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Drag ...
+        3. See ...
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: Edge 155, Chrome 140, Firefox 142
+  - type: dropdown
+    id: viewport
+    attributes:
+      label: Viewport
+      options:
+        - Desktop
+        - Mobile
+        - Both
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I tested the current main branch.
+          required: true
+        - label: I did not include secrets, tokens, or private data.
+          required: true
