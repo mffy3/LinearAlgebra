@@ -255,6 +255,27 @@
     };
   }
 
+  function rotation(s) {
+    if (s.mode === 'general') {
+      return {
+        text: 'R(θ)S 不再是正交矩阵。圆被拉成椭圆，长度和夹角都变了；det 也不再是 1。正交性不是“看起来像旋转”，而是 RᵀR = I。',
+        prompt: '切回“正交旋转”，看看椭圆怎样重新变回圆。'
+      };
+    }
+
+    if (Math.abs(s.angle - 90) < 0.5) {
+      return {
+        text: 'e₁ 正好转到了 y 轴。长度还是 1，夹角还是 90°；R(θ) 只改了方向。',
+        prompt: '继续转到 180°，看看 e₁ 会到哪里。'
+      };
+    }
+
+    return {
+      text: 'R(θ) 把每个点转过同一个角度。圆的半径没有变，所以它还是圆；长度、夹角、det 都不变。',
+      prompt: '先转 90°，看 e₁ 是不是正好转到 y 轴。'
+    };
+  }
+
   global.LinAlgNarration = {
     transform: transform,
     determinant: determinant,
@@ -262,6 +283,7 @@
     eigen: eigen,
     solve: solve,
     physics: physics,
-    combination: combination
+    combination: combination,
+    rotation: rotation
   };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

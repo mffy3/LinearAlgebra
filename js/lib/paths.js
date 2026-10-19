@@ -18,13 +18,13 @@
       id: 'some',
       label: '略有了解',
       start: '02-determinant',
-      pages: ['02-determinant', '03-rank', '04-eigenvector', '05-solve', 'physics']
+      pages: ['02-determinant', '03-rank', '04-eigenvector', '05-solve', 'physics', 'physics-rotation']
     },
     learned: {
       id: 'learned',
       label: '有扎实的基础',
       start: 'physics',
-      pages: ['physics', 'economics', 'computer', 'art', 'music', 'social']
+      pages: ['physics', 'physics-rotation', 'economics', 'computer', 'art', 'music', 'social']
     }
   };
 
@@ -36,6 +36,7 @@
     '04-eigenvector': '特征向量',
     '05-solve': '线性方程组',
     'physics': '物理',
+    'physics-rotation': '刚体旋转',
     'economics': '经济',
     'computer': '计算机',
     'art': '美术',
@@ -49,7 +50,8 @@
     '03-rank': 'rank(A) + nullity(A) = 2',
     '04-eigenvector': 'det(A − λI) = 0',
     '05-solve': 'rank A = rank[A|b]',
-    physics: 'T₁u + T₂v = −W'
+    physics: 'T₁u + T₂v = −W',
+    'physics-rotation': 'R(θ)ᵀR(θ) = I，det R = 1'
   };
 
   var checklists = {
@@ -156,6 +158,20 @@
         body: '你的路线直接去应用；这里可以跳过。'
       }
     },
+    'physics-rotation': {
+      zero: {
+        title: '应用篇 · 刚体旋转',
+        body: 'R(θ) 只转方向，不改长度；换成普通矩阵，圆就会被压成椭圆。'
+      },
+      some: {
+        title: '应用篇 · 刚体旋转',
+        body: '正交矩阵保长、保角；用 RᵀR = I 和 det = 1 检查。'
+      },
+      learned: {
+        title: '应用 2 / 7 · 刚体旋转',
+        body: '直接看 R(θ)ᵀR(θ) = I；长度、夹角、det 都不变。'
+      }
+    },
     physics: {
       zero: {
         title: '应用篇 · 物理',
@@ -166,7 +182,7 @@
         body: '把前面学的 Ax = b 用起来：两股张力就是两个未知数。'
       },
       learned: {
-        title: '应用 1 / 6 · 物理',
+        title: '应用 1 / 7 · 物理',
         body: '直接从方程开始：T₁u + T₂v = −W；不用再复习定义。'
       }
     }
