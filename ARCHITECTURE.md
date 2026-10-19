@@ -64,6 +64,8 @@ index.html
 | 叙述 | `js/lib/narration.js` | 根据状态返回 `{text, prompt}` | 改状态、画图 |
 | 入口 3D | `js/lib/entry-scene.js` | 透视投影、平面、指针旋转 | 处理水平选择、跳转 |
 | 入口路线 | `js/lib/entry-flow.js` | 三个水平、路线、CTA | 画 3D |
+| 路线配置 | `js/lib/paths.js` | 每条路线的页面顺序、每站引导 | 改 3D 或 DOM |
+| 路线提示 | `js/lib/level-ui.js` | 读取水平，在页面顶部插入“第 N 站” | 改页面教学内容 |
 | 应用控制 | `js/demos/physics-force.js` | 锚点、重力、张力 | 复制 `solve2` 公式 |
 | 零基础课 | `js/demos/vectors.js` | 相加、数乘、αu+βv、目标挑战 | 引入矩阵（第 0 课只讲向量） |
 | 控制器 | `js/demos/*.js` | 读输入、算状态、调绘图、更新读数 | 复制数学公式、写大段 CSS |
@@ -89,7 +91,8 @@ index.html
 | 即时旁白 | `js/lib/narration.js` | 返回 `{text,prompt}`；不要在这里操作 DOM |
 | 旁白卡的位置 / 字体 | `css/canvas.css` 的 `.professor-note` / `.professor-strip` | 桌面在右栏，手机在画布下方 |
 | 入口 3D 平面 | `js/lib/entry-scene.js` | 只改投影、相机、线条；不要碰水平选择 |
-| 三个水平 / 路线 | `js/lib/entry-flow.js` | `LEVELS` 对象是唯一入口 |
+| 三个水平 / 路线 | `js/lib/entry-flow.js` + `js/lib/paths.js` | 展示在入口，顺序在 paths |
+| 页面顶部的路线提示 | `js/lib/level-ui.js` | 读取 `?level=` 或 localStorage |
 | 画布颜色 / 网格 | `js/lib/canvas-utils.js` 的 `PALETTE` | 不要改 `math.js` |
 | 页面圆角 / 色板 / 字体 | `css/main.css` 的 `:root` | 全站生效 |
 | 全部展厅便当盒 / 地球仪 | `css/bento.css`、`js/lib/chapter-globe.js` | 章节数量变化时，地球仪会自动均分角度 |
