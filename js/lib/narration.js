@@ -325,6 +325,27 @@
     };
   }
 
+  function pca(s) {
+    if (s.explained >= 0.9) {
+      return {
+        text: '第一主成分已经解释 90% 以上的方差。把点投影到这条线上，只用一维坐标就能保住大部分信息。',
+        prompt: '看看投影点：它们几乎都落在同一条线上，垂直线段很短。'
+      };
+    }
+
+    if (s.stretch <= 1.1) {
+      return {
+        text: '点云接近圆形，两个方向的方差差不多；这时 PCA 的压缩效果有限，λ₁/(λ₁+λ₂) 也接近 0.5。',
+        prompt: '把拉伸拉大，再观察主方向和解释方差占比。'
+      };
+    }
+
+    return {
+      text: '先中心化，再算协方差矩阵；最大特征向量就是 PC1。投影坐标 t 就是点在主方向上的位置。',
+      prompt: '拖动金色主轴端点，看看点云和投影线怎样一起转。'
+    };
+  }
+
   function convolution(s) {
     if (s.kernel === 'identity') {
       return {
@@ -393,6 +414,7 @@
     quantum: quantum,
     economics: economics,
     portfolio: portfolio,
-    convolution: convolution
+    convolution: convolution,
+    pca: pca
   };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

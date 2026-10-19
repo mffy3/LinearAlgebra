@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="计算机软件应用：PCA 主成分分析。用协方差矩阵的特征向量找到点云最重要的方向。">
+  <meta name="theme-color" content="#efeae1">
+  <title>PCA 降维 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/canvas.css">
+  <link rel="stylesheet" href="../../css/applications.css">
+</head>
+<body class="lab-page application-page application-software">
+  <a class="skip-link" href="#lab-main">跳到主要内容</a>
+
+  <header class="site-header lab-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Linear Algebra 入口">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../../index.html">入口</a>
+        <a href="software-convolution.html">图像卷积</a>
+        <a href="software-pca.html" aria-current="page">PCA</a>
+        <a href="../../ROADMAP.md">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="lab-main" class="lab-main">
+    <section class="lab-intro application-intro" data-zone="intro">
+      <div class="lab-intro-copy">
+        <p class="eyebrow">APPLICATION 07 · 计算机软件 · PCA 降维</p>
+        <div class="application-title-row">
+          <span class="application-badge">SOFTWARE</span>
+          <h1>把一团点，<span class="gradient-text">压成一条线</span></h1>
+        </div>
+        <p class="lede">
+          PCA 不神秘：先找点云的中心，再找它“拉得最长”的方向。协方差矩阵的最大特征向量
+          就是这条主方向；把点投影上去，就用一条线保留了大部分信息。
+        </p>
+        <div class="intro-pills" aria-label="本章关键词">
+          <span class="pill">中心化</span>
+          <span class="pill">协方差矩阵</span>
+          <span class="pill">主方向</span>
+          <span class="pill pill-accent">可拖拽</span>
+        </div>
+      </div>
+
+      <aside class="application-formula" aria-label="PCA 公式">
+        <p class="formula-label">主成分</p>
+        <p class="formula-main">Σv = λv</p>
+        <p class="formula-sub">最大特征值对应的特征向量是 PC1；解释方差占比 <b>λ₁ / (λ₁ + λ₂)</b>。</p>
+      </aside>
+    </section>
+
+    <div class="workspace" data-zone="workspace">
+      <section class="stage-card" id="stage-card" data-zone="canvas" aria-labelledby="stage-title">
+        <div class="stage-head">
+          <div>
+            <p class="stage-kicker">LIVE SOFTWARE</p>
+            <h2 id="stage-title">点云的主方向</h2>
+          </div>
+          <div class="stage-actions">
+            <button class="btn btn-small btn-ghost" id="btn-reset" type="button">重置</button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="pca-canvas" class="transform-canvas" width="900" height="620"
+            aria-label="PCA 点云可视化：中心、协方差主轴和一维投影。">
+            你的浏览器不支持 Canvas，请换一个现代浏览器。
+          </canvas>
+
+          <div class="det-chip solve-chip" id="pca-chip">
+            <span>PCA</span>
+            <strong id="canvas-status">中心化 · 主方向</strong>
+          </div>
+
+          <p class="canvas-hint" id="pca-hint">拖动金色主轴端点旋转点云，或调整拉伸</p>
+        </div>
+
+        <div class="professor-strip" aria-live="polite">
+          <span class="professor-seal" aria-hidden="true">λ</span>
+          <div>
+            <p id="professor-strip-text">先找点云中心，再找协方差矩阵的最大特征向量；那就是 PC1。</p>
+            <p class="professor-strip-prompt" id="professor-strip-prompt">拖动金色主轴端点，看看点云和投影线怎样一起转。</p>
+          </div>
+        </div>
+
+        <div class="stage-foot">
+          <div class="foot-item">
+            <span class="foot-label">方向 θ</span>
+            <b id="readout-theta">30.0°</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">拉伸</span>
+            <b id="readout-stretch">2.20×</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">λ₁ / λ₂</span>
+            <b id="readout-eigen">—</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">解释方差</span>
+            <b id="readout-explained">—</b>
+          </div>
+        </div>
+      </section>
+
+      <aside class="control-panel" data-zone="controls" aria-label="主方向与投影">
+        <div class="panel-head">
+          <h2>主方向</h2>
+          <span class="pill pill-soft">2D → 1D</span>
+        </div>
+
+        <div class="professor-note" aria-live="polite">
+          <div class="professor-head">
+            <span class="professor-seal" aria-hidden="true">λ</span>
+            <span>边做边看</span>
+          </div>
+          <p id="professor-text">先找点云中心，再找协方差矩阵的最大特征向量；那就是 PC1。</p>
+          <p class="professor-prompt" id="professor-prompt">拖动金色主轴端点，看看点云和投影线怎样一起转。</p>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>θ · 主方向角</span>
+            <span class="probe-hint">0° 到 180°</span>
+          </div>
+          <div class="weight-row">
+            <input id="theta-range" class="weight-range" type="range" min="0" max="180" step="1" value="30"
+              aria-label="主方向角">
+            <label class="weight-number">
+              <input id="theta" type="number" min="0" max="180" step="1" value="30" inputmode="decimal"
+                aria-label="主方向角度数">
+              <span>°</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>拉伸 · 长短轴比</span>
+            <span class="probe-hint">越大越像一条线</span>
+          </div>
+          <div class="weight-row">
+            <input id="stretch-range" class="weight-range" type="range" min="0.6" max="3" step="0.05" value="2.2"
+              aria-label="点云拉伸">
+            <label class="weight-number">
+              <input id="stretch" type="number" min="0.6" max="3" step="0.05" value="2.2" inputmode="decimal"
+                aria-label="点云拉伸倍数">
+              <span>×</span>
+            </label>
+          </div>
+        </div>
+
+        <label class="toggle-row">
+          <input id="toggle-projection" type="checkbox" checked>
+          <span class="toggle-track" aria-hidden="true"><span class="toggle-thumb"></span></span>
+          <span class="toggle-text">显示一维投影</span>
+        </label>
+
+        <div class="panel-section">
+          <p class="panel-label">预设</p>
+          <div class="preset-grid">
+            <button class="preset-btn" type="button" data-preset="diagonal">斜向</button>
+            <button class="preset-btn" type="button" data-preset="horizontal">水平</button>
+            <button class="preset-btn" type="button" data-preset="vertical">竖直</button>
+            <button class="preset-btn" type="button" data-preset="round">接近圆形</button>
+          </div>
+        </div>
+
+        <div class="matrix-readout" aria-label="协方差矩阵">
+          <div class="matrix-readout-row">
+            <span>Σ</span>
+            <b id="matrix-sigma">—</b>
+          </div>
+          <div class="matrix-readout-row">
+            <span>PC1</span>
+            <b id="matrix-pc1">—</b>
+          </div>
+        </div>
+
+        <div class="challenge-card" id="challenge-card">
+          <div class="challenge-head">
+            <span>小挑战</span>
+            <strong id="challenge-state">进行中</strong>
+          </div>
+          <p>让第一主成分解释至少 90% 的方差。</p>
+          <div class="challenge-metric">
+            <span>解释方差</span>
+            <b id="challenge-distance">—</b>
+          </div>
+          <div class="challenge-meter" id="challenge-meter" role="progressbar"
+            aria-label="PCA 解释方差挑战进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="challenge-meter-fill"></span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="explain-section" data-zone="lecture" aria-labelledby="explain-title">
+      <div class="section-heading">
+        <p class="eyebrow">WHY IT LOOKS LIKE THIS</p>
+        <h2 id="explain-title">为什么最大特征向量是主方向</h2>
+        <p>因为投影后的方差，正好等于协方差矩阵在单位方向上的二次型。</p>
+      </div>
+
+      <div class="explain-grid explain-grid-three">
+        <article class="explain-card">
+          <span class="explain-index">01</span>
+          <h3>先中心化</h3>
+          <p>PCA 只看形状，不看位置；先把每个点减去均值，再计算协方差。</p>
+          <p class="formula">Σ = (1/(n−1)) Σ (xᵢ − x̄)(xᵢ − x̄)ᵀ</p>
+          <p>这样主轴才会穿过点云中心。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">02</span>
+          <h3>投影方差 = vᵀΣv</h3>
+          <p>把点投影到单位方向 v 上，投影长度的方差就是 vᵀΣv；它在特征向量方向取极值。</p>
+          <p class="formula">Σv = λv</p>
+          <p>最大 λ 对应 PC1，第二大的 λ 对应 PC2。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">03</span>
+          <h3>降维：只留一条线</h3>
+          <p>把每个点换成它在 PC1 上的坐标 t，就完成 2D → 1D 压缩。</p>
+          <p class="formula">x ≈ x̄ + t·v₁</p>
+          <p>解释方差越高，丢掉的那条垂直方向越不重要。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="quiz-section" data-zone="quiz">
+      <div class="quiz-card" aria-labelledby="quiz-title">
+        <div class="quiz-copy">
+          <p class="eyebrow">先猜后验</p>
+          <h2 id="quiz-title">PC1 是协方差矩阵的哪个特征向量？</h2>
+          <p>先想：主方向要让投影后的点尽量“散开”。</p>
+          <div class="quiz-options" role="group" aria-label="选择答案">
+            <button class="quiz-option" type="button" data-quiz-pca="a">最小特征值对应的特征向量</button>
+            <button class="quiz-option" type="button" data-quiz-pca="b">最大特征值对应的特征向量</button>
+            <button class="quiz-option" type="button" data-quiz-pca="c">任意一个特征向量</button>
+          </div>
+          <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></p>
+          <button class="btn btn-primary" id="btn-quiz-apply" type="button">拉成一条线验证 <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="quiz-visual" aria-hidden="true">
+          <canvas id="quiz-canvas" width="360" height="260"></canvas>
+          <span class="quiz-mini-label" id="quiz-mini-label">PC1 = 最大方差方向</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-strip" data-zone="next" aria-labelledby="next-title">
+      <div>
+        <p class="eyebrow">NEXT APPLICATION</p>
+        <h2 id="next-title">下一站：音频，时间怎样被矩阵滤波</h2>
+        <p>把一段声音看成向量，卷积核就是 FIR 滤波器；同一套局部线性映射换到时间轴上。</p>
+      </div>
+      <a class="btn btn-primary" href="../../ROADMAP.md">查看应用篇路线 <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>从箭头开始。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../../index.html">入口</a>
+        <a href="software-convolution.html">图像卷积</a>
+        <a href="software-pca.html">PCA</a>
+        <a href="../../ROADMAP.md">路线图</a>
+        <a href="../../RULES.md">规则</a>
+        <a href="../../MANUAL.md">手册</a>
+        <a href="../../REFERENCES.md">参考</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+        项目内容为原创，参考来源仅以链接与出处形式标注。
+      </p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">这个页面需要 JavaScript 才能绘制交互。请启用 JavaScript 后刷新。</div>
+  </noscript>
+
+  <script src="../../js/lib/math.js" defer></script>
+  <script src="../../js/lib/canvas-utils.js" defer></script>
+  <script src="../../js/lib/paths.js" defer></script>
+  <script src="../../js/lib/level-ui.js" defer></script>
+  <script src="../../js/lib/narration.js" defer></script>
+  <script src="../../js/demos/software-pca.js" defer></script>
+</body>
+</html>
