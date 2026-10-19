@@ -188,6 +188,81 @@ test('变换后单位方格有向面积 = det(A)', () => {
 });
 
 /* ------------------------------------------------------------------ */
+console.log('\n秩 / 列空间 / 零空间');
+
+test('满秩矩阵：列空间是整个平面，零空间只有 0', () => {
+  const cs = L.columnSpace2(L.identity());
+  const ns = L.nullSpace2(L.identity());
+  assert.equal(cs.dimension, 2);
+  assert.equal(cs.isPlane, true);
+  assert.equal(ns.dimension, 0);
+  assert.equal(ns.isZero, true);
+  assert.equal(ns.direction, null);
+});
+
+test('秩 1 矩阵：列空间是一条线，零空间是一条线', () => {
+  const m = L.mat2(1, 3, 2, 6);
+  const cs = L.columnSpace2(m);
+  const ns = L.nullSpace2(m);
+  assert.equal(cs.dimension, 1);
+  assert.equal(ns.dimension, 1);
+  closeVec(cs.direction, { x: 1 / Math.sqrt(5), y: 2 / Math.sqrt(5) }, 1e-9, 'Col');
+  closeVec(ns.direction, { x: -3 / Math.sqrt(10), y: 1 / Math.sqrt(10) }, 1e-9, 'Null');
+  closeVec(L.applyMat(m, ns.direction), { x: 0, y: 0 }, 1e-9, 'A·null');
+});
+
+test('秩 1 时零空间一般不垂直于列空间', () => {
+  const m = L.mat2(1, 3, 2, 6);
+  const cs = L.columnSpace2(m);
+  const ns = L.nullSpace2(m);
+  const dot = L.dot(cs.direction, ns.direction);
+  assert.equal(Math.abs(dot) > 0.1, true, `dot should not be ~0, got ${dot}`);
+});
+
+test('奇异矩阵 [[1,2],[0.5,1]] 的零空间方向', () => {
+  const m = L.mat2(1, 2, 0.5, 1);
+  const ns = L.nullSpace2(m);
+  assert.equal(ns.dimension, 1);
+  closeVec(ns.direction, { x: -2 / Math.sqrt(5), y: 1 / Math.sqrt(5) }, 1e-9);
+  closeVec(L.applyMat(m, ns.direction), { x: 0, y: 0 }, 1e-9);
+});
+
+test('零矩阵：列空间只有 0，零空间是整个平面', () => {
+  const cs = L.columnSpace2(L.zero());
+  const ns = L.nullSpace2(L.zero());
+  assert.equal(cs.dimension, 0);
+  assert.equal(cs.isZero, true);
+  assert.equal(ns.dimension, 2);
+  assert.equal(ns.isPlane, true);
+  assert.equal(ns.basis.length, 2);
+});
+
+test('行向量在第二行时也能求出零空间', () => {
+  const m = L.mat2(0, 0, 1, 2);
+  const ns = L.nullSpace2(m);
+  assert.equal(ns.dimension, 1);
+  closeVec(ns.direction, { x: -2 / Math.sqrt(5), y: 1 / Math.sqrt(5) }, 1e-9);
+  closeVec(L.applyMat(m, ns.direction), { x: 0, y: 0 }, 1e-9);
+});
+
+test('rank + nullity = 2（随机 100 例）', () => {
+  for (let i = 0; i < 100; i++) {
+    const m = randomMatrix(2);
+    const r = L.rank(m);
+    const cs = L.columnSpace2(m);
+    const ns = L.nullSpace2(m);
+    assert.equal(cs.dimension, r, `case ${i} column dimension`);
+    assert.equal(ns.dimension, 2 - r, `case ${i} null dimension`);
+    assert.equal(r + ns.dimension, 2, `case ${i} rank-nullity`);
+    for (const n of ns.basis) {
+      const image = L.applyMat(m, n);
+      close(image.x, 0, 1e-8, `case ${i} A·n.x`);
+      close(image.y, 0, 1e-8, `case ${i} A·n.y`);
+    }
+  }
+});
+
+/* ------------------------------------------------------------------ */
 console.log('\n特征值 / 特征向量');
 
 test('对称矩阵 [[2,1],[1,2]] 的特征值为 3 和 1', () => {

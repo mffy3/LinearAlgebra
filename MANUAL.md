@@ -3,7 +3,7 @@
 > 写给老板的“公司使用说明书”。
 > 不需要懂前端工程，也能知道每个文件夹是干什么的、想加功能时该怎么说、改崩了怎么救。
 >
-> 当前版本：v0.2（基建 + 矩阵变换 + 行列式面积 Demo）
+> 当前版本：v0.3（基建 + 矩阵变换 + 行列式 + 秩与零空间）
 > 配套文件：`RULES.md`（纪律）、`ROADMAP.md`（路线图）、`README.md`（对外介绍）
 
 ---
@@ -33,11 +33,13 @@
 │   │   └── canvas-utils.js    画图工具箱：坐标转换、网格、箭头、裁剪
 │   └── demos/                 各个展厅的“讲解员”
 │       ├── transform.js       矩阵变换展厅的讲解员：读输入、调数学、指挥画图
-│       └── determinant.js     行列式展厅的讲解员：算面积、底、高，画高度线
+│       ├── determinant.js     行列式展厅的讲解员：算面积、底、高，画高度线
+│       └── rank.js            秩与零空间展厅的讲解员：算维数、方向、像向量
 │
 ├── pages/                     各个独立展厅
 │   ├── 01-transform.html      1 号展厅：矩阵即变换（当前开放）
 │   ├── 02-determinant.html    2 号展厅：行列式 = 面积（当前开放）
+│   ├── 03-rank.html           3 号展厅：秩与零空间（当前开放）
 │   └── applications/          专题应用区（未来：物理、经济、图像、硬件）
 │
 ├── assets/
@@ -72,7 +74,7 @@
 
 - `js/lib/math.js` —— 公式都在这里。改错一个符号，整个软件都在骗人。
 - `js/lib/canvas-utils.js` —— 坐标与裁剪。改错会让网格错位、箭头乱飞。
-- `js/demos/transform.js`、`js/demos/determinant.js` —— 当前展厅的交互逻辑。想改交互，直接告诉 AI，不要自己抠。
+- `js/demos/transform.js`、`js/demos/determinant.js`、`js/demos/rank.js` —— 当前展厅的交互逻辑。想改交互，直接告诉 AI，不要自己抠。
 - `tests/math.test.js` —— 质检标准。不能为了让测试变绿而改测试。
 
 > 这些文件不是“禁止看”，而是**不建议手动改**。要看可以，改之前让 AI 备份并说明影响。
@@ -81,7 +83,7 @@
 
 | 想做的事 | 要新建 | 要修改 |
 |---|---|---|
-| 加一个“特征向量”展厅 | `pages/03-eigenvector.html`、`js/demos/eigenvector.js` | `index.html` 加入口；`ROADMAP.md` 改状态；`math.js` 已有特征值函数 |
+| 加一个“特征向量”展厅 | `pages/04-eigenvector.html`、`js/demos/eigenvector.js` | `index.html` 加入口；`ROADMAP.md` 改状态；`math.js` 已有特征值函数 |
 | 给行列式页加“面积尺” | 无 | `js/demos/determinant.js`、`css/canvas.css` |
 | 加“物理受力分解”应用 | `pages/applications/physics.html`、`js/demos/physics-force.js` | 应用区入口；`math.js` 可能加向量投影 |
 | 加“图像卷积”应用 | `pages/applications/graphics.html`、`js/demos/graphics-convolution.js` | 需要图片素材与卷积核控件 |
@@ -107,7 +109,7 @@
 ```text
 用户输入（四个数字 / 拖动箭头）
         ↓
-js/demos/*.js          （读取、校验、保存状态，如 transform.js / determinant.js）
+js/demos/*.js          （读取、校验、保存状态，如 transform.js / determinant.js / rank.js）
         ↓
 js/lib/math.js         （算矩阵、行列式、特征值）
         ↓
@@ -262,10 +264,11 @@ Uncaught TypeError: ...
 
 ## 附录 A：当前版本能玩什么
 
-- 打开 `index.html` → 进入“矩阵变换”或“行列式”展厅。
+- 打开 `index.html` → 进入“矩阵变换”“行列式”或“秩与零空间”展厅。
 - **矩阵变换**：修改四个数字 `a, b, c, d`，网格实时形变；拖动青色 / 紫色箭头尖端；看 det、面积缩放、秩、定向、特征值；切换单位方格 / 单位圆 / 特征方向图层；完成“让 det = 0.5”挑战。
 - **行列式 = 面积**：看单位正方形如何变成平行四边形；实时验证 `S = |det| = 底 × 高`；拖到 `det = 0` 看面积归零；负行列式时图形翻面；完成“让面积 = 2.00”挑战。
-- 两页都有“先猜后验”选择题，支持桌面 / 手机 / `file://` 直接打开。
+- **秩与零空间**：看平面被压成线或点；拖动橙色探测向量 x，观察 Ax 的长度变化；当 Ax = 0 时找到零空间；完成“把 x 拖进零空间”挑战。
+- 三页都有“先猜后验”选择题，支持桌面 / 手机 / `file://` 直接打开。
 
 ## 附录 B：当前版本不包含什么
 
@@ -281,6 +284,7 @@ Uncaught TypeError: ...
 | 线性映射 | linear transformation | 正文统一用“线性映射”，口语可说“变换” |
 | 列空间 | column space | 矩阵两列张成的空间 |
 | 零空间 | null space | 不用 kernel |
+| 零化度 | nullity | 零空间的维数 |
 | 秩 | rank | 2、1、0 |
 | 行列式 | determinant | 面积缩放因子，带符号 |
 | 底 / 高 | base / height | 平行四边形的底边与对应高 |

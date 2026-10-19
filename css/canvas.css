@@ -253,6 +253,26 @@
   border-top: 2px dashed var(--amber);
 }
 
+.legend-dash-null {
+  border-top-color: var(--rose);
+}
+
+.legend-probe {
+  display: inline-block;
+  width: 14px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--amber);
+}
+
+.legend-image {
+  display: inline-block;
+  width: 14px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--blue);
+}
+
 .canvas-hint {
   right: 12px;
   bottom: 12px;
@@ -458,6 +478,78 @@
 .readout small {
   color: #5c6d84;
   font-size: 0.58rem;
+}
+
+/* 探测向量编辑器 */
+.probe-editor {
+  margin-top: 12px;
+  padding: 10px 11px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: rgba(251, 191, 36, 0.035);
+}
+
+.probe-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+
+.probe-hint {
+  color: #53647b;
+  font-size: 0.58rem;
+}
+
+.probe-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.probe-field {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  padding: 5px 8px;
+  border: 1px solid rgba(251, 191, 36, 0.16);
+  border-radius: 8px;
+  background: rgba(7, 11, 18, 0.4);
+}
+
+.probe-field:focus-within {
+  border-color: rgba(251, 191, 36, 0.5);
+}
+
+.probe-field span {
+  color: var(--amber);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+}
+
+.probe-field input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  color: var(--text);
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  text-align: right;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.probe-field input::-webkit-outer-spin-button,
+.probe-field input::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
 }
 
 /* 面积验算卡 */

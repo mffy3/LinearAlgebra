@@ -25,6 +25,7 @@
     squareNegative: '#fb7185',
     circle: '#fbbf24',
     eigen: '#fb7185',
+    blue: '#60a5fa',
     text: '#e8eef8',
     muted: '#93a4bd',
     origin: '#e2e8f0'

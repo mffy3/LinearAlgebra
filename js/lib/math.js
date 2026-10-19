@@ -418,6 +418,106 @@
   }
 
   /* ------------------------------------------------------------------ *
+   * 列空间 / 零空间（2×2）
+   * ------------------------------------------------------------------ */
+
+  /**
+   * 列空间：矩阵两列张成的空间。
+   *
+   * 返回：
+   * {
+   *   dimension: 0 | 1 | 2,
+   *   basis: [{x,y}, ...],       // 列空间的一组基
+   *   direction: {x,y} | null,   // 秩 1 时的单位方向
+   *   isPlane: boolean,          // 秩 2：整个平面
+   *   isZero: boolean            // 秩 0：只有原点
+   * }
+   */
+  function columnSpace2(m, eps) {
+    var tol = eps == null ? EPS : eps;
+    var r = rank(m, tol);
+    var c1 = { x: m.a, y: m.c };
+    var c2 = { x: m.b, y: m.d };
+
+    if (r === 0) {
+      return {
+        dimension: 0,
+        basis: [],
+        direction: null,
+        isPlane: false,
+        isZero: true
+      };
+    }
+
+    if (r === 2) {
+      return {
+        dimension: 2,
+        basis: [c1, c2],
+        direction: null,
+        isPlane: true,
+        isZero: false
+      };
+    }
+
+    // 秩 1：取较长的一列作为方向，避免拿零向量归一化。
+    var base = length(c1) >= length(c2) ? c1 : c2;
+    return {
+      dimension: 1,
+      basis: [base],
+      direction: normalize(base),
+      isPlane: false,
+      isZero: false
+    };
+  }
+
+  /**
+   * 零空间：所有满足 A x = 0 的 x 组成的空间。
+   *
+   * 返回结构同 columnSpace2：
+   * - 秩 2：{0}，basis 为空
+   * - 秩 1：一条过原点的直线，direction 为单位方向
+   * - 秩 0：整个平面，basis 取 e₁、e₂
+   */
+  function nullSpace2(m, eps) {
+    var tol = eps == null ? EPS : eps;
+    var r = rank(m, tol);
+
+    if (r === 2) {
+      return {
+        dimension: 0,
+        basis: [],
+        direction: null,
+        isPlane: false,
+        isZero: true
+      };
+    }
+
+    if (r === 0) {
+      return {
+        dimension: 2,
+        basis: [{ x: 1, y: 0 }, { x: 0, y: 1 }],
+        direction: null,
+        isPlane: true,
+        isZero: false
+      };
+    }
+
+    // 秩 1：零空间垂直于行空间。取较长的一行 (p, q)，法向量 (-q, p)。
+    var row1 = { x: m.a, y: m.b };
+    var row2 = { x: m.c, y: m.d };
+    var row = length(row1) >= length(row2) ? row1 : row2;
+    var direction = normalize({ x: -row.y, y: row.x });
+
+    return {
+      dimension: 1,
+      basis: [direction],
+      direction: direction,
+      isPlane: false,
+      isZero: false
+    };
+  }
+
+  /* ------------------------------------------------------------------ *
    * 多边形（用于行列式 = 面积）
    * ------------------------------------------------------------------ */
 
@@ -549,6 +649,10 @@
 
     // 特征
     eigen2: eigen2,
+
+    // 列空间 / 零空间
+    columnSpace2: columnSpace2,
+    nullSpace2: nullSpace2,
 
     // 多边形 / 角度
     polygonArea: polygonArea,

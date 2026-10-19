@@ -1220,7 +1220,8 @@ button {
     font-size: 0.76rem;
   }
 
-  .site-nav .nav-soon {
+  .site-nav .nav-soon,
+  .site-nav a[href$="index.html"] {
     display: none;
   }
 
@@ -1320,8 +1321,11 @@ button {
     padding: 22px;
   }
 
-  .site-nav a[href$="ROADMAP.md"],
-  .site-nav a[href$="index.html"] {
+  .site-nav a[href$="ROADMAP.md"] {
+    display: none;
+  }
+
+  .brand-text {
     display: none;
   }
 }
