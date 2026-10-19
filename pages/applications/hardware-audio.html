@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="计算机硬件应用：音频 FIR 滤波。拖动播放头和 5 个 tap，看局部加权和怎样改变波形。">
+  <meta name="theme-color" content="#efeae1">
+  <title>音频 FIR 滤波 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/canvas.css">
+  <link rel="stylesheet" href="../../css/applications.css">
+</head>
+<body class="lab-page application-page application-hardware">
+  <a class="skip-link" href="#lab-main">跳到主要内容</a>
+
+  <header class="site-header lab-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Linear Algebra 入口">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../../index.html">入口</a>
+        <a href="software-pca.html">PCA</a>
+        <a href="hardware-audio.html" aria-current="page">音频</a>
+        <a href="../../ROADMAP.md">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="lab-main" class="lab-main">
+    <section class="lab-intro application-intro" data-zone="intro">
+      <div class="lab-intro-copy">
+        <p class="eyebrow">APPLICATION 08 · 计算机硬件 · 音频 FIR</p>
+        <div class="application-title-row">
+          <span class="application-badge">HARDWARE</span>
+          <h1>五个权重，<span class="gradient-text">改写一段声音</span></h1>
+        </div>
+        <p class="lede">
+          一段声音采样就是一条向量。FIR 滤波器每次取最近的几个采样，按 5 个 tap 加权相加，
+          得到新的采样。它和图像卷积是同一件事，只是窗口从二维变成了一维时间轴。
+        </p>
+        <div class="intro-pills" aria-label="本章关键词">
+          <span class="pill">FIR</span>
+          <span class="pill">5 个 tap</span>
+          <span class="pill">时间卷积</span>
+          <span class="pill pill-accent">可拖拽</span>
+        </div>
+      </div>
+
+      <aside class="application-formula" aria-label="FIR 公式">
+        <p class="formula-label">一个输出采样</p>
+        <p class="formula-main">y[n] = Σ h[k] · x[n−k]</p>
+        <p class="formula-sub">5 个 tap 就是 5 个权重。平滑核压低高频，差分核突出变化；它仍然是一个局部线性映射。</p>
+      </aside>
+    </section>
+
+    <div class="workspace" data-zone="workspace">
+      <section class="stage-card" id="stage-card" data-zone="canvas" aria-labelledby="stage-title">
+        <div class="stage-head">
+          <div>
+            <p class="stage-kicker">LIVE HARDWARE</p>
+            <h2 id="stage-title">输入与滤波后的波形</h2>
+          </div>
+          <div class="stage-actions">
+            <button class="btn btn-small btn-ghost" id="btn-reset" type="button">重置</button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="audio-canvas" class="transform-canvas" width="900" height="620"
+            aria-label="音频 FIR 可视化：输入波形、输出波形、播放头和 5 个 tap。">
+            你的浏览器不支持 Canvas，请换一个现代浏览器。
+          </canvas>
+
+          <div class="det-chip solve-chip" id="audio-chip">
+            <span>FIR</span>
+            <strong id="canvas-status">5 taps · 局部线性</strong>
+          </div>
+
+          <p class="canvas-hint" id="audio-hint">拖动播放头，或上下拖下方 tap</p>
+        </div>
+
+        <div class="professor-strip" aria-live="polite">
+          <span class="professor-seal" aria-hidden="true">λ</span>
+          <div>
+            <p id="professor-strip-text">每个输出采样只看最近的 5 个输入采样；tap 就是这 5 个权重。</p>
+            <p class="professor-strip-prompt" id="professor-strip-prompt">先把播放头拖到波形起伏大的地方。</p>
+          </div>
+        </div>
+
+        <div class="stage-foot">
+          <div class="foot-item">
+            <span class="foot-label">采样 n</span>
+            <b id="readout-sample">48</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">x[n]</span>
+            <b id="readout-x">0.00</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">y[n]</span>
+            <b id="readout-y">0.00</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">Σ tap</span>
+            <b id="readout-sum">1.00</b>
+          </div>
+        </div>
+      </section>
+
+      <aside class="control-panel" data-zone="controls" aria-label="FIR taps 与预设">
+        <div class="panel-head">
+          <h2>五个 tap</h2>
+          <span class="pill pill-soft">5 taps</span>
+        </div>
+
+        <div class="professor-note" aria-live="polite">
+          <div class="professor-head">
+            <span class="professor-seal" aria-hidden="true">λ</span>
+            <span>边做边看</span>
+          </div>
+          <p id="professor-text">每个输出采样只看最近的 5 个输入采样；tap 就是这 5 个权重。</p>
+          <p class="professor-prompt" id="professor-prompt">先把播放头拖到波形起伏大的地方。</p>
+        </div>
+
+        <div class="panel-section">
+          <p class="panel-label">预设</p>
+          <div class="preset-grid">
+            <button class="preset-btn is-active" type="button" data-filter="identity">直通</button>
+            <button class="preset-btn" type="button" data-filter="smooth">平滑</button>
+            <button class="preset-btn" type="button" data-filter="lowpass">低通</button>
+            <button class="preset-btn" type="button" data-filter="highpass">差分</button>
+          </div>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>输入噪声</span>
+            <span class="probe-hint">改变原始波形</span>
+          </div>
+          <div class="weight-row">
+            <input id="noise-range" class="weight-range" type="range" min="0" max="0.4" step="0.01" value="0.12"
+              aria-label="输入噪声">
+            <label class="weight-number">
+              <input id="noise" type="number" min="0" max="0.4" step="0.01" value="0.12" inputmode="decimal"
+                aria-label="输入噪声数值">
+              <span>×</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="challenge-card" id="challenge-card">
+          <div class="challenge-head">
+            <span>小挑战</span>
+            <strong id="challenge-state">进行中</strong>
+          </div>
+          <p>设计一个平滑核，让输出峰值降到输入的 80% 以下。</p>
+          <div class="challenge-metric">
+            <span>输出 / 输入峰值</span>
+            <b id="challenge-distance">100%</b>
+          </div>
+          <div class="challenge-meter" id="challenge-meter" role="progressbar"
+            aria-label="FIR 峰值压制挑战进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="challenge-meter-fill"></span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="explain-section" data-zone="lecture" aria-labelledby="explain-title">
+      <div class="section-heading">
+        <p class="eyebrow">WHY IT LOOKS LIKE THIS</p>
+        <h2 id="explain-title">FIR 是一个带记忆的加权和</h2>
+        <p>每个输出采样只回看最近 5 个输入；tap 决定“回看多少、各占多重”。</p>
+      </div>
+
+      <div class="explain-grid explain-grid-three">
+        <article class="explain-card">
+          <span class="explain-index">01</span>
+          <h3>时间卷积</h3>
+          <p>图像卷积在二维窗口上滑动；FIR 在一维时间上滑动，形状完全一样。</p>
+          <p class="formula">y[n] = h₀x[n] + h₁x[n−1] + … + h₄x[n−4]</p>
+          <p>窗口长度 5，所以每个输出只依赖 5 个输入。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">02</span>
+          <h3>平滑核 vs 差分核</h3>
+          <p>tap 都为正且和为 1，输出是加权平均；正负相抵的核则更像在找变化。</p>
+          <p class="formula">Σ h[k] = 1 → 保留直流；Σ h[k] = 0 → 压掉平坦部分</p>
+          <p>窗越长，平滑越强；但也会带来延迟。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">03</span>
+          <h3>矩阵视角</h3>
+          <p>把整段信号看成向量 x，FIR 就是一个带状的 Toeplitz 矩阵 H，y = Hx。</p>
+          <p class="formula">y = Hx</p>
+          <p>每一行只和附近 5 个输入相乘，所以矩阵大部分是 0。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="quiz-section" data-zone="quiz">
+      <div class="quiz-card" aria-labelledby="quiz-title">
+        <div class="quiz-copy">
+          <p class="eyebrow">先猜后验</p>
+          <h2 id="quiz-title">FIR 的 y[n] 用到了哪些输入？</h2>
+          <p>先想：5 个 tap 意味着回看几个采样？</p>
+          <div class="quiz-options" role="group" aria-label="选择答案">
+            <button class="quiz-option" type="button" data-quiz-audio="a">只用到 x[n]</button>
+            <button class="quiz-option" type="button" data-quiz-audio="b">x[n] 和它之前的 4 个采样</button>
+            <button class="quiz-option" type="button" data-quiz-audio="c">整段信号的所有采样</button>
+          </div>
+          <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></p>
+          <button class="btn btn-primary" id="btn-quiz-apply" type="button">切到平滑核验证 <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="quiz-visual" aria-hidden="true">
+          <canvas id="quiz-canvas" width="360" height="260"></canvas>
+          <span class="quiz-mini-label" id="quiz-mini-label">5 个采样 → 1 个输出</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-strip" data-zone="next" aria-labelledby="next-title">
+      <div>
+        <p class="eyebrow">NEXT APPLICATION</p>
+        <h2 id="next-title">下一站：纠错码，噪声中的冗余</h2>
+        <p>用 GF(2) 上的校验矩阵，把信息编码成能检测和纠正错误的码字。</p>
+      </div>
+      <a class="btn btn-primary" href="../../ROADMAP.md">查看应用篇路线 <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>从箭头开始。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../../index.html">入口</a>
+        <a href="software-pca.html">PCA</a>
+        <a href="hardware-audio.html">音频</a>
+        <a href="../../ROADMAP.md">路线图</a>
+        <a href="../../RULES.md">规则</a>
+        <a href="../../MANUAL.md">手册</a>
+        <a href="../../REFERENCES.md">参考</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+        项目内容为原创，参考来源仅以链接与出处形式标注。
+      </p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">这个页面需要 JavaScript 才能绘制交互。请启用 JavaScript 后刷新。</div>
+  </noscript>
+
+  <script src="../../js/lib/math.js" defer></script>
+  <script src="../../js/lib/canvas-utils.js" defer></script>
+  <script src="../../js/lib/paths.js" defer></script>
+  <script src="../../js/lib/level-ui.js" defer></script>
+  <script src="../../js/lib/narration.js" defer></script>
+  <script src="../../js/demos/hardware-audio.js" defer></script>
+</body>
+</html>

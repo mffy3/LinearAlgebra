@@ -325,6 +325,34 @@
     };
   }
 
+  function audio(s) {
+    if (s.filter === 'identity') {
+      return {
+        text: '直通核是 h₀ = 1，其余为 0；y[n] = x[n]，输出完全复制输入，峰值比是 100%。',
+        prompt: '把 h₀ 调小，再把相邻 tap 调大，观察峰值比下降。'
+      };
+    }
+
+    if (s.filter === 'highpass') {
+      return {
+        text: '差分核的正负权重互相抵消，平坦部分被压掉，快速变化被保留；它更像“边缘检测”而不是平滑。',
+        prompt: '换成平滑核，比较两种核在同一个波形上的输出。'
+      };
+    }
+
+    if (s.ratio <= 0.8 && Math.abs(s.tapsSum - 1) < 0.1) {
+      return {
+        text: '平滑核把相邻采样平均，快速起伏被压低，峰值随之下降；代价是波形会变得更“钝”。',
+        prompt: '把播放头拖到高频密集处，比较输入和输出的振幅。'
+      };
+    }
+
+    return {
+      text: '每个输出采样只看最近的 5 个输入采样；tap 就是这 5 个权重。它和图像卷积是同一个局部加权和。',
+      prompt: '把播放头拖到波形起伏大的地方，再看 y[n]。'
+    };
+  }
+
   function pca(s) {
     if (s.explained >= 0.9) {
       return {
@@ -415,6 +443,7 @@
     economics: economics,
     portfolio: portfolio,
     convolution: convolution,
-    pca: pca
+    pca: pca,
+    audio: audio
   };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

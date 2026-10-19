@@ -3,7 +3,7 @@
 > 写给老板的“公司使用说明书”。
 > 不需要懂前端工程，也能知道每个文件夹是干什么的、想加功能时该怎么说、改崩了怎么救。
 >
-> 当前版本：v2.0（3D 入口 + 水平选择 + 路线提示 + 零基础向量课 + 五个基础展厅 + 物理三页 + 经济两页 + 软件两页）
+> 当前版本：v2.1（3D 入口 + 水平选择 + 路线提示 + 零基础向量课 + 五个基础展厅 + 物理三页 + 经济两页 + 软件两页 + 音频 FIR）
 > 配套文件：`RULES.md`（纪律）、`ROADMAP.md`（路线图）、`README.md`（对外介绍）、`ARCHITECTURE.md`（分区与迭代）
 
 ---
@@ -55,7 +55,8 @@ Linear Algebra/
 │       ├── economics-leontief.js 经济应用：(I − A)⁻¹d
 │       ├── economics-portfolio.js 经济应用：wᵀΣw 与特征向量
 │       ├── software-convolution.js 软件应用：3×3 核与滑动窗口
-│       └── software-pca.js 软件应用：协方差主方向与投影
+│       ├── software-pca.js 软件应用：协方差主方向与投影
+│       └── hardware-audio.js 硬件应用：FIR 与 5 个 tap
 │
 ├── pages/                     各个独立展厅
 │   ├── library.html           全部展厅：地球仪与便当盒目录
@@ -72,7 +73,8 @@ Linear Algebra/
 │       ├── economics-leontief.html 经济：投入产出（当前开放）
 │       ├── economics-portfolio.html 经济：投资组合（当前开放）
 │       ├── software-convolution.html 软件：图像卷积（当前开放）
-│       └── software-pca.html 软件：PCA 降维（当前开放）
+│       ├── software-pca.html 软件：PCA 降维（当前开放）
+│       └── hardware-audio.html 硬件：音频 FIR（当前开放）
 │
 ├── assets/
 │   └── images/                仓库：图标、演示图片等静态素材
@@ -318,6 +320,7 @@ Uncaught TypeError: ...
 - **经济 · 投资组合**：拖金点调权重，左右拖协方差椭圆调 ρ；看有效前沿、最小风险点和协方差矩阵特征向量。
 - **软件 · 图像卷积**：拖动 3×3 窗口，切换 5 种核；看 9 个像素怎样按权重变成一个输出。
 - **软件 · PCA 降维**：拖动主轴端点或调拉伸；看主方向、一维投影与 λ₁/(λ₁+λ₂)。
+- **硬件 · 音频 FIR**：拖播放头和下方 tap；看 5 个权重怎样改变波形与峰值。
 - 零基础向量课、五个基础展厅和物理应用都有“先猜后验”选择题，支持桌面 / 手机 / `file://` 直接打开。
 
 ## 附录 B：当前版本不包含什么

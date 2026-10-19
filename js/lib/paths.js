@@ -18,13 +18,13 @@
       id: 'some',
       label: '略有了解',
       start: '02-determinant',
-      pages: ['02-determinant', '03-rank', '04-eigenvector', '05-solve', 'physics', 'physics-rotation', 'physics-quantum', 'economics-leontief', 'economics-portfolio', 'software-convolution', 'software-pca']
+      pages: ['02-determinant', '03-rank', '04-eigenvector', '05-solve', 'physics', 'physics-rotation', 'physics-quantum', 'economics-leontief', 'economics-portfolio', 'software-convolution', 'software-pca', 'hardware-audio']
     },
     learned: {
       id: 'learned',
       label: '有扎实的基础',
       start: 'physics',
-      pages: ['physics', 'physics-rotation', 'physics-quantum', 'economics-leontief', 'economics-portfolio', 'software-convolution', 'software-pca', 'economics', 'computer', 'art', 'music', 'social']
+      pages: ['physics', 'physics-rotation', 'physics-quantum', 'economics-leontief', 'economics-portfolio', 'software-convolution', 'software-pca', 'hardware-audio', 'economics', 'computer', 'art', 'music', 'social']
     }
   };
 
@@ -42,6 +42,7 @@
     'economics-portfolio': '投资组合',
     'software-convolution': '图像卷积',
     'software-pca': 'PCA 降维',
+    'hardware-audio': '音频滤波',
     'economics': '经济',
     'computer': '计算机',
     'art': '美术',
@@ -61,7 +62,8 @@
     'economics-leontief': 'x = (I − A)⁻¹ d',
     'economics-portfolio': 'σ² = wᵀΣw',
     'software-convolution': 'y = Σ kᵢⱼ xᵢⱼ',
-    'software-pca': 'λ₁ / (λ₁ + λ₂)'
+    'software-pca': 'λ₁ / (λ₁ + λ₂)',
+    'hardware-audio': 'y[n] = Σ h[k]x[n−k]'
   };
 
   var checklists = {
@@ -178,7 +180,7 @@
         body: '正交矩阵保长、保角；用 RᵀR = I 和 det = 1 检查。'
       },
       learned: {
-        title: '应用 2 / 12 · 刚体旋转',
+        title: '应用 2 / 13 · 刚体旋转',
         body: '直接看 R(θ)ᵀR(θ) = I；长度、夹角、det 都不变。'
       }
     },
@@ -192,7 +194,7 @@
         body: '先抓住归一化：|α|² + |β|² = 1；相位 φ 不改变概率。'
       },
       learned: {
-        title: '应用 3 / 12 · 量子态',
+        title: '应用 3 / 13 · 量子态',
         body: '直接看 |ψ⟩ = α|0⟩ + β|1⟩ 与 Born 规则 p = |α|²。'
       }
     },
@@ -206,7 +208,7 @@
         body: '直接看 (I − A)⁻¹ d：A 是中间投入，逆矩阵把间接需求也算进去。'
       },
       learned: {
-        title: '应用 4 / 12 · 投入产出',
+        title: '应用 4 / 13 · 投入产出',
         body: '直接解 (I − A)x = d；x = (I − A)⁻¹d，列是总需求乘数。'
       }
     },
@@ -220,7 +222,7 @@
         body: '直接看 wᵀΣw：权重、协方差和相关性一起决定组合风险。'
       },
       learned: {
-        title: '应用 5 / 12 · 投资组合',
+        title: '应用 5 / 13 · 投资组合',
         body: '直接看 Σ 的特征值/特征向量：风险主方向和可分散方向。'
       }
     },
@@ -234,7 +236,7 @@
         body: '卷积核就是一个 9 维线性函数；拖动窗口，看输出像素怎么变。'
       },
       learned: {
-        title: '应用 6 / 12 · 图像卷积',
+        title: '应用 6 / 13 · 图像卷积',
         body: '直接看 y = Σ kᵢⱼxᵢⱼ；核固定，窗口滑动就是局部线性映射。'
       }
     },
@@ -248,8 +250,22 @@
         body: '直接看协方差矩阵的最大特征向量：它解释最多的方差。'
       },
       learned: {
-        title: '应用 7 / 12 · PCA 降维',
+        title: '应用 7 / 13 · PCA 降维',
         body: '直接看 λ₁/(λ₁+λ₂) 与一维重建误差。'
+      }
+    },
+    'hardware-audio': {
+      zero: {
+        title: '应用篇 · 音频滤波',
+        body: '把一段声音采样成向量；FIR 就是 5 个 tap 的滑动加权和。'
+      },
+      some: {
+        title: '应用篇 · 音频滤波',
+        body: '直接看 h0…h4：平滑核压高频，差分核反过来突出变化。'
+      },
+      learned: {
+        title: '应用 8 / 13 · 音频滤波',
+        body: '直接看 y[n] = Σ h[k]x[n−k]；拖动 tap 看频响变化。'
       }
     },
     physics: {
@@ -262,7 +278,7 @@
         body: '把前面学的 Ax = b 用起来：两股张力就是两个未知数。'
       },
       learned: {
-        title: '应用 1 / 12 · 物理',
+        title: '应用 1 / 13 · 物理',
         body: '直接从方程开始：T₁u + T₂v = −W；不用再复习定义。'
       }
     }
