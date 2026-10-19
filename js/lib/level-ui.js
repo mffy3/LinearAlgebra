@@ -19,6 +19,14 @@
   } catch (error) {
     level = null;
   }
+
+  var active = P.levels[level] ? level : 'some';
+  window.LinAlgLevel = {
+    name: active,
+    factor: active === 'zero' ? 1.8 : (active === 'learned' ? 0.55 : 1),
+    challengeLabel: active === 'zero' ? '先试一下' : (active === 'learned' ? '进阶挑战' : '小挑战')
+  };
+
   if (!P.levels[level]) return;
 
   document.body.dataset.level = level;
@@ -112,6 +120,14 @@
     guideEl.appendChild(listWrap);
   }
 
+  // 零基础先不给公式；略有了解 / 有扎实的基础直接把式子摆出来。
+  if (level !== 'zero' && P.formulas[key]) {
+    var formula = document.createElement('p');
+    formula.className = 'level-formula';
+    formula.textContent = P.formulas[key];
+    guideEl.appendChild(formula);
+  }
+
   var actions = document.createElement('div');
   actions.className = 'level-guide-actions';
 
@@ -145,6 +161,11 @@
   var quizEyebrow = document.querySelector('.quiz-section .eyebrow');
   if (quizEyebrow) {
     quizEyebrow.textContent = level === 'zero' ? '基础检查' : (level === 'some' ? '方法检查' : '应用检查');
+  }
+
+  var challengeLabel = document.querySelector('.challenge-head > span:first-child');
+  if (challengeLabel && window.LinAlgLevel) {
+    challengeLabel.textContent = window.LinAlgLevel.challengeLabel;
   }
 
   if (level === 'zero') {

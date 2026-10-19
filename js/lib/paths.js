@@ -43,6 +43,15 @@
     'social': '社会科学'
   };
 
+  var formulas = {
+    '01-transform': 'A e₁ = (a, c)，A e₂ = (b, d)',
+    '02-determinant': '|det(A)| = 底 × 高',
+    '03-rank': 'rank(A) + nullity(A) = 2',
+    '04-eigenvector': 'det(A − λI) = 0',
+    '05-solve': 'rank A = rank[A|b]',
+    physics: 'T₁u + T₂v = −W'
+  };
+
   var checklists = {
     zero: [
       '先动手，再看读数',
@@ -186,6 +195,7 @@
   global.LinAlgPaths = {
     levels: levels,
     labels: labels,
+    formulas: formulas,
     guides: guides,
     checklists: checklists,
     pageKey: pageKey,

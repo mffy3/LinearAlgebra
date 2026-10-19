@@ -24,6 +24,8 @@
 
   var view = K.createViewport(canvas, { worldSpan: 12, padding: 34 });
   var EPS = 1e-9;
+  var LEVEL_FACTOR = window.LinAlgLevel ? window.LinAlgLevel.factor : 1;
+  var SLACK_TOL = 0.06 * LEVEL_FACTOR;
   var INITIAL = {
     A: { x: -4.2, y: 5.2 },
     B: { x: 4.2, y: 5.2 },
@@ -151,7 +153,7 @@
     var t2 = result.unique ? result.particular.y : null;
     var negative = result.unique && (t1 < -0.03 || t2 < -0.03);
     var slack = result.unique && !negative &&
-      (Math.abs(t1) <= 0.06 || Math.abs(t2) <= 0.06) &&
+      (Math.abs(t1) <= SLACK_TOL || Math.abs(t2) <= SLACK_TOL) &&
       Math.max(Math.abs(t1), Math.abs(t2)) > 0.1;
     var symmetric = Math.abs(state.anchors.A.x + state.anchors.B.x) < 0.05 &&
       Math.abs(state.anchors.A.y - state.anchors.B.y) < 0.05;

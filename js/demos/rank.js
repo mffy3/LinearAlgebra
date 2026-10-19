@@ -29,6 +29,8 @@
   var ELEMENT_LIMIT = 8;
   var PROBE_LIMIT = 6;
   var EPS = 1e-9;
+  var LEVEL_FACTOR = window.LinAlgLevel ? window.LinAlgLevel.factor : 1;
+  var NULL_TOL = 0.01 * LEVEL_FACTOR;
   var INITIAL_MATRIX = L.mat2(1, 2, 0.5, 1);
   var INITIAL_PROBE = { x: 1, y: 1 };
 
@@ -173,7 +175,7 @@
       nullity: nullity,
       imageLength: imageLength,
       probeLength: probeLength,
-      probeInNullspace: probeLength > 0.1 && imageLength < 0.01
+      probeInNullspace: probeLength > 0.1 && imageLength < NULL_TOL
     });
 
     if (textEl.textContent !== note.text) textEl.textContent = note.text;
@@ -240,7 +242,7 @@
     }
 
     // 挑战：秩 1 时，把非零探测向量拖进零空间。
-    var achieved = rank === 1 && probeLength > 0.1 && imageLength < 0.01;
+    var achieved = rank === 1 && probeLength > 0.1 && imageLength < NULL_TOL;
     var progress = 0;
     if (rank === 1 && probeLength > 0.1) {
       var denom = Math.max(0.5, L.maxAbs(m) * Math.max(probeLength, 0.5));

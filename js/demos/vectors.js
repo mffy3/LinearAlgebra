@@ -22,6 +22,8 @@
   var EPS = 1e-9;
   var LIMIT = 6;
   var TARGET = { x: 3.2, y: 2.4 };
+  var LEVEL_FACTOR = window.LinAlgLevel ? window.LinAlgLevel.factor : 1;
+  var REACH_TOL = 0.08 * LEVEL_FACTOR;
 
   var INITIAL = {
     u: { x: 2, y: 0 },
@@ -149,7 +151,7 @@
       cross: cross,
       collinear: collinear,
       distance: distance,
-      reached: distance <= 0.08
+      reached: distance <= REACH_TOL
     };
   }
 

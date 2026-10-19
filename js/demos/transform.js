@@ -30,7 +30,8 @@
   var view = K.createViewport(canvas, { worldSpan: 10.5, padding: 34 });
 
   var TARGET_DET = 0.5;
-  var TARGET_TOLERANCE = 0.02;
+  var LEVEL_FACTOR = window.LinAlgLevel ? window.LinAlgLevel.factor : 1;
+  var TARGET_TOLERANCE = 0.02 * LEVEL_FACTOR;
   var ELEMENT_LIMIT = 8;
   var EIGEN_EPS = 1e-9;
 

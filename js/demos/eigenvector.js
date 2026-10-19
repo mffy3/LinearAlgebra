@@ -27,7 +27,8 @@
   var ELEMENT_LIMIT = 8;
   var PROBE_LIMIT = 6;
   var EPS = 1e-9;
-  var COLLINEAR_SIN = 0.02; // 约 1.15°
+  var LEVEL_FACTOR = window.LinAlgLevel ? window.LinAlgLevel.factor : 1;
+  var COLLINEAR_SIN = 0.02 * LEVEL_FACTOR; // 零基础更宽松，进阶更严格
   var INITIAL_MATRIX = L.mat2(2, 1, 1, 2);
   var INITIAL_PROBE = { x: 1, y: 0 };
 

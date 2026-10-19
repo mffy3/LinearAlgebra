@@ -103,6 +103,19 @@
   letter-spacing: 0.03em;
 }
 
+.level-formula {
+  grid-column: 1 / -1;
+  justify-self: start;
+  margin-top: 1px;
+  padding: 4px 9px;
+  border: 1px solid rgba(46, 49, 44, 0.12);
+  border-radius: 8px;
+  color: var(--ink);
+  background: rgba(250, 246, 238, 0.55);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+}
+
 .level-check-item {
   padding: 2px 8px;
   border: 1px solid rgba(46, 49, 44, 0.12);
