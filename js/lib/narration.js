@@ -227,12 +227,41 @@
     };
   }
 
+  function combination(s) {
+    if (s.reached) {
+      return {
+        text: '金色箭头落在目标点上了。你没有直接移动它，只是调了两个倍数：α 控制 u，β 控制 v。',
+        prompt: '把目标点留在原地，换一组 u、v 的方向，还能拼出来吗？'
+      };
+    }
+
+    if (s.collinear) {
+      return {
+        text: '两个箭头共线了。无论 α、β 怎么取，αu + βv 都只能留在这条直线上；两个方向退化成了一个。',
+        prompt: '把 v 拖到直线外面，看看所有组合怎样从一条线变成一张平面。'
+      };
+    }
+
+    if (Math.abs(s.alpha) < 0.01 && Math.abs(s.beta) < 0.01) {
+      return {
+        text: '两个系数都是 0，结果是原点。先把 α 调到 0.5，再把 β 调大，看看金色箭头怎么走。',
+        prompt: '先只动 α，不动 β；金色箭头会沿着哪个方向移动？'
+      };
+    }
+
+    return {
+      text: 'α 是 u 的倍数，β 是 v 的倍数；把两段首尾接起来，就得到 αu + βv。α、β 取遍所有实数，就是 u、v 张成的空间。',
+      prompt: '把 α 继续调大，同时把 β 调小；金色箭头会走出什么轨迹？'
+    };
+  }
+
   global.LinAlgNarration = {
     transform: transform,
     determinant: determinant,
     rank: rank,
     eigen: eigen,
     solve: solve,
-    physics: physics
+    physics: physics,
+    combination: combination
   };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

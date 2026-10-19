@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="零基础第 0 课：用两个箭头认识向量相加、数乘与线性组合，看两个不共线的方向怎样铺满一个平面。">
+  <meta name="theme-color" content="#efeae1">
+  <title>向量与组合 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/canvas.css">
+</head>
+<body class="lab-page">
+  <a class="skip-link" href="#lab-main">跳到主要内容</a>
+
+  <header class="site-header lab-header">
+    <div class="header-inner">
+      <a class="brand" href="../index.html" aria-label="Linear Algebra 入口">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="library.html">五个展厅</a>
+        <a href="00-vectors.html" aria-current="page">向量</a>
+        <a href="../ROADMAP.md">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="lab-main" class="lab-main">
+    <section class="lab-intro" data-zone="intro">
+      <div class="lab-intro-copy">
+        <p class="eyebrow">CHAPTER 00 · 向量 = 方向 + 长度</p>
+        <h1>两个箭头，<span class="gradient-text">拼出一个平面</span></h1>
+        <p class="lede">
+          先不碰矩阵。你只需要认识两件事：箭头可以首尾相接地相加，也可以按一个倍数拉长。
+          把所有可能的“拉长 + 相加”放在一起，就得到一张平面。
+        </p>
+      </div>
+      <div class="intro-pills" aria-label="本章关键词">
+        <span class="pill">相加</span>
+        <span class="pill">数乘</span>
+        <span class="pill">线性组合</span>
+        <span class="pill pill-accent">可拖拽</span>
+      </div>
+    </section>
+
+    <div class="workspace" data-zone="workspace">
+      <section class="stage-card" id="stage-card" data-zone="canvas" aria-labelledby="stage-title">
+        <div class="stage-head">
+          <div>
+            <p class="stage-kicker">LIVE CANVAS</p>
+            <h2 id="stage-title">用两个箭头拼出一切</h2>
+          </div>
+          <div class="stage-actions">
+            <button class="btn btn-small btn-ghost" id="btn-reset" type="button">重置</button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="vectors-canvas" class="transform-canvas" width="900" height="620"
+            aria-label="向量线性组合可视化。鼠尾草色箭头是 u，陶土色箭头是 v；调整系数后，金色箭头是 αu + βv。">
+            你的浏览器不支持 Canvas，请换一个现代浏览器。
+          </canvas>
+
+          <div class="det-chip solve-chip" id="vectors-chip">
+            <span>组合</span>
+            <strong id="canvas-status">铺满平面</strong>
+          </div>
+
+          <p class="canvas-hint" id="vectors-hint">拖动 u / v 的尖端，或调整 α、β</p>
+        </div>
+
+        <div class="professor-strip" aria-live="polite">
+          <span class="professor-seal" aria-hidden="true">λ</span>
+          <div>
+            <p id="professor-strip-text">α 是 u 的倍数，β 是 v 的倍数；把两段首尾接起来，就得到 αu + βv。</p>
+            <p class="professor-strip-prompt" id="professor-strip-prompt">先把 α、β 都调到 0，看看结果回到哪里。</p>
+          </div>
+        </div>
+
+        <div class="stage-foot">
+          <div class="foot-item">
+            <span class="foot-label">αu + βv</span>
+            <b id="readout-combo">(2.00, 2.00)</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">|u|</span>
+            <b id="readout-u">2.00</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">|v|</span>
+            <b id="readout-v">2.00</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">目标距离</span>
+            <b id="readout-distance">1.56</b>
+          </div>
+        </div>
+      </section>
+
+      <aside class="control-panel" data-zone="controls" aria-label="向量、系数与显示控制">
+        <div class="panel-head">
+          <h2>两个箭头</h2>
+          <span class="pill pill-soft">2 × 2</span>
+        </div>
+
+        <div class="professor-note" aria-live="polite">
+          <div class="professor-head">
+            <span class="professor-seal" aria-hidden="true">λ</span>
+            <span>边做边看</span>
+          </div>
+          <p id="professor-text">α 是 u 的倍数，β 是 v 的倍数；把两段首尾接起来，就得到 αu + βv。</p>
+          <p class="professor-prompt" id="professor-prompt">先把 α、β 都调到 0，看看结果回到哪里。</p>
+        </div>
+
+        <div class="vector-pair">
+          <div class="probe-editor" aria-label="向量 u">
+            <div class="probe-head">
+              <span>向量 u</span>
+              <span class="probe-hint">拖动绿色箭头</span>
+            </div>
+            <div class="probe-fields">
+              <label class="probe-field">
+                <span>x</span>
+                <input id="u-x" type="number" value="2" min="-6" max="6" step="0.1"
+                  inputmode="decimal" aria-label="向量 u 的 x 分量">
+              </label>
+              <label class="probe-field">
+                <span>y</span>
+                <input id="u-y" type="number" value="0" min="-6" max="6" step="0.1"
+                  inputmode="decimal" aria-label="向量 u 的 y 分量">
+              </label>
+            </div>
+          </div>
+
+          <div class="probe-editor" aria-label="向量 v">
+            <div class="probe-head">
+              <span>向量 v</span>
+              <span class="probe-hint">拖动陶土色箭头</span>
+            </div>
+            <div class="probe-fields">
+              <label class="probe-field">
+                <span>x</span>
+                <input id="v-x" type="number" value="0" min="-6" max="6" step="0.1"
+                  inputmode="decimal" aria-label="向量 v 的 x 分量">
+              </label>
+              <label class="probe-field">
+                <span>y</span>
+                <input id="v-y" type="number" value="2" min="-6" max="6" step="0.1"
+                  inputmode="decimal" aria-label="向量 v 的 y 分量">
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="coefficient-editor" aria-label="线性组合系数">
+          <div class="coeff-row">
+            <span class="coeff-symbol">α</span>
+            <input id="alpha-range" class="coeff-range" type="range" min="-2" max="2" step="0.1" value="1" aria-label="系数 α">
+            <input id="alpha" class="coeff-number" type="number" min="-2" max="2" step="0.1" value="1" inputmode="decimal" aria-label="系数 α 的数值">
+          </div>
+          <div class="coeff-row">
+            <span class="coeff-symbol">β</span>
+            <input id="beta-range" class="coeff-range" type="range" min="-2" max="2" step="0.1" value="1" aria-label="系数 β">
+            <input id="beta" class="coeff-number" type="number" min="-2" max="2" step="0.1" value="1" inputmode="decimal" aria-label="系数 β 的数值">
+          </div>
+        </div>
+
+        <label class="toggle-row">
+          <input id="toggle-span" type="checkbox" checked>
+          <span class="toggle-track" aria-hidden="true"><span class="toggle-thumb"></span></span>
+          <span class="toggle-text">显示所有组合</span>
+        </label>
+
+        <div class="panel-section">
+          <p class="panel-label">预设</p>
+          <div class="preset-grid">
+            <button class="preset-btn" type="button" data-preset="orthogonal">正交</button>
+            <button class="preset-btn" type="button" data-preset="collinear">共线</button>
+            <button class="preset-btn" type="button" data-preset="opposite">反向</button>
+          </div>
+        </div>
+
+        <div class="challenge-card" id="challenge-card">
+          <div class="challenge-head">
+            <span>小挑战</span>
+            <strong id="challenge-state">进行中</strong>
+          </div>
+          <p>调整 α、β，让金色箭头落在目标点上。</p>
+          <div class="challenge-metric">
+            <span>目标距离</span>
+            <b id="challenge-distance">1.56</b>
+          </div>
+          <div class="challenge-meter" id="challenge-meter" role="progressbar"
+            aria-label="拼出目标点进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="challenge-meter-fill"></span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="explain-section" data-zone="lecture" aria-labelledby="explain-title">
+      <div class="section-heading">
+        <p class="eyebrow">WHY IT LOOKS LIKE THIS</p>
+        <h2 id="explain-title">相加、拉长，然后呢</h2>
+        <p>线性代数里最常见的两个动作，其实你已经在做了。</p>
+      </div>
+
+      <div class="explain-grid explain-grid-three">
+        <article class="explain-card">
+          <span class="explain-index">01</span>
+          <h3>相加：首尾相接</h3>
+          <p>把 v 的起点放到 u 的终点，从原点指向 v 终点的箭头，就是 u + v。</p>
+          <p class="formula">u + v = (u₁ + v₁, u₂ + v₂)</p>
+          <p>交换顺序结果不变：u + v = v + u。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">02</span>
+          <h3>数乘：只改长度</h3>
+          <p>α 乘上 u，方向不变；α 为负时箭头反向，α = 0 时回到原点。</p>
+          <p class="formula">αu = (αu₁, αu₂)</p>
+          <p>α 的绝对值越大，箭头越长。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">03</span>
+          <h3>线性组合：铺出一个空间</h3>
+          <p>让 α、β 取遍所有实数，αu + βv 的所有结果组成 u、v 张成的空间。</p>
+          <p class="formula">span(u, v) = {αu + βv}</p>
+          <p>u、v 不共线时，它是一整张平面；共线时，只剩一条线。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="quiz-section" data-zone="quiz">
+      <div class="quiz-card" aria-labelledby="quiz-title">
+        <div class="quiz-copy">
+          <p class="eyebrow">先猜后验</p>
+          <h2 id="quiz-title">两个不共线的箭头，所有线性组合填满什么？</h2>
+          <p>先想：如果两个方向不一样，α、β 能不能把你带到平面上的每一个点？</p>
+          <div class="quiz-options" role="group" aria-label="选择答案">
+            <button class="quiz-option" type="button" data-quiz-vectors="point">一个点</button>
+            <button class="quiz-option" type="button" data-quiz-vectors="line">一条线</button>
+            <button class="quiz-option" type="button" data-quiz-vectors="plane">整个平面</button>
+          </div>
+          <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></p>
+          <button class="btn btn-primary" id="btn-quiz-apply" type="button">用两个方向验证 <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="quiz-visual" aria-hidden="true">
+          <canvas id="quiz-canvas" width="360" height="260"></canvas>
+          <span class="quiz-mini-label" id="quiz-mini-label">两个方向 · 一张平面</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-strip" data-zone="next" aria-labelledby="next-title">
+      <div>
+        <p class="eyebrow">NEXT</p>
+        <h2 id="next-title">下一站：矩阵变换</h2>
+        <p>现在你知道两个箭头能拼出什么。下一步，让一个矩阵把这两个箭头一起搬走。</p>
+      </div>
+      <a class="btn btn-primary" href="01-transform.html">进入矩阵变换 <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>从箭头开始。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../index.html">入口</a>
+        <a href="00-vectors.html">向量</a>
+        <a href="01-transform.html">矩阵变换</a>
+        <a href="02-determinant.html">行列式</a>
+        <a href="03-rank.html">秩与零空间</a>
+        <a href="04-eigenvector.html">特征向量</a>
+        <a href="05-solve.html">线性方程组</a>
+        <a href="library.html">全部展厅</a>
+        <a href="../RULES.md">规则</a>
+        <a href="../REFERENCES.md">参考</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+        项目内容为原创，参考来源仅以链接与出处形式标注。
+      </p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">这个页面需要 JavaScript 才能绘制交互。请启用 JavaScript 后刷新。</div>
+  </noscript>
+
+  <script src="../js/lib/math.js" defer></script>
+  <script src="../js/lib/canvas-utils.js" defer></script>
+  <script src="../js/lib/narration.js" defer></script>
+  <script src="../js/demos/vectors.js" defer></script>
+</body>
+</html>

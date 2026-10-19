@@ -354,6 +354,71 @@
   display: none;
 }
 
+.vector-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.vector-pair .probe-editor {
+  margin-top: 0;
+}
+
+.coefficient-editor {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--radius-md);
+  background: var(--bg-soft);
+}
+
+.coeff-row {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) 54px;
+  align-items: center;
+  gap: 9px;
+}
+
+.coeff-symbol {
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: 1rem;
+}
+
+.coeff-range {
+  width: 100%;
+  min-width: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.coeff-number {
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  color: var(--ink);
+  background: var(--surface);
+  font: inherit;
+  font-size: 0.7rem;
+  text-align: right;
+}
+
+.coeff-number:focus {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(116, 134, 118, 0.14);
+}
+
+@media (max-width: 560px) {
+  .vector-pair {
+    grid-template-columns: 1fr;
+  }
+}
+
 .view-switch {
   display: grid;
   grid-template-columns: 1fr 1fr;

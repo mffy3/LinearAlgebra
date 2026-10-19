@@ -65,6 +65,7 @@ index.html
 | 入口 3D | `js/lib/entry-scene.js` | 透视投影、平面、指针旋转 | 处理水平选择、跳转 |
 | 入口路线 | `js/lib/entry-flow.js` | 三个水平、路线、CTA | 画 3D |
 | 应用控制 | `js/demos/physics-force.js` | 锚点、重力、张力 | 复制 `solve2` 公式 |
+| 零基础课 | `js/demos/vectors.js` | 相加、数乘、αu+βv、目标挑战 | 引入矩阵（第 0 课只讲向量） |
 | 控制器 | `js/demos/*.js` | 读输入、算状态、调绘图、更新读数 | 复制数学公式、写大段 CSS |
 | 样式 | `css/main.css`、`css/bento.css`、`css/canvas.css` | 颜色、排版、布局 | 改数学结论 |
 | 页面 | `pages/*.html` | 区块结构、静态文案、脚本顺序 | 内联大段 JS |
