@@ -24,6 +24,7 @@
   document.body.dataset.level = level;
   var data = P.levels[level];
   var key = P.pageKey(window.location.pathname);
+  if (key !== 'physics') document.body.classList.add('level-core');
   var index = P.indexOf(level, key);
   var inPath = index >= 0;
   var total = data.pages.length;
@@ -94,6 +95,23 @@
   body.textContent = guide.body;
   guideEl.appendChild(body);
 
+  var checklist = P.checklists[level];
+  if (checklist) {
+    var listWrap = document.createElement('div');
+    listWrap.className = 'level-checklist';
+    var listLabel = document.createElement('span');
+    listLabel.className = 'level-checklist-label';
+    listLabel.textContent = '这一站怎么学';
+    listWrap.appendChild(listLabel);
+    checklist.forEach(function (item) {
+      var chip = document.createElement('span');
+      chip.className = 'level-check-item';
+      chip.textContent = item;
+      listWrap.appendChild(chip);
+    });
+    guideEl.appendChild(listWrap);
+  }
+
   var actions = document.createElement('div');
   actions.className = 'level-guide-actions';
 
@@ -123,6 +141,21 @@
   }
 
   if (actions.childNodes.length) guideEl.appendChild(actions);
+
+  var quizEyebrow = document.querySelector('.quiz-section .eyebrow');
+  if (quizEyebrow) {
+    quizEyebrow.textContent = level === 'zero' ? '基础检查' : (level === 'some' ? '方法检查' : '应用检查');
+  }
+
+  if (level === 'zero') {
+    var quizOptions = document.querySelector('.quiz-options');
+    if (quizOptions && quizOptions.parentNode) {
+      var hint = document.createElement('p');
+      hint.className = 'level-quiz-hint';
+      hint.textContent = '提示：先看画布，再选；不确定就回到上面的图。';
+      quizOptions.parentNode.insertBefore(hint, quizOptions);
+    }
+  }
 
   var intro = document.querySelector('.lab-intro');
   if (intro && intro.parentNode) {

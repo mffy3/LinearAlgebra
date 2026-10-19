@@ -86,10 +86,50 @@
   line-height: 1.6;
 }
 
+.level-checklist {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  grid-column: 1 / -1;
+  margin-top: 2px;
+}
+
+.level-checklist-label {
+  margin-right: 2px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.03em;
+}
+
+.level-check-item {
+  padding: 2px 8px;
+  border: 1px solid rgba(46, 49, 44, 0.12);
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(250, 246, 238, 0.45);
+  font-size: 0.58rem;
+}
+
 .level-guide-actions {
   grid-column: 2;
   grid-row: 2 / span 2;
   justify-self: end;
+}
+
+.level-quiz-hint {
+  margin-top: 10px;
+  padding: 7px 10px;
+  border-left: 2px solid var(--accent);
+  color: var(--muted);
+  background: rgba(227, 232, 221, 0.5);
+  font-size: 0.66rem;
+  line-height: 1.55;
+}
+
+body[data-level="learned"].level-core .quiz-section {
+  display: none;
 }
 
 .level-next {

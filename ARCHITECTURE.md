@@ -64,8 +64,8 @@ index.html
 | 叙述 | `js/lib/narration.js` | 根据状态返回 `{text, prompt}` | 改状态、画图 |
 | 入口 3D | `js/lib/entry-scene.js` | 透视投影、平面、指针旋转 | 处理水平选择、跳转 |
 | 入口路线 | `js/lib/entry-flow.js` | 三个水平、路线、CTA | 画 3D |
-| 路线配置 | `js/lib/paths.js` | 每条路线的页面顺序、每站引导 | 改 3D 或 DOM |
-| 路线提示 | `js/lib/level-ui.js` | 读取水平，在页面顶部插入“第 N 站” | 改页面教学内容 |
+| 路线配置 | `js/lib/paths.js` | 每条路线的页面顺序、每站引导、学习清单 | 改 3D 或 DOM |
+| 路线提示 | `js/lib/level-ui.js` | 读取水平，插入“第 N 站”、清单、quiz 提示；进阶路线隐藏基础 quiz | 改页面数学内容 |
 | 应用控制 | `js/demos/physics-force.js` | 锚点、重力、张力 | 复制 `solve2` 公式 |
 | 零基础课 | `js/demos/vectors.js` | 相加、数乘、αu+βv、目标挑战 | 引入矩阵（第 0 课只讲向量） |
 | 控制器 | `js/demos/*.js` | 读输入、算状态、调绘图、更新读数 | 复制数学公式、写大段 CSS |

@@ -43,6 +43,24 @@
     'social': '社会科学'
   };
 
+  var checklists = {
+    zero: [
+      '先动手，再看读数',
+      '一次只改一个量',
+      '看不懂就回到画布'
+    ],
+    some: [
+      '先写公式，再代数字',
+      '盯住符号和退化情况',
+      '把结论和画面对上'
+    ],
+    learned: [
+      '跳过定义，直接看结构',
+      '用已经会的工具解',
+      '把这一页接到应用上'
+    ]
+  };
+
   // 每一页、每一个水平的引导文案。没有配置的页使用 fallback。
   var guides = {
     '00-vectors': {
@@ -169,6 +187,7 @@
     levels: levels,
     labels: labels,
     guides: guides,
+    checklists: checklists,
     pageKey: pageKey,
     indexOf: indexOf,
     nextKey: nextKey
