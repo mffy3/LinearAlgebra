@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://mffy3.github.io/LinearAlgebra/">
+    <strong><span class="emoji emoji1f449">👉</span> 点击这里在线体验软件</strong>
+  </a>
+</p>
+
 # Linear Algebra · 线性代数可视化实验室
 
 一个纯前端、零依赖的线性代数可视化实验室。先选一个起点，再从平面和空间里理解矩阵。
