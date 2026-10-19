@@ -1,0 +1,44 @@
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 依赖与构建产物
+node_modules/
+dist/
+build/
+.cache/
+.vite/
+coverage/
+
+# 环境变量与密钥
+.env
+.env.*
+*.local
+*.pem
+*.key
+*.p12
+*.pfx
+
+# 日志与临时文件
+*.log
+*.tmp
+*.bak
+*.orig
+
+# 内部资料与版权材料：不进入版本库
+*.docx
+线性代数学习工具_*.md
+
+# 本地视觉自检产物与无头浏览器配置
+screenshots/
+.edge-profile*/
+.edge-cdp-profile/
+
+# 系统缩略图缓存
+ehthumbs.db
+[Tt]humbs.db
