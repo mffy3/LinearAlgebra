@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="物理应用：刚体旋转。用 R(θ) 转动平面，验证长度、夹角和定向不变；对比普通矩阵把圆压成椭圆。">
+  <meta name="theme-color" content="#efeae1">
+  <title>刚体旋转 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/canvas.css">
+  <link rel="stylesheet" href="../../css/applications.css">
+</head>
+<body class="lab-page application-page application-physics">
+  <a class="skip-link" href="#lab-main">跳到主要内容</a>
+
+  <header class="site-header lab-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Linear Algebra 入口">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../../index.html">入口</a>
+        <a href="physics.html">物理</a>
+        <a href="physics-rotation.html" aria-current="page">刚体旋转</a>
+        <a href="physics-quantum.html">量子态</a>
+        <a href="../../ROADMAP.md">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="lab-main" class="lab-main">
+    <section class="lab-intro application-intro" data-zone="intro">
+      <div class="lab-intro-copy">
+        <p class="eyebrow">APPLICATION 02 · 物理 · 刚体旋转</p>
+        <div class="application-title-row">
+          <span class="application-badge">PHYSICS</span>
+          <h1>旋转，<span class="gradient-text">不改长度</span></h1>
+        </div>
+        <p class="lede">
+          刚体转动时，点与点的距离不变，角度也不变。把这件事写成矩阵，就是正交矩阵：
+          R(θ) 只改变方向。换成普通矩阵，圆马上就会被压成椭圆。
+        </p>
+        <div class="intro-pills" aria-label="本章关键词">
+          <span class="pill">正交矩阵</span>
+          <span class="pill">保长</span>
+          <span class="pill">det = 1</span>
+          <span class="pill pill-accent">可拖拽</span>
+        </div>
+      </div>
+
+      <aside class="application-formula" aria-label="旋转矩阵">
+        <p class="formula-label">旋转矩阵</p>
+        <p class="formula-main">R(θ) = [[cosθ, −sinθ], [sinθ, cosθ]]</p>
+        <p class="formula-sub">正交：<b>RᵀR = I</b>；保长、保角；<b>det R = 1</b>，定向不变。</p>
+      </aside>
+    </section>
+
+    <div class="workspace" data-zone="workspace">
+      <section class="stage-card" id="stage-card" data-zone="canvas" aria-labelledby="stage-title">
+        <div class="stage-head">
+          <div>
+            <p class="stage-kicker">LIVE PHYSICS</p>
+            <h2 id="stage-title">转动一个刚体</h2>
+          </div>
+          <div class="stage-actions">
+            <button class="btn btn-small btn-ghost" id="btn-reset" type="button">重置</button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="rotation-canvas" class="transform-canvas" width="900" height="620" tabindex="0" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown"
+            aria-label="刚体旋转可视化。单位圆在正交旋转下保持为圆；普通矩阵会把它压成椭圆。">
+            你的浏览器不支持 Canvas，请换一个现代浏览器。
+          </canvas>
+
+          <div class="det-chip solve-chip" id="rotation-chip">
+            <span>变换</span>
+            <strong id="canvas-status">正交 · 保长</strong>
+          </div>
+
+          <p class="canvas-hint" id="rotation-hint">拖动手柄或调 θ；键盘方向键也可</p>
+        </div>
+
+        <div class="professor-strip" aria-live="polite">
+          <span class="professor-seal" aria-hidden="true">λ</span>
+          <div>
+            <p id="professor-strip-text">R(θ) 把每个点转过同一个角度。圆的半径没有变，所以它还是圆。</p>
+            <p class="professor-strip-prompt" id="professor-strip-prompt">先转 90°，看 e₁ 是不是正好转到 y 轴。</p>
+          </div>
+        </div>
+
+        <div class="stage-foot">
+          <div class="foot-item">
+            <span class="foot-label">θ</span>
+            <b id="readout-theta">30.0°</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">det R</span>
+            <b id="readout-det">1.00</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">|R e₁|</span>
+            <b id="readout-length">1.00</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">正交误差</span>
+            <b id="readout-ortho">0.00</b>
+          </div>
+        </div>
+      </section>
+
+      <aside class="control-panel" data-zone="controls" aria-label="旋转角与变换模式">
+        <div class="panel-head">
+          <h2>旋转与拉伸</h2>
+          <span class="pill pill-soft">2 × 2</span>
+        </div>
+
+        <div class="professor-note" aria-live="polite">
+          <div class="professor-head">
+            <span class="professor-seal" aria-hidden="true">λ</span>
+            <span>边做边看</span>
+          </div>
+          <p id="professor-text">R(θ) 把每个点转过同一个角度。圆的半径没有变，所以它还是圆。</p>
+          <p class="professor-prompt" id="professor-prompt">先转 90°，看 e₁ 是不是正好转到 y 轴。</p>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>旋转角 θ</span>
+            <span class="probe-hint">拖动圆周手柄也可</span>
+          </div>
+          <div class="weight-row">
+            <input id="angle-range" class="weight-range" type="range" min="0" max="360" step="1" value="30"
+              aria-label="旋转角">
+            <label class="weight-number">
+              <input id="angle" type="number" min="0" max="360" step="1" value="30" inputmode="decimal"
+                aria-label="旋转角度数">
+              <span>°</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="view-switch" role="group" aria-label="切换正交旋转与普通矩阵">
+          <button class="view-btn is-active" type="button" data-mode="orthogonal" aria-pressed="true">正交旋转</button>
+          <button class="view-btn" type="button" data-mode="general" aria-pressed="false">普通矩阵</button>
+        </div>
+
+        <label class="toggle-row">
+          <input id="toggle-original" type="checkbox" checked>
+          <span class="toggle-track" aria-hidden="true"><span class="toggle-thumb"></span></span>
+          <span class="toggle-text">显示变换前</span>
+        </label>
+
+        <div class="panel-section">
+          <p class="panel-label">预设</p>
+          <div class="preset-grid">
+            <button class="preset-btn" type="button" data-preset="30">30°</button>
+            <button class="preset-btn" type="button" data-preset="90">90°</button>
+            <button class="preset-btn" type="button" data-preset="180">180°</button>
+            <button class="preset-btn" type="button" data-preset="general">普通矩阵</button>
+          </div>
+        </div>
+
+        <div class="challenge-card" id="challenge-card">
+          <div class="challenge-head">
+            <span>小挑战</span>
+            <strong id="challenge-state">进行中</strong>
+          </div>
+          <p>把 e₁ 正好转到 y 轴：旋转角落到 90°。</p>
+          <div class="challenge-metric">
+            <span>与 90° 的差</span>
+            <b id="challenge-distance">60.0°</b>
+          </div>
+          <div class="challenge-meter" id="challenge-meter" role="progressbar"
+            aria-label="转到 90 度挑战进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="challenge-meter-fill"></span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="explain-section" data-zone="lecture" aria-labelledby="explain-title">
+      <div class="section-heading">
+        <p class="eyebrow">WHY IT LOOKS LIKE THIS</p>
+        <h2 id="explain-title">旋转为什么是正交矩阵</h2>
+        <p>它只改变方向，不改变长度和夹角；这三件事都能用一个式子检查。</p>
+      </div>
+
+      <div class="explain-grid explain-grid-three">
+        <article class="explain-card">
+          <span class="explain-index">01</span>
+          <h3>保长：|Rv| = |v|</h3>
+          <p>把圆周上的每个点都转同一个角，半径不变，所以圆还是圆。</p>
+          <p class="formula">|R(θ)v| = |v|</p>
+          <p>这不是“差不多”；对任意 v 都精确成立。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">02</span>
+          <h3>保角：内积不变</h3>
+          <p>旋转不改变两个向量之间的夹角，所以点积也不变。</p>
+          <p class="formula">(Ru) · (Rv) = u · v</p>
+          <p>等价写法：RᵀR = I，R 的列是标准正交基。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">03</span>
+          <h3>定向：det R = 1</h3>
+          <p>旋转不会把平面翻面；面积不变，定向也不变。</p>
+          <p class="formula">det R = cos²θ + sin²θ = 1</p>
+          <p>反射也有保长，但 det = −1；它把左右手互换。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="quiz-section" data-zone="quiz">
+      <div class="quiz-card" aria-labelledby="quiz-title">
+        <div class="quiz-copy">
+          <p class="eyebrow">先猜后验</p>
+          <h2 id="quiz-title">旋转矩阵的行列式是多少？</h2>
+          <p>先想：旋转会改变面积吗？会把平面翻面吗？</p>
+          <div class="quiz-options" role="group" aria-label="选择答案">
+            <button class="quiz-option" type="button" data-quiz-rotation="0">0</button>
+            <button class="quiz-option" type="button" data-quiz-rotation="1">1</button>
+            <button class="quiz-option" type="button" data-quiz-rotation="-1">−1</button>
+          </div>
+          <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></p>
+          <button class="btn btn-primary" id="btn-quiz-apply" type="button">转到 90° 验证 <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="quiz-visual" aria-hidden="true">
+          <canvas id="quiz-canvas" width="360" height="260"></canvas>
+          <span class="quiz-mini-label" id="quiz-mini-label">R(θ) · 圆还是圆</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-strip" data-zone="next" aria-labelledby="next-title">
+      <div>
+        <p class="eyebrow">NEXT APPLICATION</p>
+        <h2 id="next-title">下一站：量子态，两种可能</h2>
+        <p>一个复向量 <b>α|0⟩ + β|1⟩</b>，测量时按 <b>|α|²、|β|²</b> 选一个结果。</p>
+      </div>
+      <a class="btn btn-primary" href="physics-quantum.html">进入量子态 <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>从箭头开始。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../../index.html">入口</a>
+        <a href="physics.html">物理</a>
+        <a href="physics-rotation.html">刚体旋转</a>
+        <a href="../../ROADMAP.md">路线图</a>
+        <a href="../../RULES.md">规则</a>
+        <a href="../../MANUAL.md">手册</a>
+        <a href="../../REFERENCES.md">参考</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+        项目内容为原创，参考来源仅以链接与出处形式标注。
+      </p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">这个页面需要 JavaScript 才能绘制交互。请启用 JavaScript 后刷新。</div>
+  </noscript>
+
+  <script src="../../js/lib/math.js" defer></script>
+  <script src="../../js/lib/canvas-utils.js" defer></script>
+  <script src="../../js/lib/paths.js" defer></script>
+  <script src="../../js/lib/level-ui.js" defer></script>
+  <script src="../../js/lib/narration.js" defer></script>
+  <script src="../../js/demos/physics-rotation.js" defer></script>
+</body>
+</html>

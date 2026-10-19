@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="计算机硬件应用：GF(2) 校验矩阵与 Hamming(7,4) 纠错码。用 syndrome 定位单比特错误。">
+  <meta name="theme-color" content="#efeae1">
+  <title>纠错码 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/canvas.css">
+  <link rel="stylesheet" href="../../css/applications.css">
+</head>
+<body class="lab-page application-page application-hardware">
+  <a class="skip-link" href="#lab-main">跳到主要内容</a>
+
+  <header class="site-header lab-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Linear Algebra 入口">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../../index.html">入口</a>
+        <a href="hardware-audio.html">音频</a>
+        <a href="hardware-ecc.html" aria-current="page">纠错</a>
+        <a href="../../ROADMAP.md">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="lab-main" class="lab-main">
+    <section class="lab-intro application-intro" data-zone="intro">
+      <div class="lab-intro-copy">
+        <p class="eyebrow">APPLICATION 09 · 计算机硬件 · 纠错码</p>
+        <div class="application-title-row">
+          <span class="application-badge">HARDWARE</span>
+          <h1>七位里，<span class="gradient-text">错了一位</span></h1>
+        </div>
+        <p class="lede">
+          Hamming(7,4) 把 4 位信息编成 7 位码字。传输中翻转 1 位后，
+          校验矩阵 H 会给出一个 3 位 syndrome；它的二进制值就是出错位。
+        </p>
+        <div class="intro-pills" aria-label="本章关键词">
+          <span class="pill">GF(2)</span>
+          <span class="pill">校验矩阵</span>
+          <span class="pill">syndrome</span>
+          <span class="pill pill-accent">可点击</span>
+        </div>
+      </div>
+
+      <aside class="application-formula" aria-label="纠错公式">
+        <p class="formula-label">校验</p>
+        <p class="formula-main">s = H r</p>
+        <p class="formula-sub">所有运算在 GF(2) 上（模 2）。无错时 <b>H r = 0</b>；单比特错误时，syndrome 等于 H 的对应列。</p>
+      </aside>
+    </section>
+
+    <div class="workspace" data-zone="workspace">
+      <section class="stage-card" id="stage-card" data-zone="canvas" aria-labelledby="stage-title">
+        <div class="stage-head">
+          <div>
+            <p class="stage-kicker">LIVE HARDWARE</p>
+            <h2 id="stage-title">码字与 syndrome</h2>
+          </div>
+          <div class="stage-actions">
+            <button class="btn btn-small btn-ghost" id="btn-reset" type="button">重置</button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="ecc-canvas" class="transform-canvas" width="900" height="620" tabindex="0" aria-keyshortcuts="ArrowLeft ArrowRight Space Enter"
+            aria-label="Hamming(7,4) 码字位、校验矩阵 syndrome 和纠错结果。">
+            你的浏览器不支持 Canvas，请换一个现代浏览器。
+          </canvas>
+
+          <div class="det-chip solve-chip" id="ecc-chip">
+            <span>纠错</span>
+            <strong id="canvas-status">GF(2) · 单比特</strong>
+          </div>
+
+          <p class="canvas-hint" id="ecc-hint">点任意码字位翻转；或点“注入单比特错误”</p>
+        </div>
+
+        <div class="professor-strip" aria-live="polite">
+          <span class="professor-seal" aria-hidden="true">λ</span>
+          <div>
+            <p id="professor-strip-text">7 位码字满足 Hc = 0；收到 r 后，先算 syndrome。</p>
+            <p class="professor-strip-prompt" id="professor-strip-prompt">点一位让它翻转，看看 syndrome 变成什么。</p>
+          </div>
+        </div>
+
+        <div class="stage-foot">
+          <div class="foot-item">
+            <span class="foot-label">syndrome</span>
+            <b id="readout-syndrome">000</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">出错位</span>
+            <b id="readout-error">—</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">状态</span>
+            <b id="readout-status">无错误</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">距离</span>
+            <b id="readout-distance">0</b>
+          </div>
+        </div>
+      </section>
+
+      <aside class="control-panel" data-zone="controls" aria-label="信息位与纠错操作">
+        <div class="panel-head">
+          <h2>4 位信息</h2>
+          <span class="pill pill-soft">7, 4</span>
+        </div>
+
+        <div class="professor-note" aria-live="polite">
+          <div class="professor-head">
+            <span class="professor-seal" aria-hidden="true">λ</span>
+            <span>边做边看</span>
+          </div>
+          <p id="professor-text">7 位码字满足 Hc = 0；收到 r 后，先算 syndrome。</p>
+          <p id="professor-prompt" class="professor-prompt">点一位让它翻转，看看 syndrome 变成什么。</p>
+        </div>
+
+        <div class="message-bits" id="message-bits" aria-label="4 位信息">
+          <button class="message-bit" type="button" data-msg-bit="0">d₁ <b>1</b></button>
+          <button class="message-bit" type="button" data-msg-bit="1">d₂ <b>0</b></button>
+          <button class="message-bit" type="button" data-msg-bit="2">d₃ <b>1</b></button>
+          <button class="message-bit" type="button" data-msg-bit="3">d₄ <b>1</b></button>
+        </div>
+
+        <div class="preset-grid">
+          <button class="preset-btn" type="button" data-msg-preset="0000">0000</button>
+          <button class="preset-btn" type="button" data-msg-preset="1011">1011</button>
+          <button class="preset-btn" type="button" data-msg-preset="1111">1111</button>
+          <button class="preset-btn" type="button" data-msg-preset="0101">0101</button>
+        </div>
+
+        <div class="ecc-actions">
+          <button class="btn btn-small btn-ghost" id="btn-inject" type="button">注入单比特错误</button>
+          <button class="btn btn-small btn-primary" id="btn-correct" type="button">纠正</button>
+        </div>
+
+        <div class="matrix-readout" aria-label="校验矩阵 H">
+          <div class="matrix-readout-row">
+            <span>H</span>
+            <b>[[0,0,0,1,1,1,1],<br>[0,1,1,0,0,1,1],<br>[1,0,1,0,1,0,1]]</b>
+          </div>
+          <div class="matrix-readout-row">
+            <span>列含义</span>
+            <b>1…7 的 3 位二进制</b>
+          </div>
+        </div>
+
+        <div class="challenge-card" id="challenge-card">
+          <div class="challenge-head">
+            <span>小挑战</span>
+            <strong id="challenge-state">进行中</strong>
+          </div>
+          <p>注入 1 位错误，再用 syndrome 把它纠正回来。</p>
+          <div class="challenge-metric">
+            <span>纠错结果</span>
+            <b id="challenge-distance">未开始</b>
+          </div>
+          <div class="challenge-meter" id="challenge-meter" role="progressbar"
+            aria-label="单比特纠错挑战进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="challenge-meter-fill"></span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="explain-section" data-zone="lecture" aria-labelledby="explain-title">
+      <div class="section-heading">
+        <p class="eyebrow">WHY IT LOOKS LIKE THIS</p>
+        <h2 id="explain-title">syndrome 是错误地址</h2>
+        <p>H 的每一列是一个 3 位错误签名；单比特错误只会命中其中一列。</p>
+      </div>
+
+      <div class="explain-grid explain-grid-three">
+        <article class="explain-card">
+          <span class="explain-index">01</span>
+          <h3>GF(2)：只有 0 和 1</h3>
+          <p>加法和减法都是异或；1 + 1 = 0。校验矩阵的乘法也在模 2 下进行。</p>
+          <p class="formula">s = H r mod 2</p>
+          <p>这不是近似，是精确的有限域运算。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">02</span>
+          <h3>H 的列就是错误签名</h3>
+          <p>如果第 k 位翻转，syndrome 就等于 H 的第 k 列。</p>
+          <p class="formula">H eₖ = column k</p>
+          <p>7 列分别是 1…7 的二进制，所以 syndrome 直接给出位置。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">03</span>
+          <h3>单比特纠正，多比特会失效</h3>
+          <p>Hamming(7,4) 保证纠正任意 1 位错误；两个错误可能被误判成第三位。</p>
+          <p class="formula">d_min = 3</p>
+          <p>最小距离 3 才能单纠错；要纠正更多错误，需要更长、更冗余的码。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="quiz-section" data-zone="quiz">
+      <div class="quiz-card" aria-labelledby="quiz-title">
+        <div class="quiz-copy">
+          <p class="eyebrow">先猜后验</p>
+          <h2 id="quiz-title">syndrome 告诉你什么？</h2>
+          <p>先想：H 的每一列都是不同的 3 位二进制。</p>
+          <div class="quiz-options" role="group" aria-label="选择答案">
+            <button class="quiz-option" type="button" data-quiz-ecc="a">原始信息是什么</button>
+            <button class="quiz-option" type="button" data-quiz-ecc="b">哪一位出错了</button>
+            <button class="quiz-option" type="button" data-quiz-ecc="c">传输速度是多少</button>
+          </div>
+          <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></p>
+          <button class="btn btn-primary" id="btn-quiz-apply" type="button">注入错误验证 <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="quiz-visual" aria-hidden="true">
+          <canvas id="quiz-canvas" width="360" height="260"></canvas>
+          <span class="quiz-mini-label" id="quiz-mini-label">s = H r → 错误位</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-strip" data-zone="next" aria-labelledby="next-title">
+      <div>
+        <p class="eyebrow">NEXT</p>
+        <h2 id="next-title">下一站：把所有应用收进一张地图</h2>
+        <p>物理、经济、软件、硬件共用同一套线性映射；接下来做跨域索引与发布收尾。</p>
+      </div>
+      <a class="btn btn-primary" href="../../ROADMAP.md">查看路线图 <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>从箭头开始。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../../index.html">入口</a>
+        <a href="hardware-audio.html">音频</a>
+        <a href="hardware-ecc.html">纠错</a>
+        <a href="../../ROADMAP.md">路线图</a>
+        <a href="../../RULES.md">规则</a>
+        <a href="../../MANUAL.md">手册</a>
+        <a href="../../REFERENCES.md">参考</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+        项目内容为原创，参考来源仅以链接与出处形式标注。
+      </p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">这个页面需要 JavaScript 才能绘制交互。请启用 JavaScript 后刷新。</div>
+  </noscript>
+
+  <script src="../../js/lib/math.js" defer></script>
+  <script src="../../js/lib/canvas-utils.js" defer></script>
+  <script src="../../js/lib/paths.js" defer></script>
+  <script src="../../js/lib/level-ui.js" defer></script>
+  <script src="../../js/lib/narration.js" defer></script>
+  <script src="../../js/demos/hardware-ecc.js" defer></script>
+</body>
+</html>

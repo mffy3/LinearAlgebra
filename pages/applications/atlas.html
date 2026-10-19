@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Linear Algebra 应用地图：物理、经济、软件、硬件中的线性代数应用索引。">
+  <meta name="theme-color" content="#efeae1">
+  <title>应用地图 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/atlas.css">
+</head>
+<body class="home-page atlas-page">
+  <a class="skip-link" href="#atlas-main">跳到主要内容</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Linear Algebra 入口">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../../index.html">入口</a>
+        <a href="../library.html">全部展厅</a>
+        <a href="atlas.html" aria-current="page">应用地图</a>
+        <a href="../../ROADMAP.md">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="atlas-main" class="atlas-main">
+    <section class="atlas-hero" data-zone="atlas">
+      <div>
+        <p class="eyebrow">P6 · 跨域索引</p>
+        <h1>一张地图，<br><span class="gradient-text">九个入口</span></h1>
+        <p class="lede">
+          物理的力、经济的投入产出、图像的卷积、硬件的纠错，
+          背后都在做同一件事：把一组数按线性规则重新组合。选一个入口，继续看它落在哪个矩阵上。
+        </p>
+      </div>
+
+      <aside class="atlas-count-card" aria-label="应用数量">
+        <strong id="atlas-count">9</strong>
+        <span>个可交互应用 · 4 个领域</span>
+      </aside>
+    </section>
+
+    <div class="atlas-filters" role="group" aria-label="按领域筛选应用">
+      <button class="atlas-filter" type="button" data-domain="all" aria-pressed="true">全部</button>
+      <button class="atlas-filter" type="button" data-domain="physics" aria-pressed="false">物理</button>
+      <button class="atlas-filter" type="button" data-domain="economics" aria-pressed="false">经济</button>
+      <button class="atlas-filter" type="button" data-domain="software" aria-pressed="false">软件</button>
+      <button class="atlas-filter" type="button" data-domain="hardware" aria-pressed="false">硬件</button>
+    </div>
+
+    <p class="atlas-count" id="atlas-filter-count" aria-live="polite">显示全部 9 个应用</p>
+
+    <section class="atlas-grid" aria-label="应用列表">
+      <a class="atlas-card" href="physics.html" data-domain="physics" aria-label="物理：受力分解">
+        <div class="atlas-card-top">
+          <span class="atlas-domain">PHYSICS</span>
+          <span class="atlas-index">01</span>
+        </div>
+        <h2>受力分解</h2>
+        <p>两根绳子挂住重物；把张力写成方程组，观察负张力与松弛。</p>
+        <span class="atlas-formula">T₁u + T₂v = −W</span>
+        <div class="atlas-concepts"><span>逆矩阵</span><span>方程组</span></div>
+      </a>
+
+      <a class="atlas-card" href="physics-rotation.html" data-domain="physics" aria-label="物理：刚体旋转">
+        <div class="atlas-card-top">
+          <span class="atlas-domain">PHYSICS</span>
+          <span class="atlas-index">02</span>
+        </div>
+        <h2>刚体旋转</h2>
+        <p>R(θ) 只转方向，不改长度；对比普通矩阵把圆压成椭圆。</p>
+        <span class="atlas-formula">RᵀR = I</span>
+        <div class="atlas-concepts"><span>正交矩阵</span><span>保长</span></div>
+      </a>
+
+      <a class="atlas-card" href="physics-quantum.html" data-domain="physics" aria-label="物理：量子态叠加">
+        <div class="atlas-card-top">
+          <span class="atlas-domain">PHYSICS</span>
+          <span class="atlas-index">03</span>
+        </div>
+        <h2>量子态叠加</h2>
+        <p>两个复振幅决定测量概率；相位 φ 不改变概率，却改变干涉。</p>
+        <span class="atlas-formula">|α|² + |β|² = 1</span>
+        <div class="atlas-concepts"><span>复向量</span><span>归一化</span></div>
+      </a>
+
+      <a class="atlas-card" href="economics-leontief.html" data-domain="economics" aria-label="经济：列昂惕夫投入产出">
+        <div class="atlas-card-top">
+          <span class="atlas-domain">ECONOMICS</span>
+          <span class="atlas-index">04</span>
+        </div>
+        <h2>投入产出</h2>
+        <p>两个行业互相供货；解 (I − A)x = d，看间接需求怎样被算进去。</p>
+        <span class="atlas-formula">x = (I − A)⁻¹d</span>
+        <div class="atlas-concepts"><span>逆矩阵</span><span>线性方程</span></div>
+      </a>
+
+      <a class="atlas-card" href="economics-portfolio.html" data-domain="economics" aria-label="经济：投资组合">
+        <div class="atlas-card-top">
+          <span class="atlas-domain">ECONOMICS</span>
+          <span class="atlas-index">05</span>
+        </div>
+        <h2>投资组合</h2>
+        <p>权重与相关性决定风险；拖动有效前沿上的点，看协方差椭圆。</p>
+        <span class="atlas-formula">σ² = wᵀΣw</span>
+        <div class="atlas-concepts"><span>协方差</span><span>特征值</span></div>
+      </a>
+
+      <a class="atlas-card" href="software-convolution.html" data-domain="software" aria-label="软件：图像卷积">
+        <div class="atlas-card-top">
+          <span class="atlas-domain">SOFTWARE</span>
+          <span class="atlas-index">06</span>
+        </div>
+        <h2>图像卷积</h2>
+        <p>拖动 3×3 窗口；每个输出像素都是九个输入像素的加权和。</p>
+        <span class="atlas-formula">y = Σ kᵢⱼxᵢⱼ</span>
+        <div class="atlas-concepts"><span>卷积</span><span>局部线性</span></div>
+      </a>
+
+      <a class="atlas-card" href="software-pca.html" data-domain="software" aria-label="软件：PCA 降维">
+        <div class="atlas-card-top">
+          <span class="atlas-domain">SOFTWARE</span>
+          <span class="atlas-index">07</span>
+        </div>
+        <h2>PCA 降维</h2>
+        <p>把点云压到最大方差方向；拖动主轴，看一条线保留多少信息。</p>
+        <span class="atlas-formula">Σv = λv</span>
+        <div class="atlas-concepts"><span>特征向量</span><span>投影</span></div>
+      </a>
+
+      <a class="atlas-card" href="hardware-audio.html" data-domain="hardware" aria-label="硬件：音频 FIR">
+        <div class="atlas-card-top">
+          <span class="atlas-domain">HARDWARE</span>
+          <span class="atlas-index">08</span>
+        </div>
+        <h2>音频 FIR</h2>
+        <p>5 个 tap 在时间轴上滑动；拖动播放头，比较输入和输出波形。</p>
+        <span class="atlas-formula">y[n] = Σ h[k]x[n−k]</span>
+        <div class="atlas-concepts"><span>时间卷积</span><span>滤波</span></div>
+      </a>
+
+      <a class="atlas-card" href="hardware-ecc.html" data-domain="hardware" aria-label="硬件：Hamming 纠错">
+        <div class="atlas-card-top">
+          <span class="atlas-domain">HARDWARE</span>
+          <span class="atlas-index">09</span>
+        </div>
+        <h2>Hamming 纠错</h2>
+        <p>翻转一位码字，syndrome 会直接给出错误位置；再把它纠正。</p>
+        <span class="atlas-formula">s = H r (mod 2)</span>
+        <div class="atlas-concepts"><span>GF(2)</span><span>校验矩阵</span></div>
+      </a>
+    </section>
+
+    <div class="atlas-empty" id="atlas-empty">这个领域暂时没有应用。</div>
+
+    <section class="atlas-concepts-section" aria-labelledby="concept-title">
+      <p class="eyebrow">SAME MATH, DIFFERENT SURFACE</p>
+      <h2 id="concept-title">四个领域，共用这些概念</h2>
+      <div class="atlas-concept-row">
+        <span class="atlas-concept">矩阵乘法</span>
+        <span class="atlas-concept">逆矩阵</span>
+        <span class="atlas-concept">特征值 / 特征向量</span>
+        <span class="atlas-concept">协方差</span>
+        <span class="atlas-concept">卷积</span>
+        <span class="atlas-concept">GF(2)</span>
+        <span class="atlas-concept">投影</span>
+        <span class="atlas-concept">归一化</span>
+      </div>
+    </section>
+
+    <section class="atlas-release" data-zone="release" aria-labelledby="release-title">
+      <div>
+        <p class="eyebrow">P6 · 发布检查</p>
+        <h2 id="release-title">先把地图走通，再收尾。</h2>
+        <p>
+          所有应用都是纯前端、零依赖、可以直接用本地文件打开。数学内核共用一套
+          `math.js`；每个页面只负责自己的视觉与交互。
+        </p>
+      </div>
+      <div class="atlas-release-status" aria-label="发布状态">
+        <span>数学测试 <b>45 / 45</b></span>
+        <span>Console 错误 <b>0</b></span>
+        <span>横向溢出 <b>无</b></span>
+        <span>拖动帧率 <b>60fps</b></span>
+        <span>P1–P5 应用 + 开源清单 <b>已完成</b></span>
+        <a class="btn btn-small btn-ghost" href="release.html">查看完整发布检查</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>从箭头开始。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../../index.html">入口</a>
+        <a href="../library.html">全部展厅</a>
+        <a href="atlas.html">应用地图</a>
+        <a href="../../ROADMAP.md">路线图</a>
+        <a href="../../RULES.md">规则</a>
+        <a href="../../MANUAL.md">手册</a>
+        <a href="../../REFERENCES.md">参考</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+        项目内容为原创，参考来源仅以链接与出处形式标注。
+      </p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">这个页面需要 JavaScript 才能筛选应用。请启用 JavaScript 后刷新。</div>
+  </noscript>
+
+  <script src="../../js/lib/atlas.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="行列式可视化：观察单位正方形如何被矩阵放大、翻转、压扁，实时验证面积 = |det(A)| = 底 × 高。">
+  <meta name="theme-color" content="#efeae1">
+  <title>行列式 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/canvas.css">
+</head>
+<body class="lab-page">
+  <a class="skip-link" href="#lab-main">跳到主要内容</a>
+
+  <header class="site-header lab-header">
+    <div class="header-inner">
+      <a class="brand" href="../index.html" aria-label="Linear Algebra 首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="01-transform.html">矩阵变换</a>
+        <a href="02-determinant.html" aria-current="page">行列式</a>
+        <a href="03-rank.html">秩与零空间</a>
+        <a href="04-eigenvector.html">特征向量</a>
+        <a href="05-solve.html">线性方程组</a>
+        <a href="../ROADMAP.md">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="lab-main" class="lab-main">
+    <section class="lab-intro" data-zone="intro">
+      <div class="lab-intro-copy">
+        <p class="eyebrow">CHAPTER 02 · 行列式 = 带符号的面积</p>
+        <h1>面积，<span class="gradient-text">如何被放大</span></h1>
+        <p class="lede">
+          行列式听起来吓人，其实只问一件事：单位正方形被放大成了几倍？
+          底乘高已经说完了大半；拖到压扁、拖到翻面，数字和图形会一起回答。
+        </p>
+      </div>
+      <div class="intro-meta" aria-label="技术特性">
+        <span class="pill">带符号面积</span>
+        <span class="pill">底 × 高</span>
+        <span class="pill">实时验算</span>
+        <span class="pill pill-accent">可拖拽</span>
+      </div>
+    </section>
+
+    <div class="workspace" data-zone="workspace">
+      <section class="stage-card" id="stage-card" data-zone="canvas" aria-labelledby="stage-title">
+        <div class="stage-head">
+          <div>
+            <p class="stage-kicker">LIVE CANVAS</p>
+            <h2 id="stage-title">单位正方形的旅程</h2>
+          </div>
+          <div class="stage-actions">
+            <button id="btn-replay" class="btn btn-small btn-ghost" type="button">回放变形</button>
+            <button id="btn-reset" class="btn btn-small btn-ghost" type="button">重置</button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap" id="canvas-wrap">
+          <canvas id="determinant-canvas" class="transform-canvas" role="img"
+            aria-label="行列式面积可视化。虚线方格是原来的单位正方形，实线平行四边形是矩阵变换后的图形；虚线段表示底边上的高。">
+            你的浏览器不支持 Canvas。请使用最新版 Edge、Chrome 或 Firefox。
+          </canvas>
+
+          <div class="canvas-badge" aria-hidden="true">
+            <span class="live-dot"></span>
+            实时验算
+          </div>
+
+          <div class="det-chip" id="canvas-det-chip">
+            <span>det</span>
+            <strong id="canvas-det">1.00</strong>
+            <span class="chip-sep">·</span>
+            <span>面积</span>
+            <strong id="canvas-area">1.00</strong>
+          </div>
+
+          <div class="canvas-legend" aria-hidden="true">
+            <span class="legend-item"><i class="legend-line legend-e1"></i>e₁′</span>
+            <span class="legend-item"><i class="legend-line legend-e2"></i>e₂′</span>
+            <span class="legend-item"><i class="legend-fill"></i>变换后</span>
+            <span class="legend-item"><i class="legend-dash"></i>高 h</span>
+          </div>
+
+          <p class="canvas-hint">拖动箭头尖端，或修改右侧数字</p>
+        </div>
+
+        <div class="professor-strip" aria-live="polite">
+          <span class="professor-seal" aria-hidden="true">λ</span>
+          <div>
+            <p id="professor-strip-text">行列式不咬人。它只是在问：单位正方形被放大成了几倍？底乘高，已经说完了大半。</p>
+            <p class="professor-strip-prompt" id="professor-strip-prompt">先猜 det = 0 时方格会变成什么，再动手。</p>
+          </div>
+        </div>
+
+        <div class="stage-foot">
+          <div class="foot-item">
+            <span class="foot-label">底 b</span>
+            <b id="foot-base">1.00</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">高 h</span>
+            <b id="foot-height">1.00</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">面积 S</span>
+            <b id="foot-area">1.00</b>
+          </div>
+          <div class="foot-item foot-item-wide">
+            <span class="foot-label">定向</span>
+            <b id="foot-orientation">保持</b>
+          </div>
+        </div>
+      </section>
+
+      <aside class="control-panel" data-zone="controls" aria-label="矩阵与面积控制">
+        <div class="panel-head">
+          <h2>矩阵 A</h2>
+          <span class="pill pill-soft">2 × 2</span>
+        </div>
+
+        <div class="professor-note" aria-live="polite">
+          <div class="professor-head">
+            <span class="professor-seal" aria-hidden="true">λ</span>
+            <span>边做边看</span>
+          </div>
+          <p id="professor-text">行列式不咬人。它只是在问：单位正方形被放大成了几倍？底乘高，已经说完了大半。</p>
+          <p class="professor-prompt" id="professor-prompt">先猜 det = 0 时方格会变成什么，再动手。</p>
+        </div>
+
+        <div class="matrix-editor" role="group" aria-labelledby="matrix-caption">
+          <span class="matrix-bracket matrix-bracket-left" aria-hidden="true"></span>
+          <div class="matrix-fields">
+            <label class="matrix-cell">
+              <span class="matrix-var">a</span>
+              <input id="matrix-a" class="matrix-input" type="number" value="1"
+                min="-8" max="8" step="0.1" inputmode="decimal"
+                aria-label="矩阵元素 a，第一行第一列">
+            </label>
+            <label class="matrix-cell">
+              <span class="matrix-var">b</span>
+              <input id="matrix-b" class="matrix-input" type="number" value="0"
+                min="-8" max="8" step="0.1" inputmode="decimal"
+                aria-label="矩阵元素 b，第一行第二列">
+            </label>
+            <label class="matrix-cell">
+              <span class="matrix-var">c</span>
+              <input id="matrix-c" class="matrix-input" type="number" value="0"
+                min="-8" max="8" step="0.1" inputmode="decimal"
+                aria-label="矩阵元素 c，第二行第一列">
+            </label>
+            <label class="matrix-cell">
+              <span class="matrix-var">d</span>
+              <input id="matrix-d" class="matrix-input" type="number" value="1"
+                min="-8" max="8" step="0.1" inputmode="decimal"
+                aria-label="矩阵元素 d，第二行第二列">
+            </label>
+          </div>
+          <span class="matrix-bracket matrix-bracket-right" aria-hidden="true"></span>
+        </div>
+
+        <p class="matrix-note" id="matrix-caption">
+          列向量 e₁′ = (a, c)，e₂′ = (b, d)。面积取两条列向量中较长的一条作为底。
+        </p>
+
+        <div class="readout-grid">
+          <div class="readout">
+            <span class="readout-label">det(A)</span>
+            <strong class="readout-value" id="readout-det">1.00</strong>
+            <small>带符号面积</small>
+          </div>
+          <div class="readout">
+            <span class="readout-label">面积 S</span>
+            <strong class="readout-value" id="readout-area">1.00</strong>
+            <small>|det(A)|</small>
+          </div>
+          <div class="readout">
+            <span class="readout-label">底 b</span>
+            <strong class="readout-value" id="readout-base">1.00</strong>
+            <small>较长列向量的长度</small>
+          </div>
+          <div class="readout">
+            <span class="readout-label">高 h</span>
+            <strong class="readout-value" id="readout-height">1.00</strong>
+            <small>S / b</small>
+          </div>
+          <div class="readout">
+            <span class="readout-label">定向</span>
+            <strong class="readout-value" id="readout-orientation">保持</strong>
+            <small>det 的符号</small>
+          </div>
+          <div class="readout">
+            <span class="readout-label">秩</span>
+            <strong class="readout-value" id="readout-rank">2</strong>
+            <small>列空间维数</small>
+          </div>
+        </div>
+
+        <div class="formula-panel" aria-label="面积验算">
+          <p>
+            <span>det(A) = ad − bc</span>
+            <b id="calc-det">1.00</b>
+          </p>
+          <p>
+            <span>S = |det(A)|</span>
+            <b id="calc-area">1.00</b>
+          </p>
+          <p>
+            <span>b × h</span>
+            <b><span id="calc-base">1.00</span> × <span id="calc-height">1.00</span> = <span id="calc-product">1.00</span></b>
+          </p>
+        </div>
+
+        <div class="control-block">
+          <div class="block-head">
+            <h3>预设</h3>
+            <span class="block-hint">看面积怎么变</span>
+          </div>
+          <div class="preset-row" role="group" aria-label="矩阵预设">
+            <button class="preset-btn" type="button" data-preset="identity">单位</button>
+            <button class="preset-btn" type="button" data-preset="scale2">放大 2×</button>
+            <button class="preset-btn" type="button" data-preset="shear">剪切</button>
+            <button class="preset-btn" type="button" data-preset="rotate30">旋转 30°</button>
+            <button class="preset-btn" type="button" data-preset="flip">翻转</button>
+            <button class="preset-btn preset-btn-warn" type="button" data-preset="collapse">压扁</button>
+          </div>
+        </div>
+
+        <div class="control-block">
+          <div class="block-head">
+            <h3>显示图层</h3>
+            <span class="block-hint">只影响画面，不影响数学</span>
+          </div>
+          <div class="toggle-list">
+            <label class="toggle-row">
+              <input id="toggle-grid" type="checkbox" checked>
+              <span class="toggle-track" aria-hidden="true"><span class="toggle-thumb"></span></span>
+              <span class="toggle-text">网格</span>
+            </label>
+            <label class="toggle-row">
+              <input id="toggle-original" type="checkbox" checked>
+              <span class="toggle-track" aria-hidden="true"><span class="toggle-thumb"></span></span>
+              <span class="toggle-text">原始方格</span>
+            </label>
+            <label class="toggle-row">
+              <input id="toggle-height" type="checkbox" checked>
+              <span class="toggle-track" aria-hidden="true"><span class="toggle-thumb"></span></span>
+              <span class="toggle-text">高度线</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="challenge-card" id="challenge-card">
+          <div class="challenge-head">
+            <span class="challenge-kicker">小挑战</span>
+            <span class="challenge-state" id="challenge-state" role="status" aria-live="polite">进行中</span>
+          </div>
+          <h3>让面积 S 落在 2.00 附近</h3>
+          <p class="challenge-copy">容差 ±0.02。先猜怎么调，再动手验证。</p>
+          <div class="challenge-meter" id="challenge-meter" role="progressbar"
+            aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="挑战进度">
+            <span id="challenge-meter-fill"></span>
+          </div>
+          <p class="challenge-current">当前面积 = <b id="challenge-area">1.000</b></p>
+        </div>
+      </aside>
+    </div>
+
+    <section class="explain-section" data-zone="lecture" aria-labelledby="explain-title">
+      <div class="section-heading">
+        <p class="eyebrow">WHY IT LOOKS LIKE THIS</p>
+        <h2 id="explain-title">面积的四条线索</h2>
+        <p>同一块平行四边形，可以用行列式算，也可以用底乘高算。两种算法必须给出同一个数。</p>
+      </div>
+
+      <div class="explain-grid">
+        <article class="explain-card">
+          <span class="explain-index">01</span>
+          <h3>单位正方形的面积是 1</h3>
+          <p>虚线方格是原来的单位正方形，边长 1，面积 1。矩阵把它送成一个平行四边形。</p>
+          <p class="formula">S₀ = 1　→　S = |det(A)| · S₀</p>
+          <p>所以 <b>|det|</b> 就是“面积放大了几倍”，而不是一个孤立的公式。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">02</span>
+          <h3>为什么是 ad − bc？</h3>
+          <p>把两条列向量看作平行四边形的两条边。取较长的一条作底 <b>b</b>，另一条到底边的垂直距离就是高 <b>h</b>。</p>
+          <p class="formula">S = b · h = |ad − bc|</p>
+          <p>剪切会把图形推斜，但底和高不变，所以面积不变；缩放会把底或高拉长，面积随之改变。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">03</span>
+          <h3>符号表示“定向”</h3>
+          <p><b>det &gt; 0</b>：方格保持原来的方向；<b>det &lt; 0</b>：方格被翻面，像照了一次镜子。</p>
+          <p class="formula">det &lt; 0　⇔　定向翻转</p>
+          <p>面积本身不带符号，所以读面积时取 <b>|det|</b>；符号单独告诉我们“有没有翻转”。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">04</span>
+          <h3>det = 0：面积归零</h3>
+          <p>两条列向量共线时，平行四边形被压成一条线段，底乘高里高变成 0，面积自然是 0。</p>
+          <p class="formula">det(A) = 0　⇔　A 不可逆</p>
+          <p>“不可逆”在几何上就是：整个平面被压到了更低维，原来的面积信息丢失了。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="quiz-section" data-zone="quiz">
+      <div class="quiz-card" aria-labelledby="quiz-title">
+        <div class="quiz-copy">
+          <p class="eyebrow">先猜后验</p>
+          <h2 id="quiz-title">矩阵 [[2, 1], [0, 1]] 把单位正方形变成面积多大的平行四边形？</h2>
+          <p>先别算。凭直觉选一个，再用按钮把矩阵填进去，看面积读数与图形是否一致。</p>
+          <div class="quiz-options" role="group" aria-labelledby="quiz-title">
+            <button class="quiz-option" type="button" data-quiz-area="1">面积 1</button>
+            <button class="quiz-option" type="button" data-quiz-area="2">面积 2</button>
+            <button class="quiz-option" type="button" data-quiz-area="3">面积 3</button>
+          </div>
+          <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></p>
+          <div class="quiz-actions">
+            <button id="btn-quiz-apply" class="btn btn-ghost" type="button">用这个矩阵验证 →</button>
+          </div>
+        </div>
+        <div class="quiz-visual" aria-hidden="true">
+          <div class="quiz-mini-grid"></div>
+          <div class="quiz-mini-label">S = ?</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-strip" data-zone="next" aria-labelledby="next-title">
+      <div>
+        <p class="eyebrow">NEXT</p>
+        <h2 id="next-title">下一站：秩与零空间，哪些方向被压掉了</h2>
+        <p>面积告诉我们“压扁了多少”，秩和零空间告诉我们“具体压掉了哪些方向”。</p>
+      </div>
+      <a class="btn btn-primary" href="03-rank.html">进入秩与零空间 <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>把矩阵，看成一次空间的呼吸。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../index.html">首页</a>
+        <a href="01-transform.html">矩阵变换</a>
+        <a href="02-determinant.html">行列式</a>
+        <a href="03-rank.html">秩与零空间</a>
+        <a href="04-eigenvector.html">特征向量</a>
+        <a href="05-solve.html">线性方程组</a>
+        <a href="../RULES.md">规则</a>
+        <a href="../MANUAL.md">手册</a>
+        <a href="../REFERENCES.md">参考</a>
+        <a href="../ROADMAP.md">路线图</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+      </p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">这个页面需要 JavaScript 才能绘制 Canvas。请启用 JavaScript 后刷新。</div>
+  </noscript>
+
+  <script src="../js/lib/math.js" defer></script>
+  <script src="../js/lib/canvas-utils.js" defer></script>
+  <script src="../js/lib/paths.js" defer></script>
+  <script src="../js/lib/level-ui.js" defer></script>
+  <script src="../js/lib/narration.js" defer></script>
+  <script src="../js/demos/determinant.js" defer></script>
+</body>
+</html>

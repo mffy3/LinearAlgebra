@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Linear Algebra：先选一个起点，再从平面和三维空间里慢慢理解矩阵、行列式、特征向量与线性方程组。">
+  <meta name="theme-color" content="#efeae1">
+  <title>Linear Algebra · 先选一个起点</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/entry.css">
+</head>
+<body class="entry-page">
+  <a class="skip-link" href="#entry-main">跳到主要内容</a>
+
+  <header class="entry-top">
+    <a class="brand" href="index.html" aria-label="Linear Algebra 入口">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" role="presentation">
+          <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+          <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+          <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+          <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+        </svg>
+      </span>
+      <span class="brand-text">
+        <strong>Linear Algebra</strong>
+        <small>INTERACTIVE LINEAR ALGEBRA</small>
+      </span>
+    </a>
+    <div class="entry-top-links">
+      <a class="entry-top-link" href="pages/applications/atlas.html">应用地图</a>
+      <a class="entry-top-link" href="ROADMAP.md">路线图</a>
+    </div>
+  </header>
+
+  <canvas id="entry-canvas" aria-hidden="true"></canvas>
+
+  <main id="entry-main" class="entry-main">
+    <section class="entry-copy" data-zone="entry-copy" aria-labelledby="entry-title">
+      <p class="eyebrow">LINEAR ALGEBRA · 2D / 3D</p>
+      <h1 id="entry-title">先选一个<br>起点。</h1>
+      <p class="lede">
+        不用急着看完全部。选一个最接近你的状态，
+        后面的内容会按这个起点排好，再慢慢展开。
+      </p>
+    </section>
+
+    <section class="entry-choice" data-zone="entry-choice" aria-labelledby="choice-title">
+      <div class="entry-choice-head">
+        <h2 id="choice-title">你的起点</h2>
+        <span>只影响顺序，不影响内容</span>
+      </div>
+
+      <div class="level-picker" role="group" aria-label="选择你的基础">
+        <button class="level-option" type="button" data-level="zero" aria-pressed="false">
+          <span class="level-no">01</span>
+          <span class="level-title">完全零基础</span>
+        </button>
+        <button class="level-option" type="button" data-level="some" aria-pressed="false">
+          <span class="level-no">02</span>
+          <span class="level-title">略有了解</span>
+        </button>
+        <button class="level-option" type="button" data-level="learned" aria-pressed="false">
+          <span class="level-no">03</span>
+          <span class="level-title">有扎实的基础</span>
+        </button>
+      </div>
+
+      <div class="entry-path" id="entry-path" data-zone="path" hidden aria-live="polite">
+        <div class="path-head">
+          <span class="path-label">你的路线</span>
+          <span class="path-level" id="path-level">完全零基础</span>
+        </div>
+        <h2 class="path-title" id="path-title" tabindex="-1">从零开始</h2>
+        <p class="path-desc" id="path-desc">先认识箭头和网格，再看矩阵怎样搬动整个平面。</p>
+        <div class="path-steps" id="path-steps"></div>
+        <div class="path-actions">
+          <a class="btn btn-primary" id="path-start" href="pages/01-transform.html?level=zero">从矩阵变换开始 <span aria-hidden="true">→</span></a>
+          <a class="path-all" href="pages/library.html">全部展厅</a>
+          <button class="path-change" id="path-change" type="button">换一个起点</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="entry-foot">
+    <span>拖动画面，转动空间</span>
+    <span>2D ↔ 3D</span>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">这个入口需要 JavaScript 才能绘制三维空间。请启用 JavaScript 后刷新。</div>
+  </noscript>
+
+  <script src="js/lib/entry-scene.js" defer></script>
+  <script src="js/lib/entry-flow.js" defer></script>
+</body>
+</html>

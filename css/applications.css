@@ -1,0 +1,285 @@
+/* ==========================================================================
+   applications.css · 应用篇
+   共享基础展厅的骨架，但每个领域有自己的“语气”。
+   ========================================================================== */
+
+.application-page {
+  background: linear-gradient(180deg, #e9ece4 0, #efeae1 340px);
+}
+
+.application-intro {
+  display: grid;
+  max-width: 1200px;
+  grid-template-columns: minmax(0, 1fr) minmax(270px, 0.52fr);
+  align-items: end;
+  gap: 24px;
+}
+
+.application-intro .lab-intro-copy {
+  min-width: 0;
+}
+
+.application-title-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.application-title-row h1 {
+  margin-bottom: 16px;
+}
+
+.application-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 11px;
+  border-radius: 999px;
+  color: #fbf8f1;
+  background: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.application-formula {
+  position: relative;
+  overflow: hidden;
+  padding: 22px 24px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: 0 14px 40px rgba(46, 49, 44, 0.06);
+}
+
+.application-formula::after {
+  content: "";
+  position: absolute;
+  right: -30px;
+  bottom: -40px;
+  width: 140px;
+  height: 140px;
+  border: 1px solid rgba(116, 134, 118, 0.2);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.formula-label {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+}
+
+.formula-main {
+  margin: 10px 0 8px;
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: 1.22rem;
+  line-height: 1.45;
+}
+
+.formula-sub {
+  max-width: 38ch;
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.6;
+}
+
+.formula-sub b {
+  color: var(--ink);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.message-bits {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin: 12px 0;
+}
+
+.message-bit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 11px;
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  color: var(--muted);
+  background: rgba(250, 246, 238, 0.55);
+  font-size: 0.65rem;
+  text-align: left;
+}
+
+.message-bit b {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.message-bit:hover {
+  border-color: var(--accent);
+}
+
+.ecc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 12px;
+}
+
+.kernel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  width: min(100%, 168px);
+  margin: 0 auto 12px;
+}
+
+.kernel-cell {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border: 1px solid rgba(46, 49, 44, 0.12);
+  border-radius: 7px;
+  color: var(--ink);
+  background: rgba(250, 246, 238, 0.62);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+}
+
+.kernel-cell.is-negative {
+  color: var(--warm);
+  background: rgba(176, 125, 110, 0.08);
+}
+
+.kernel-cell.is-center {
+  border-color: rgba(191, 163, 106, 0.45);
+}
+
+.matrix-readout {
+  display: grid;
+  gap: 7px;
+  margin: 12px 0;
+  padding: 10px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  background: rgba(250, 246, 238, 0.5);
+}
+
+.matrix-readout-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.62rem;
+}
+
+.matrix-readout-row b {
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 500;
+  text-align: right;
+}
+
+/* --------------------------------------------------------------------------
+   Physics controls
+   -------------------------------------------------------------------------- */
+
+.weight-editor {
+  margin-top: 12px;
+  padding: 12px 13px;
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--radius-md);
+  background: var(--bg-soft);
+}
+
+.weight-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.weight-range {
+  width: 100%;
+  min-width: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.weight-number {
+  display: flex;
+  flex: none;
+  align-items: baseline;
+  gap: 4px;
+  padding: 5px 8px;
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.weight-number input {
+  width: 48px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  color: var(--ink);
+  background: transparent;
+  font: inherit;
+  font-size: 0.78rem;
+  text-align: right;
+}
+
+.weight-number span {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+}
+
+.application-page .toggle-row {
+  margin-top: 14px;
+}
+
+.application-physics .stage-card {
+  background: #f8f4ec;
+}
+
+@media (max-width: 1000px) {
+  .application-intro {
+    grid-template-columns: 1fr;
+  }
+
+  .application-formula {
+    max-width: 520px;
+  }
+}
+
+@media (max-width: 720px) {
+  .application-intro {
+    gap: 18px;
+  }
+
+  .application-title-row {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .application-title-row h1 {
+    flex-basis: 100%;
+  }
+
+  .application-formula {
+    padding: 18px 18px;
+  }
+
+  .formula-main {
+    font-size: 1.05rem;
+  }
+}

@@ -1,0 +1,35 @@
+Linear Algebra — interactive linear algebra visualizer
+
+Copyright (c) 2026 Linear Algebra contributors
+
+Licensing
+---------
+
+Source code (HTML, CSS, JavaScript, tests) is licensed under the MIT License.
+See LICENSE in the repository root.
+
+Original prose, diagrams, exercises, and project screenshots are licensed under
+Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+See LICENSES/CC-BY-SA-4.0.txt and the canonical legal text at
+https://creativecommons.org/licenses/by-sa/4.0/legalcode.
+
+Third-party material and references
+------------------------------------
+
+The project discusses standard linear algebra topics and links to public
+reference material, including MIT OpenCourseWare, Gilbert Strang's published
+work, and 3Blue1Brown's public videos. Those works remain the property of their
+respective owners and are not relicensed by this project.
+
+The project is independent. It is not affiliated with, sponsored by, or
+endorsed by MIT, Gilbert Strang, or 3Blue1Brown.
+
+All screenshots and diagrams in assets/images were produced from this project
+unless a file states otherwise. No stock photography, external icon packs, or
+third-party fonts are bundled.
+
+Trademarks
+----------
+
+"MIT", "3Blue1Brown", and other names are used only for identification and
+attribution. No trademark license is granted.

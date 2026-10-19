@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="经济应用：投资组合。用协方差矩阵、权重和特征向量理解收益、风险与分散。">
+  <meta name="theme-color" content="#efeae1">
+  <title>投资组合 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/canvas.css">
+  <link rel="stylesheet" href="../../css/applications.css">
+</head>
+<body class="lab-page application-page application-economics">
+  <a class="skip-link" href="#lab-main">跳到主要内容</a>
+
+  <header class="site-header lab-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Linear Algebra 入口">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../../index.html">入口</a>
+        <a href="physics.html">物理</a>
+        <a href="economics-leontief.html">投入产出</a>
+        <a href="economics-portfolio.html" aria-current="page">投资组合</a>
+        <a href="software-convolution.html">图像卷积</a>
+        <a href="../../ROADMAP.md">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="lab-main" class="lab-main">
+    <section class="lab-intro application-intro" data-zone="intro">
+      <div class="lab-intro-copy">
+        <p class="eyebrow">APPLICATION 05 · 经济 · 投资组合</p>
+        <div class="application-title-row">
+          <span class="application-badge">FINANCE</span>
+          <h1>风险和收益，<span class="gradient-text">一起分配</span></h1>
+        </div>
+        <p class="lede">
+          两种资产不是简单地把收益和风险相加。它们会一起波动，协方差矩阵记录的正是这件事；
+          权重 w 决定你站在可行域的哪一点。
+        </p>
+        <div class="intro-pills" aria-label="本章关键词">
+          <span class="pill">协方差矩阵</span>
+          <span class="pill">权重</span>
+          <span class="pill">有效前沿</span>
+          <span class="pill pill-accent">可调</span>
+        </div>
+      </div>
+
+      <aside class="application-formula" aria-label="组合收益与风险">
+        <p class="formula-label">组合</p>
+        <p class="formula-main">μ<sub>p</sub> = wᵀμ</p>
+        <p class="formula-sub">风险平方 <b>σ<sub>p</sub>² = wᵀΣw</b>；协方差矩阵 <b>Σ</b> 描述两种资产怎样一起动，<b>w₁ + w₂ = 1</b>。</p>
+      </aside>
+    </section>
+
+    <div class="workspace" data-zone="workspace">
+      <section class="stage-card" id="stage-card" data-zone="canvas" aria-labelledby="stage-title">
+        <div class="stage-head">
+          <div>
+            <p class="stage-kicker">LIVE FINANCE</p>
+            <h2 id="stage-title">可行域上的一个点</h2>
+          </div>
+          <div class="stage-actions">
+            <button class="btn btn-small btn-ghost" id="btn-reset" type="button">重置</button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="portfolio-canvas" class="transform-canvas" width="900" height="620"
+            aria-label="投资组合的风险收益图和协方差椭圆。">
+            你的浏览器不支持 Canvas，请换一个现代浏览器。
+          </canvas>
+
+          <div class="det-chip solve-chip" id="portfolio-chip">
+            <span>组合</span>
+            <strong id="canvas-status">正权重 · 可分散</strong>
+          </div>
+
+          <p class="canvas-hint" id="portfolio-hint">拖金点调权重；左右拖协方差椭圆调 ρ</p>
+        </div>
+
+        <div class="professor-strip" aria-live="polite">
+          <span class="professor-seal" aria-hidden="true">λ</span>
+          <div>
+            <p id="professor-strip-text">组合风险不是两个风险的加权平均；相关性会让它或大或小。</p>
+            <p class="professor-strip-prompt" id="professor-strip-prompt">先把权重拉到 50%，比较组合点和两个资产点。</p>
+          </div>
+        </div>
+
+        <div class="stage-foot">
+          <div class="foot-item">
+            <span class="foot-label">w₁</span>
+            <b id="readout-weight">50%</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">E[r]</span>
+            <b id="readout-return">10.0%</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">σ</span>
+            <b id="readout-risk">18.0%</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">ρ</span>
+            <b id="readout-rho">0.25</b>
+          </div>
+        </div>
+      </section>
+
+      <aside class="control-panel" data-zone="controls" aria-label="组合权重与相关性">
+        <div class="panel-head">
+          <h2>权重与风险</h2>
+          <span class="pill pill-soft">2 种资产</span>
+        </div>
+
+        <div class="professor-note" aria-live="polite">
+          <div class="professor-head">
+            <span class="professor-seal" aria-hidden="true">λ</span>
+            <span>边做边看</span>
+          </div>
+          <p id="professor-text">组合风险不是两个风险的加权平均；相关性会让它或大或小。</p>
+          <p class="professor-prompt" id="professor-prompt">先把权重拉到 50%，比较组合点和两个资产点。</p>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>w₁ · 资产 A 权重</span>
+            <span class="probe-hint">w₂ = 1 − w₁</span>
+          </div>
+          <div class="weight-row">
+            <input id="weight-range" class="weight-range" type="range" min="0" max="100" step="1" value="50"
+              aria-label="资产 A 权重">
+            <label class="weight-number">
+              <input id="weight" type="number" min="0" max="100" step="1" value="50" inputmode="decimal"
+                aria-label="资产 A 权重百分比">
+              <span>%</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>ρ · 相关性</span>
+            <span class="probe-hint">−1 到 +1</span>
+          </div>
+          <div class="weight-row">
+            <input id="rho-range" class="weight-range" type="range" min="-80" max="80" step="5" value="25"
+              aria-label="资产相关性">
+            <label class="weight-number">
+              <input id="rho" type="number" min="-0.8" max="0.8" step="0.05" value="0.25" inputmode="decimal"
+                aria-label="资产相关性数值">
+              <span>ρ</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <p class="panel-label">预设</p>
+          <div class="preset-grid">
+            <button class="preset-btn" type="button" data-preset="a">100% A</button>
+            <button class="preset-btn" type="button" data-preset="b">100% B</button>
+            <button class="preset-btn" type="button" data-preset="half">50 / 50</button>
+            <button class="preset-btn" type="button" data-preset="min">最小风险</button>
+          </div>
+        </div>
+
+        <div class="matrix-readout" aria-label="协方差矩阵和特征值">
+          <div class="matrix-readout-row">
+            <span>Σ</span>
+            <b id="matrix-sigma">[[0.0225, 0.0094], [0.0094, 0.0625]]</b>
+          </div>
+          <div class="matrix-readout-row">
+            <span>λ₁ / λ₂</span>
+            <b id="matrix-eigen">0.066 / 0.019</b>
+          </div>
+        </div>
+
+        <div class="challenge-card" id="challenge-card">
+          <div class="challenge-head">
+            <span>小挑战</span>
+            <strong id="challenge-state">进行中</strong>
+          </div>
+          <p>找到风险最小的组合：调 w₁。</p>
+          <div class="challenge-metric">
+            <span>与最小风险权重的差</span>
+            <b id="challenge-distance">30.2%</b>
+          </div>
+          <div class="challenge-meter" id="challenge-meter" role="progressbar"
+            aria-label="最小风险组合挑战进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="challenge-meter-fill"></span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="explain-section" data-zone="lecture" aria-labelledby="explain-title">
+      <div class="section-heading">
+        <p class="eyebrow">WHY IT LOOKS LIKE THIS</p>
+        <h2 id="explain-title">风险为什么能分散</h2>
+        <p>两种资产不是各走各的；它们的协方差决定了组合之后的波动。</p>
+      </div>
+
+      <div class="explain-grid explain-grid-three">
+        <article class="explain-card">
+          <span class="explain-index">01</span>
+          <h3>组合方差：wᵀΣw</h3>
+          <p>权重进入二次型，交叉项 2w₁w₂ρσ₁σ₂ 就是“它们一起动”的部分。</p>
+          <p class="formula">σ<sub>p</sub>² = wᵀΣw</p>
+          <p>相关性越低，交叉项越小，组合风险越容易被压低。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">02</span>
+          <h3>最小风险：不是 50 / 50</h3>
+          <p>最小方差点由 σ₁、σ₂、ρ 共同决定；在现在的参数下，它偏向低波动资产。</p>
+          <p class="formula">w* = (σ₂² − ρσ₁σ₂) / (σ₁² + σ₂² − 2ρσ₁σ₂)</p>
+          <p>把 w* 代回去，就得到可行域最左端的点。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">03</span>
+          <h3>特征向量：风险主方向</h3>
+          <p>协方差矩阵是对称的；它的特征向量给出一组“互不相关”的方向，特征值是这些方向的方差。</p>
+          <p class="formula">Σ = QΛQᵀ</p>
+          <p>最大特征值方向是风险最大的主方向，最小特征值方向是分散最有效的方向。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="quiz-section" data-zone="quiz">
+      <div class="quiz-card" aria-labelledby="quiz-title">
+        <div class="quiz-copy">
+          <p class="eyebrow">先猜后验</p>
+          <h2 id="quiz-title">协方差矩阵的特征向量表示什么？</h2>
+          <p>先想：协方差矩阵是对称的，它的特征方向有什么特别？</p>
+          <div class="quiz-options" role="group" aria-label="选择答案">
+            <button class="quiz-option" type="button" data-quiz-portfolio="a">资产的预期收益</button>
+            <button class="quiz-option" type="button" data-quiz-portfolio="b">互不相关的风险方向</button>
+            <button class="quiz-option" type="button" data-quiz-portfolio="c">资产的交易价格</button>
+          </div>
+          <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></p>
+          <button class="btn btn-primary" id="btn-quiz-apply" type="button">找到最小风险组合 <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="quiz-visual" aria-hidden="true">
+          <canvas id="quiz-canvas" width="360" height="260"></canvas>
+          <span class="quiz-mini-label" id="quiz-mini-label">Σ = QΛQᵀ</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-strip" data-zone="next" aria-labelledby="next-title">
+      <div>
+        <p class="eyebrow">NEXT APPLICATION</p>
+        <h2 id="next-title">下一站：图像卷积，局部如何相加</h2>
+        <p>一张图不是矩阵？把每个像素看成向量，卷积核就是一个很小的线性映射。</p>
+      </div>
+      <a class="btn btn-primary" href="software-convolution.html">进入图像卷积 <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>从箭头开始。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../../index.html">入口</a>
+        <a href="physics.html">物理</a>
+        <a href="economics-leontief.html">投入产出</a>
+        <a href="economics-portfolio.html">投资组合</a>
+        <a href="../../ROADMAP.md">路线图</a>
+        <a href="../../RULES.md">规则</a>
+        <a href="../../MANUAL.md">手册</a>
+        <a href="../../REFERENCES.md">参考</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+        项目内容为原创，参考来源仅以链接与出处形式标注。
+      </p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">这个页面需要 JavaScript 才能绘制交互。请启用 JavaScript 后刷新。</div>
+  </noscript>
+
+  <script src="../../js/lib/math.js" defer></script>
+  <script src="../../js/lib/canvas-utils.js" defer></script>
+  <script src="../../js/lib/paths.js" defer></script>
+  <script src="../../js/lib/level-ui.js" defer></script>
+  <script src="../../js/lib/narration.js" defer></script>
+  <script src="../../js/demos/economics-portfolio.js" defer></script>
+</body>
+</html>
