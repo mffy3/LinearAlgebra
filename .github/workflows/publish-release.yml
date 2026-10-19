@@ -1,0 +1,38 @@
+name: publish release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: github.repository == 'mffy3/LinearAlgebra'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out full history and tags
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build the v1.0.0 archive
+        run: |
+          git archive --format=zip --prefix=LinearAlgebra-v1.0.0/ v1.0.0 -o LinearAlgebra-v1.0.0.zip
+          sha256sum LinearAlgebra-v1.0.0.zip > SHA256SUMS.txt
+
+      - name: Create the GitHub Release if needed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view v1.0.0 >/dev/null 2>&1; then
+            echo "Release v1.0.0 already exists; leave it unchanged."
+            exit 0
+          fi
+          gh release create v1.0.0 \
+            LinearAlgebra-v1.0.0.zip \
+            SHA256SUMS.txt \
+            --title "Linear Algebra v1.0.0" \
+            --notes-file RELEASE_NOTES.md
