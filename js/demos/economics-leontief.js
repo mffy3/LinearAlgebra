@@ -36,7 +36,8 @@
 
   var state = {
     d1: 30,
-    d2: 20
+    d2: 20,
+    dragging: null
   };
 
   var els = {
@@ -115,7 +116,7 @@
     if (!els.hint) return;
     els.hint.textContent = data.achieved
       ? '制造业达到 50；农业的产出也跟着变了'
-      : '调 d₁、d₂，看两个行业的总产出怎么变';
+      : '左右拖动需求框里的金点，或调 d₁、d₂';
   }
 
   function updateReadouts() {
@@ -259,11 +260,15 @@
       });
   }
 
-  function drawDemand() {
-    var boxes = [
-      { node: NODES.agri, x: NODES.agri.x - 1.1, y: -1.3, w: 2.2, h: 0.9, label: 'd₁', value: state.d1, color: K.PALETTE.e1 },
-      { node: NODES.manufacturing, x: NODES.manufacturing.x - 1.1, y: -1.3, w: 2.2, h: 0.9, label: 'd₂', value: state.d2, color: K.PALETTE.e2 }
+  function demandBoxes() {
+    return [
+      { key: 'd1', node: NODES.agri, x: NODES.agri.x - 1.1, y: -1.3, w: 2.2, h: 0.9, label: 'd₁', value: state.d1, color: K.PALETTE.e1 },
+      { key: 'd2', node: NODES.manufacturing, x: NODES.manufacturing.x - 1.1, y: -1.3, w: 2.2, h: 0.9, label: 'd₂', value: state.d2, color: K.PALETTE.e2 }
     ];
+  }
+
+  function drawDemand() {
+    var boxes = demandBoxes();
 
     boxes.forEach(function (box) {
       ctx.save();
@@ -272,8 +277,8 @@
       ctx.restore();
       strokeWorldRect(ctx, view, box, 'rgba(46, 49, 44, 0.18)');
 
-      K.drawLabel(ctx, view.worldToScreen({ x: box.x + box.w / 2, y: box.y + 0.54 }).x,
-        view.worldToScreen({ x: box.x + box.w / 2, y: box.y + 0.54 }).y,
+      K.drawLabel(ctx, view.worldToScreen({ x: box.x + box.w / 2, y: box.y - 0.28 }).x,
+        view.worldToScreen({ x: box.x + box.w / 2, y: box.y - 0.28 }).y,
         box.label + ' = ' + L.formatFixed(box.value, 0), {
           color: box.color,
           background: 'rgba(250, 246, 238, 0.94)',
@@ -290,6 +295,27 @@
           head: 7,
           headWidth: 4
         });
+
+      // 需求框里的横向滑点，拖它直接改 d。
+      var trackX = box.x + 0.28;
+      var trackW = box.w - 0.56;
+      var knobX = trackX + (box.value / 60) * trackW;
+      var knob = view.worldToScreen({ x: knobX, y: box.y + box.h / 2 });
+      ctx.save();
+      ctx.strokeStyle = 'rgba(46, 49, 44, 0.16)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(view.worldToScreen({ x: trackX, y: box.y + box.h / 2 }).x, knob.y);
+      ctx.lineTo(view.worldToScreen({ x: trackX + trackW, y: box.y + box.h / 2 }).x, knob.y);
+      ctx.stroke();
+      ctx.fillStyle = K.PALETTE.gold;
+      ctx.strokeStyle = 'rgba(250, 246, 238, 0.96)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(knob.x, knob.y, 6.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
     });
   }
 
@@ -421,6 +447,75 @@
       else if (preset === 'agri') setDemand(45, 12);
       else if (preset === 'manufacturing') setDemand(12, 45);
     });
+  });
+
+  /* ------------------------------------------------------------------ *
+   * 拖动需求框
+   * ------------------------------------------------------------------ */
+
+  function hitDemand(event) {
+    var p = view.pointerPosition(event);
+    var boxes = demandBoxes();
+    for (var i = 0; i < boxes.length; i++) {
+      var box = boxes[i];
+      var a = view.worldToScreen({ x: box.x, y: box.y });
+      var b = view.worldToScreen({ x: box.x + box.w, y: box.y + box.h });
+      if (p.x >= Math.min(a.x, b.x) - 6 && p.x <= Math.max(a.x, b.x) + 6 &&
+          p.y >= Math.min(a.y, b.y) - 6 && p.y <= Math.max(a.y, b.y) + 6) {
+        return box.key;
+      }
+    }
+    return null;
+  }
+
+  function updateDemandFromPointer(event) {
+    if (!state.dragging) return;
+    var world = view.screenToWorld(view.pointerPosition(event));
+    var boxes = demandBoxes();
+    var box = boxes[0];
+    for (var i = 0; i < boxes.length; i++) {
+      if (boxes[i].key === state.dragging) box = boxes[i];
+    }
+    var trackX = box.x + 0.28;
+    var trackW = box.w - 0.56;
+    var value = clamp((world.x - trackX) / trackW * 60, 0, 60);
+    if (state.dragging === 'd1') setDemand(value, state.d2);
+    else setDemand(state.d1, value);
+  }
+
+  function endDemandDrag(event) {
+    state.dragging = null;
+    canvas.classList.remove('is-dragging');
+    canvas.classList.remove('is-grabbable');
+    if (event && canvas.hasPointerCapture && canvas.hasPointerCapture(event.pointerId)) {
+      canvas.releasePointerCapture(event.pointerId);
+    }
+  }
+
+  canvas.addEventListener('pointerdown', function (event) {
+    var box = hitDemand(event);
+    if (!box) return;
+    event.preventDefault();
+    state.dragging = box;
+    if (canvas.setPointerCapture) canvas.setPointerCapture(event.pointerId);
+    canvas.classList.add('is-dragging');
+    canvas.classList.remove('is-grabbable');
+    updateDemandFromPointer(event);
+  });
+
+  canvas.addEventListener('pointermove', function (event) {
+    if (state.dragging) {
+      event.preventDefault();
+      updateDemandFromPointer(event);
+      return;
+    }
+    canvas.classList.toggle('is-grabbable', !!hitDemand(event));
+  });
+
+  canvas.addEventListener('pointerup', endDemandDrag);
+  canvas.addEventListener('pointercancel', endDemandDrag);
+  canvas.addEventListener('pointerleave', function () {
+    if (!state.dragging) canvas.classList.remove('is-grabbable');
   });
 
   /* ------------------------------------------------------------------ *

@@ -34,7 +34,8 @@
 
   var state = {
     weight: 0.5,
-    rho: 0.25
+    rho: 0.25,
+    dragging: false
   };
 
   var els = {
@@ -148,7 +149,7 @@
     if (data.achieved) {
       els.hint.textContent = '最小风险组合：再降 ρ，看看它还能往左走多少';
     } else {
-      els.hint.textContent = '拖动权重条，或调整 w₁ 和 ρ';
+      els.hint.textContent = '拖动图上的金点，或调权重条 / ρ';
     }
   }
 
@@ -368,6 +369,15 @@
     ctx.stroke();
     ctx.restore();
 
+    ctx.save();
+    ctx.strokeStyle = 'rgba(191, 163, 106, 0.5)';
+    ctx.lineWidth = 1.2;
+    ctx.setLineDash([3, 4]);
+    ctx.beginPath();
+    ctx.arc(x, y, 14, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+
     drawPointAt(ctx, x, y, {
       radius: 7,
       fill: K.PALETTE.gold,
@@ -583,6 +593,89 @@
       else if (preset === 'half') setWeight(0.5);
       else if (preset === 'min') setWeight(minVarianceWeight(state.rho));
     });
+  });
+
+  /* ------------------------------------------------------------------ *
+   * 拖动图上的组合点
+   * ------------------------------------------------------------------ */
+
+  function currentScreenPoint() {
+    var plot = plotLayout().plot;
+    var data = compute();
+    return {
+      x: riskToX(data.current.risk, plot),
+      y: retToY(data.current.return, plot)
+    };
+  }
+
+  function hitCurrent(event) {
+    var p = view.pointerPosition(event);
+    var c = currentScreenPoint();
+    var dx = p.x - c.x;
+    var dy = p.y - c.y;
+    return Math.sqrt(dx * dx + dy * dy) <= 26;
+  }
+
+  function hitPlot(event) {
+    var p = view.pointerPosition(event);
+    var plot = plotLayout().plot;
+    return p.x >= plot.x && p.x <= plot.x + plot.w &&
+      p.y >= plot.y && p.y <= plot.y + plot.h;
+  }
+
+  function nearestWeight(event) {
+    var p = view.pointerPosition(event);
+    var plot = plotLayout().plot;
+    var best = state.weight;
+    var bestDist = Infinity;
+    for (var i = 0; i <= 200; i++) {
+      var w = i / 200;
+      var q = portfolioAt(w, state.rho);
+      var x = riskToX(q.risk, plot);
+      var y = retToY(q.return, plot);
+      var dx = p.x - x;
+      var dy = p.y - y;
+      var dist = dx * dx + dy * dy;
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = w;
+      }
+    }
+    return best;
+  }
+
+  function endDrag(event) {
+    state.dragging = false;
+    canvas.classList.remove('is-dragging');
+    canvas.classList.remove('is-grabbable');
+    if (event && canvas.hasPointerCapture && canvas.hasPointerCapture(event.pointerId)) {
+      canvas.releasePointerCapture(event.pointerId);
+    }
+  }
+
+  canvas.addEventListener('pointerdown', function (event) {
+    if (!hitCurrent(event) && !hitPlot(event)) return;
+    event.preventDefault();
+    state.dragging = true;
+    if (canvas.setPointerCapture) canvas.setPointerCapture(event.pointerId);
+    canvas.classList.add('is-dragging');
+    canvas.classList.remove('is-grabbable');
+    setWeight(nearestWeight(event));
+  });
+
+  canvas.addEventListener('pointermove', function (event) {
+    if (state.dragging) {
+      event.preventDefault();
+      setWeight(nearestWeight(event));
+      return;
+    }
+    canvas.classList.toggle('is-grabbable', hitCurrent(event) || hitPlot(event));
+  });
+
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+  canvas.addEventListener('pointerleave', function () {
+    if (!state.dragging) canvas.classList.remove('is-grabbable');
   });
 
   /* ------------------------------------------------------------------ *
