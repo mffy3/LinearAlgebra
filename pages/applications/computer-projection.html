@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="计算机应用：三维投影。用 3×3 旋转矩阵和透视除法，把立方体的三维坐标送到二维屏幕。">
+  <meta name="theme-color" content="#efeae1">
+  <title>三维投影 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/canvas.css">
+  <link rel="stylesheet" href="../../css/applications.css">
+</head>
+<body class="lab-page application-page application-software">
+  <a class="skip-link" href="#lab-main">跳到主要内容</a>
+
+  <header class="site-header lab-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Linear Algebra 入口">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../../index.html">入口</a>
+        <a href="../library.html">全部展厅</a>
+        <a href="atlas.html">应用地图</a>
+        <a href="../../ROADMAP.md">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="lab-main" class="lab-main">
+    <section class="lab-intro application-intro" data-zone="intro">
+      <div class="lab-intro-copy">
+        <p class="eyebrow">APPLICATION 10 · 计算机 · 三维投影</p>
+        <div class="application-title-row">
+          <span class="application-badge">COMPUTER</span>
+          <h1>屏幕上的立方体，<span class="gradient-text">先过一遍矩阵</span></h1>
+        </div>
+        <p class="lede">
+          三维坐标不会自己变成像素。先乘一个旋转矩阵把物体转过来，
+          再按深度做一次除法，才落到二维屏幕上——每一步都是可复算的线性代数。
+        </p>
+        <div class="intro-pills" aria-label="本章关键词">
+          <span class="pill">旋转矩阵</span>
+          <span class="pill">透视除法</span>
+          <span class="pill">齐次坐标</span>
+          <span class="pill pill-accent">可拖拽</span>
+        </div>
+      </div>
+
+      <aside class="application-formula" aria-label="三维投影公式">
+        <p class="formula-label">模型 → 屏幕</p>
+        <p class="formula-main">p′ = R p，x = f·p′ₓ / (p′<sub>z</sub> + d)</p>
+        <p class="formula-sub">
+          旋转是线性的；透视除法不是。把 <b>(x, y, z, 1)</b> 写成齐次坐标之后，
+          整条管线又能表示成一串矩阵相乘。
+        </p>
+      </aside>
+    </section>
+
+    <div class="workspace" data-zone="workspace">
+      <section class="stage-card" id="stage-card" data-zone="canvas" aria-labelledby="stage-title">
+        <div class="stage-head">
+          <div>
+            <p class="stage-kicker">LIVE COMPUTER GRAPHICS</p>
+            <h2 id="stage-title">转过来，再投下去</h2>
+          </div>
+          <div class="stage-actions">
+            <button class="btn btn-small btn-ghost" id="btn-reset" type="button">重置</button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="projection-canvas" class="transform-canvas" width="900" height="620" tabindex="0"
+            aria-label="三维立方体投影：拖动旋转立方体，观察它怎样投影到屏幕上。">
+            你的浏览器不支持 Canvas，请换一个现代浏览器。
+          </canvas>
+
+          <div class="det-chip solve-chip" id="projection-chip">
+            <span>可见面</span>
+            <strong id="canvas-status">2 / 6</strong>
+          </div>
+
+          <p class="canvas-hint" id="projection-hint">拖动画布旋转；右侧也能调角度</p>
+        </div>
+
+        <div class="professor-strip" aria-live="polite">
+          <span class="professor-seal" aria-hidden="true">λ</span>
+          <div>
+            <p id="professor-strip-text">旋转矩阵只改朝向，不改长度；投影再按深度把远处的点缩小。</p>
+            <p class="professor-strip-prompt" id="professor-strip-prompt">先把视角转到正面，看看立方体还剩几个可见面。</p>
+          </div>
+        </div>
+
+        <div class="stage-foot">
+          <div class="foot-item">
+            <span class="foot-label">偏航</span>
+            <b id="readout-yaw">35.0°</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">俯仰</span>
+            <b id="readout-pitch">-20.0°</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">焦距 f</span>
+            <b id="readout-focal">1.60</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">最近深度</span>
+            <b id="readout-depth">4.20</b>
+          </div>
+        </div>
+      </section>
+
+      <aside class="control-panel" data-zone="controls" aria-label="相机与旋转参数">
+        <div class="panel-head">
+          <h2>相机与物体</h2>
+          <span class="pill pill-soft">3 × 3</span>
+        </div>
+
+        <div class="professor-note" aria-live="polite">
+          <div class="professor-head">
+            <span class="professor-seal" aria-hidden="true">λ</span>
+            <span>边做边看</span>
+          </div>
+          <p id="professor-text">旋转矩阵只改朝向，不改长度；投影再按深度把远处的点缩小。</p>
+          <p class="professor-prompt" id="professor-prompt">先把视角转到正面，看看立方体还剩几个可见面。</p>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>偏航 yaw · 绕 y 轴</span>
+            <span class="probe-hint">-180° ~ 180°</span>
+          </div>
+          <div class="weight-row">
+            <input id="yaw-range" class="weight-range" type="range" min="-180" max="180" step="1" value="35"
+              aria-label="偏航角">
+            <label class="weight-number">
+              <input id="yaw" type="number" min="-180" max="180" step="1" value="35" inputmode="decimal"
+                aria-label="偏航角度数">
+              <span>°</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>俯仰 pitch · 绕 x 轴</span>
+            <span class="probe-hint">±85°</span>
+          </div>
+          <div class="weight-row">
+            <input id="pitch-range" class="weight-range" type="range" min="-85" max="85" step="1" value="-20"
+              aria-label="俯仰角">
+            <label class="weight-number">
+              <input id="pitch" type="number" min="-85" max="85" step="1" value="-20" inputmode="decimal"
+                aria-label="俯仰角度数">
+              <span>°</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>焦距 f</span>
+            <span class="probe-hint">越大，画面越“长焦”</span>
+          </div>
+          <div class="weight-row">
+            <input id="focal-range" class="weight-range" type="range" min="0.6" max="2.6" step="0.02" value="1.6"
+              aria-label="焦距">
+            <label class="weight-number">
+              <input id="focal" type="number" min="0.6" max="2.6" step="0.02" value="1.6" inputmode="decimal"
+                aria-label="焦距数值">
+              <span>f</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>相机距离 d</span>
+            <span class="probe-hint">后退 = 物体变小</span>
+          </div>
+          <div class="weight-row">
+            <input id="distance-range" class="weight-range" type="range" min="3.2" max="12" step="0.1" value="5.6"
+              aria-label="相机距离">
+            <label class="weight-number">
+              <input id="distance" type="number" min="3.2" max="12" step="0.1" value="5.6" inputmode="decimal"
+                aria-label="相机距离数值">
+              <span>d</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <p class="panel-label">预设</p>
+          <div class="preset-grid">
+            <button class="preset-btn" type="button" data-preset="front">正面</button>
+            <button class="preset-btn" type="button" data-preset="iso">等轴</button>
+            <button class="preset-btn" type="button" data-preset="top">俯视</button>
+          </div>
+        </div>
+
+        <div class="challenge-card" id="challenge-card">
+          <div class="challenge-head">
+            <span>小挑战</span>
+            <strong id="challenge-state">进行中</strong>
+          </div>
+          <p>把视角转到正面：偏航与俯仰都接近 0°。</p>
+          <div class="challenge-metric">
+            <span>角度偏差</span>
+            <b id="challenge-distance">40.3°</b>
+          </div>
+          <div class="challenge-meter" id="challenge-meter" role="progressbar"
+            aria-label="正面视角挑战进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="challenge-meter-fill"></span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="explain-section" data-zone="lecture" aria-labelledby="explain-title">
+      <div class="section-heading">
+        <p class="eyebrow">WHY IT LOOKS LIKE THIS</p>
+        <h2 id="explain-title">三维到二维，两步走</h2>
+        <p>先转（线性），再除（透视）。两步都能写成矩阵。</p>
+      </div>
+
+      <div class="explain-grid explain-grid-three">
+        <article class="explain-card">
+          <span class="explain-index">01</span>
+          <h3>旋转：3×3 矩阵，只改朝向</h3>
+          <p>绕 y 轴转 yaw、绕 x 轴转 pitch，合成一个矩阵 R。它保长度、det R = 1。</p>
+          <p class="formula">R = R<sub>x</sub>(pitch) · R<sub>y</sub>(yaw)</p>
+          <p>顶点先乘 R，再谈投影；顺序反了，物体会绕世界原点甩出去。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">02</span>
+          <h3>透视：除以深度</h3>
+          <p>同样大的物体，远的时候在画面里更小，因为屏幕坐标要除以深度。</p>
+          <p class="formula">x = f·pₓ / (p<sub>z</sub> + d)</p>
+          <p>这一步不是线性的：两点之和除以深度，不等于分别除以深度再相加。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">03</span>
+          <h3>齐次坐标：把除法藏进矩阵</h3>
+          <p>写成 (x, y, z, 1) 之后，平移和透视都能放进 4×4 矩阵，最后一维做除法。</p>
+          <p class="formula">(x, y, z, 1) ↦ (f x, f y, z + d, z + d)</p>
+          <p>GPU 的顶点着色器做的，就是这一串矩阵乘法。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="quiz-section" data-zone="quiz">
+      <div class="quiz-card" aria-labelledby="quiz-title">
+        <div class="quiz-copy">
+          <p class="eyebrow">先猜后验</p>
+          <h2 id="quiz-title">焦距不变，把相机从 d = 5.6 退到 d = 11，立方体在画面里会怎样？</h2>
+          <p>先想：屏幕坐标是除以深度，深度变大时，同样的 x 会被放大还是缩小？</p>
+          <div class="quiz-options" role="group" aria-label="选择答案">
+            <button class="quiz-option" type="button" data-quiz-projection="bigger">变大</button>
+            <button class="quiz-option" type="button" data-quiz-projection="smaller">变小</button>
+            <button class="quiz-option" type="button" data-quiz-projection="same">不变</button>
+          </div>
+          <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></p>
+          <button class="btn btn-primary" id="btn-quiz-apply" type="button">把相机退到 11 验证 <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="quiz-visual" aria-hidden="true">
+          <span class="quiz-mini-label" id="quiz-mini-label">x = f·pₓ / (p<sub>z</sub> + d)</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-strip" data-zone="next" aria-labelledby="next-title">
+      <div>
+        <p class="eyebrow">NEXT APPLICATION</p>
+        <h2 id="next-title">下一站：美术，平行线在远处相遇</h2>
+        <p>同一个透视除法，放到画布上就是一点透视：铁轨、地砖、街道都朝消失点收拢。</p>
+      </div>
+      <a class="btn btn-primary" href="art-perspective.html">进入一点透视 <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>从箭头开始。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../../index.html">入口</a>
+        <a href="../library.html">全部展厅</a>
+        <a href="atlas.html">应用地图</a>
+        <a href="../../ROADMAP.md">路线图</a>
+        <a href="../../RULES.md">规则</a>
+        <a href="../../MANUAL.md">手册</a>
+        <a href="../../REFERENCES.md">参考</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+        项目内容为原创，参考来源仅以链接与出处形式标注。
+      </p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">这个页面需要 JavaScript 才能绘制交互。请启用 JavaScript 后刷新。</div>
+  </noscript>
+
+  <script src="../../js/lib/math.js" defer></script>
+  <script src="../../js/lib/canvas-utils.js" defer></script>
+  <script src="../../js/lib/paths.js" defer></script>
+  <script src="../../js/lib/level-ui.js" defer></script>
+  <script src="../../js/lib/narration.js" defer></script>
+  <script src="../../js/demos/computer-projection.js" defer></script>
+</body>
+</html>

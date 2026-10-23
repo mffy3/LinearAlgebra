@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="音乐应用：和弦与频谱。三个频率按振幅叠加成波形，频谱就是这组线性组合的系数。">
+  <meta name="theme-color" content="#efeae1">
+  <title>和弦与频谱 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/canvas.css">
+  <link rel="stylesheet" href="../../css/applications.css">
+</head>
+<body class="lab-page application-page application-music">
+  <a class="skip-link" href="#lab-main">跳到主要内容</a>
+
+  <header class="site-header lab-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Linear Algebra 入口">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../../index.html">入口</a>
+        <a href="../library.html">全部展厅</a>
+        <a href="atlas.html">应用地图</a>
+        <a href="../../ROADMAP.md">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="lab-main" class="lab-main">
+    <section class="lab-intro application-intro" data-zone="intro">
+      <div class="lab-intro-copy">
+        <p class="eyebrow">APPLICATION 12 · 音乐 · 和弦与频谱</p>
+        <div class="application-title-row">
+          <span class="application-badge">MUSIC</span>
+          <h1>三个频率，<span class="gradient-text">叠成一个和弦</span></h1>
+        </div>
+        <p class="lede">
+          波形不是一团乱线：它是三根正弦按振幅加权相加。频谱柱的高度就是这三个系数，
+          改系数就是改音色，而频率本身不动。
+        </p>
+        <div class="intro-pills" aria-label="本章关键词">
+          <span class="pill">线性组合</span>
+          <span class="pill">频谱</span>
+          <span class="pill">投影系数</span>
+          <span class="pill pill-accent">可拖拽</span>
+        </div>
+      </div>
+
+      <aside class="application-formula" aria-label="和弦公式">
+        <p class="formula-label">叠加波形</p>
+        <p class="formula-main">y(t) = a₁sin(2πf₁t) + a₂sin(2πf₂t) + a₃sin(2πf₃t)</p>
+        <p class="formula-sub">
+          根音、三度、五度的频率比接近 <b>4 : 5 : 6</b>；振幅 <b>aᵢ</b> 就是这组基上的坐标。
+        </p>
+      </aside>
+    </section>
+
+    <div class="workspace" data-zone="workspace">
+      <section class="stage-card" id="stage-card" data-zone="canvas" aria-labelledby="stage-title">
+        <div class="stage-head">
+          <div>
+            <p class="stage-kicker">LIVE AUDIO</p>
+            <h2 id="stage-title">三根正弦，一条波形</h2>
+          </div>
+          <div class="stage-actions">
+            <button class="btn btn-small btn-ghost" id="btn-reset" type="button">重置</button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="harmony-canvas" class="transform-canvas" width="900" height="620" tabindex="0"
+            aria-label="和弦波形：三条分音叠加成的波形，以及三个振幅对应的频谱柱。">
+            你的浏览器不支持 Canvas，请换一个现代浏览器。
+          </canvas>
+
+          <div class="det-chip solve-chip" id="harmony-chip">
+            <span>频谱</span>
+            <strong id="canvas-status">三个分音</strong>
+          </div>
+
+          <p class="canvas-hint" id="harmony-hint">调右侧三个振幅，波形与频谱会一起变</p>
+        </div>
+
+        <div class="professor-strip" aria-live="polite">
+          <span class="professor-seal" aria-hidden="true">λ</span>
+          <div>
+            <p id="professor-strip-text">波形是三个基函数的线性组合：调振幅就是改系数，改相位就是平移波形。</p>
+            <p class="professor-strip-prompt" id="professor-strip-prompt">先把三度调小，再把五度调大，比较波形和频谱的变化。</p>
+          </div>
+        </div>
+
+        <div class="stage-foot">
+          <div class="foot-item">
+            <span class="foot-label">a₁ 根音</span>
+            <b id="readout-a1">1.00</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">a₂ 三度</span>
+            <b id="readout-a2">0.70</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">a₃ 五度</span>
+            <b id="readout-a3">0.60</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">能量 Σaᵢ²</span>
+            <b id="readout-energy">1.85</b>
+          </div>
+        </div>
+      </section>
+
+      <aside class="control-panel" data-zone="controls" aria-label="振幅与预设">
+        <div class="panel-head">
+          <h2>三个分音</h2>
+          <span class="pill pill-soft">3 个基</span>
+        </div>
+
+        <div class="professor-note" aria-live="polite">
+          <div class="professor-head">
+            <span class="professor-seal" aria-hidden="true">λ</span>
+            <span>边做边看</span>
+          </div>
+          <p id="professor-text">波形是三个基函数的线性组合：调振幅就是改系数，改相位就是平移波形。</p>
+          <p class="professor-prompt" id="professor-prompt">先把三度调小，再把五度调大，比较波形和频谱的变化。</p>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>根音 C · 261.6 Hz</span>
+            <span class="probe-hint">和弦的地基</span>
+          </div>
+          <div class="weight-row">
+            <input id="a1-range" class="weight-range" type="range" min="0" max="1" step="0.01" value="1"
+              aria-label="根音振幅">
+            <label class="weight-number">
+              <input id="a1" type="number" min="0" max="1" step="0.01" value="1" inputmode="decimal"
+                aria-label="根音振幅数值">
+              <span>a₁</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>三度 E · 329.6 Hz</span>
+            <span class="probe-hint">决定大调 / 小调的味道</span>
+          </div>
+          <div class="weight-row">
+            <input id="a2-range" class="weight-range" type="range" min="0" max="1" step="0.01" value="0.7"
+              aria-label="三度振幅">
+            <label class="weight-number">
+              <input id="a2" type="number" min="0" max="1" step="0.01" value="0.7" inputmode="decimal"
+                aria-label="三度振幅数值">
+              <span>a₂</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>五度 G · 392.0 Hz</span>
+            <span class="probe-hint">最协和的一档</span>
+          </div>
+          <div class="weight-row">
+            <input id="a3-range" class="weight-range" type="range" min="0" max="1" step="0.01" value="0.6"
+              aria-label="五度振幅">
+            <label class="weight-number">
+              <input id="a3" type="number" min="0" max="1" step="0.01" value="0.6" inputmode="decimal"
+                aria-label="五度振幅数值">
+              <span>a₃</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <p class="panel-label">预设</p>
+          <div class="preset-grid">
+            <button class="preset-btn" type="button" data-preset="major">大三和弦</button>
+            <button class="preset-btn" type="button" data-preset="single">单音</button>
+            <button class="preset-btn" type="button" data-preset="fifth">空五度</button>
+          </div>
+        </div>
+
+        <div class="challenge-card" id="challenge-card">
+          <div class="challenge-head">
+            <span>小挑战</span>
+            <strong id="challenge-state">进行中</strong>
+          </div>
+          <p>把三度音关掉：只留根音和五度，看波形变成两条正弦的叠加。</p>
+          <div class="challenge-metric">
+            <span>三度振幅</span>
+            <b id="challenge-distance">0.70</b>
+          </div>
+          <div class="challenge-meter" id="challenge-meter" role="progressbar"
+            aria-label="关闭三度挑战进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="challenge-meter-fill"></span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="explain-section" data-zone="lecture" aria-labelledby="explain-title">
+      <div class="section-heading">
+        <p class="eyebrow">WHY IT LOOKS LIKE THIS</p>
+        <h2 id="explain-title">声音是一组坐标</h2>
+        <p>换一组基（频率），波形就变成三个数字。</p>
+      </div>
+
+      <div class="explain-grid explain-grid-three">
+        <article class="explain-card">
+          <span class="explain-index">01</span>
+          <h3>波形 = 基函数的线性组合</h3>
+          <p>选定三个频率之后，每一个时刻的振幅都是三条正弦的加权和。</p>
+          <p class="formula">y = a₁e₁ + a₂e₂ + a₃e₃</p>
+          <p>eᵢ 是那根正弦，aᵢ 是你要调的旋钮。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">02</span>
+          <h3>频谱 = 投影系数</h3>
+          <p>想知道一段声音里“有多少个 329.6 Hz”，就把它投影到那根正弦上。</p>
+          <p class="formula">aᵢ = ⟨y, eᵢ⟩ / ⟨eᵢ, eᵢ⟩</p>
+          <p>频谱柱的高度，就是这组系数；换一组基，坐标就换一套。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">03</span>
+          <h3>和弦：比值的艺术</h3>
+          <p>根音、大三度、纯五度的频率比接近 4 : 5 : 6；比值越简单，听感越协和。</p>
+          <p class="formula">f₂ / f₁ ≈ 5/4，f₃ / f₁ ≈ 3/2</p>
+          <p>调振幅只改“谁更响”，不会改变这三个频率本身。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="quiz-section" data-zone="quiz">
+      <div class="quiz-card" aria-labelledby="quiz-title">
+        <div class="quiz-copy">
+          <p class="eyebrow">先猜后验</p>
+          <h2 id="quiz-title">把三度的振幅调到 0，会发生什么？</h2>
+          <p>先想：三个系数少了一个，波形和频谱各自少掉什么？</p>
+          <div class="quiz-options" role="group" aria-label="选择答案">
+            <button class="quiz-option" type="button" data-quiz-harmony="sine">变回纯正弦</button>
+            <button class="quiz-option" type="button" data-quiz-harmony="two">少一根频谱柱，仍是两条正弦的叠加</button>
+            <button class="quiz-option" type="button" data-quiz-harmony="silent">完全静音</button>
+          </div>
+          <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></p>
+          <button class="btn btn-primary" id="btn-quiz-apply" type="button">把三度调到 0 验证 <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="quiz-visual" aria-hidden="true">
+          <span class="quiz-mini-label" id="quiz-mini-label">y = Σ aᵢ sin(2πfᵢt)</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-strip" data-zone="next" aria-labelledby="next-title">
+      <div>
+        <p class="eyebrow">NEXT APPLICATION</p>
+        <h2 id="next-title">下一站：社会科学，一群人的意见会停在哪</h2>
+        <p>把“谁影响谁”写成一个矩阵，反复相乘，分布会收敛到特征向量。</p>
+      </div>
+      <a class="btn btn-primary" href="social-opinion.html">进入意见演化 <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>从箭头开始。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../../index.html">入口</a>
+        <a href="../library.html">全部展厅</a>
+        <a href="atlas.html">应用地图</a>
+        <a href="../../ROADMAP.md">路线图</a>
+        <a href="../../RULES.md">规则</a>
+        <a href="../../MANUAL.md">手册</a>
+        <a href="../../REFERENCES.md">参考</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+        项目内容为原创，参考来源仅以链接与出处形式标注。
+      </p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">这个页面需要 JavaScript 才能绘制交互。请启用 JavaScript 后刷新。</div>
+  </noscript>
+
+  <script src="../../js/lib/math.js" defer></script>
+  <script src="../../js/lib/canvas-utils.js" defer></script>
+  <script src="../../js/lib/paths.js" defer></script>
+  <script src="../../js/lib/level-ui.js" defer></script>
+  <script src="../../js/lib/narration.js" defer></script>
+  <script src="../../js/demos/music-harmony.js" defer></script>
+</body>
+</html>

@@ -18,7 +18,10 @@
     physics: '物理',
     economics: '经济',
     software: '软件',
-    hardware: '硬件'
+    hardware: '硬件',
+    art: '美术',
+    music: '音乐',
+    social: '社会科学'
   };
 
   function apply(domain) {

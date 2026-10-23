@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="社会科学应用：意见演化。把互相影响写成矩阵，反复相乘，分布收敛到特征向量。">
+  <meta name="theme-color" content="#efeae1">
+  <title>意见演化 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/canvas.css">
+  <link rel="stylesheet" href="../../css/applications.css">
+</head>
+<body class="lab-page application-page application-social">
+  <a class="skip-link" href="#lab-main">跳到主要内容</a>
+
+  <header class="site-header lab-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Linear Algebra 入口">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../../index.html">入口</a>
+        <a href="../library.html">全部展厅</a>
+        <a href="atlas.html">应用地图</a>
+        <a href="../../ROADMAP.md">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="lab-main" class="lab-main">
+    <section class="lab-intro application-intro" data-zone="intro">
+      <div class="lab-intro-copy">
+        <p class="eyebrow">APPLICATION 13 · 社会科学 · 意见演化</p>
+        <div class="application-title-row">
+          <span class="application-badge">SOCIAL SCIENCE</span>
+          <h1>一群人的意见，<span class="gradient-text">最后会停在哪</span></h1>
+        </div>
+        <p class="lede">
+          两个群体互相影响：每一轮，一部分人改变看法。把“谁影响谁”写成一个矩阵，
+          反复相乘，分布会收敛到它自己的特征向量——这就是稳态。
+        </p>
+        <div class="intro-pills" aria-label="本章关键词">
+          <span class="pill">转移矩阵</span>
+          <span class="pill">迭代</span>
+          <span class="pill">特征向量</span>
+          <span class="pill pill-accent">可交互</span>
+        </div>
+      </div>
+
+      <aside class="application-formula" aria-label="意见演化公式">
+        <p class="formula-label">一步更新</p>
+        <p class="formula-main">x<sub>t+1</sub> = M x<sub>t</sub></p>
+        <p class="formula-sub">
+          列向量 <b>x</b> 是两个群体的人数占比；<b>M</b> 的每一列加起来等于 1，
+          所以总人数守恒。稳态满足 <b>M v = v</b>。
+        </p>
+      </aside>
+    </section>
+
+    <div class="workspace" data-zone="workspace">
+      <section class="stage-card" id="stage-card" data-zone="canvas" aria-labelledby="stage-title">
+        <div class="stage-head">
+          <div>
+            <p class="stage-kicker">LIVE SOCIAL DYNAMICS</p>
+            <h2 id="stage-title">每一轮，都乘一次矩阵</h2>
+          </div>
+          <div class="stage-actions">
+            <button class="btn btn-small btn-ghost" id="btn-reset" type="button">重置</button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="opinion-canvas" class="transform-canvas" width="900" height="620" tabindex="0"
+            aria-label="意见分布：两个群体的占比柱状图，以及随轮数收敛到稳态的曲线。">
+            你的浏览器不支持 Canvas，请换一个现代浏览器。
+          </canvas>
+
+          <div class="det-chip solve-chip" id="opinion-chip">
+            <span>分布</span>
+            <strong id="canvas-status">演化中</strong>
+          </div>
+
+          <p class="canvas-hint" id="opinion-hint">用右侧按钮走一步或连续演化</p>
+        </div>
+
+        <div class="professor-strip" aria-live="polite">
+          <span class="professor-seal" aria-hidden="true">λ</span>
+          <div>
+            <p id="professor-strip-text">每一步都用同一个矩阵乘一次：新意见 = 旧意见的加权和。反复乘下去，分布收敛到矩阵的特征向量。</p>
+            <p class="professor-strip-prompt" id="professor-strip-prompt">先点“连续演化”，看两条柱子在多少步之后不再变化。</p>
+          </div>
+        </div>
+
+        <div class="stage-foot">
+          <div class="foot-item">
+            <span class="foot-label">A 当前</span>
+            <b id="readout-current">0.70</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">A 稳态</span>
+            <b id="readout-steady">0.25</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">已走步数</span>
+            <b id="readout-step">0</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">λ₂</span>
+            <b id="readout-lambda">0.60</b>
+          </div>
+        </div>
+      </section>
+
+      <aside class="control-panel" data-zone="controls" aria-label="影响比例与演化控制">
+        <div class="panel-head">
+          <h2>谁影响谁</h2>
+          <span class="pill pill-soft">2 × 2</span>
+        </div>
+
+        <div class="professor-note" aria-live="polite">
+          <div class="professor-head">
+            <span class="professor-seal" aria-hidden="true">λ</span>
+            <span>边做边看</span>
+          </div>
+          <p id="professor-text">每一步都用同一个矩阵乘一次：新意见 = 旧意见的加权和。反复乘下去，分布收敛到矩阵的特征向量。</p>
+          <p class="professor-prompt" id="professor-prompt">先点“连续演化”，看两条柱子在多少步之后不再变化。</p>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>A → B 的转向比例 α</span>
+            <span class="probe-hint">每一轮有多少人改主意</span>
+          </div>
+          <div class="weight-row">
+            <input id="alpha-range" class="weight-range" type="range" min="0" max="0.5" step="0.01" value="0.3"
+              aria-label="A 转向 B 的比例">
+            <label class="weight-number">
+              <input id="alpha" type="number" min="0" max="0.5" step="0.01" value="0.3" inputmode="decimal"
+                aria-label="A 转向 B 的比例数值">
+              <span>α</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>B → A 的转向比例 β</span>
+            <span class="probe-hint">α = β 时稳态正好一半</span>
+          </div>
+          <div class="weight-row">
+            <input id="beta-range" class="weight-range" type="range" min="0" max="0.5" step="0.01" value="0.1"
+              aria-label="B 转向 A 的比例">
+            <label class="weight-number">
+              <input id="beta" type="number" min="0" max="0.5" step="0.01" value="0.1" inputmode="decimal"
+                aria-label="B 转向 A 的比例数值">
+              <span>β</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>一开始 A 的占比</span>
+            <span class="probe-hint">起点</span>
+          </div>
+          <div class="weight-row">
+            <input id="start-range" class="weight-range" type="range" min="0" max="1" step="0.01" value="0.7"
+              aria-label="初始 A 占比">
+            <label class="weight-number">
+              <input id="start" type="number" min="0" max="1" step="0.01" value="0.7" inputmode="decimal"
+                aria-label="初始 A 占比数值">
+              <span>x₀</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <p class="panel-label">演化</p>
+          <div class="preset-grid">
+            <button class="preset-btn" type="button" id="btn-step">走一步</button>
+            <button class="preset-btn" type="button" id="btn-play">连续演化</button>
+            <button class="preset-btn" type="button" id="btn-rewind">回到起点</button>
+          </div>
+        </div>
+
+        <div class="challenge-card" id="challenge-card">
+          <div class="challenge-head">
+            <span>小挑战</span>
+            <strong id="challenge-state">进行中</strong>
+          </div>
+          <p>让稳态正好是一半一半：把 α 和 β 调成相等。</p>
+          <div class="challenge-metric">
+            <span>|α − β|</span>
+            <b id="challenge-distance">0.00</b>
+          </div>
+          <div class="challenge-meter" id="challenge-meter" role="progressbar"
+            aria-label="稳态对半挑战进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="challenge-meter-fill"></span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="explain-section" data-zone="lecture" aria-labelledby="explain-title">
+      <div class="section-heading">
+        <p class="eyebrow">WHY IT LOOKS LIKE THIS</p>
+        <h2 id="explain-title">稳态就是特征向量</h2>
+        <p>乘完矩阵不改变方向的分布，就是这套规则下的“最终答案”。</p>
+      </div>
+
+      <div class="explain-grid explain-grid-three">
+        <article class="explain-card">
+          <span class="explain-index">01</span>
+          <h3>一步 = 一次矩阵乘法</h3>
+          <p>新分布是旧分布的两项加权和；权重都来自同一个矩阵 M。</p>
+          <p class="formula">x<sub>t+1</sub> = M x<sub>t</sub></p>
+          <p>M 的列和为 1，所以 x 的两项加起来始终是 1。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">02</span>
+          <h3>稳态：M v = v</h3>
+          <p>如果某一轮之后分布不再变，那它满足 M v = v，也就是 λ = 1 的特征向量。</p>
+          <p class="formula">v = (β, α) / (α + β)</p>
+          <p>这个向量与起点无关：只要 α、β 固定，所有人最后都会走到同一个比例。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">03</span>
+          <h3>收敛快慢：看 λ₂</h3>
+          <p>另一个特征值是 1 − α − β；它越接近 0，两步就收敛；越接近 1，越慢。</p>
+          <p class="formula">λ₂ = 1 − α − β</p>
+          <p>α = β = 0 时 λ₂ = 1，矩阵是单位矩阵——分布原地不动。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="quiz-section" data-zone="quiz">
+      <div class="quiz-card" aria-labelledby="quiz-title">
+        <div class="quiz-copy">
+          <p class="eyebrow">先猜后验</p>
+          <h2 id="quiz-title">如果两个群体完全不互相影响（α = β = 0），最后会怎样？</h2>
+          <p>先想：转移矩阵变成什么？每一步乘完，分布会变吗？</p>
+          <div class="quiz-options" role="group" aria-label="选择答案">
+            <button class="quiz-option" type="button" data-quiz-opinion="half">变成一半一半</button>
+            <button class="quiz-option" type="button" data-quiz-opinion="stay">保持初始比例</button>
+            <button class="quiz-option" type="button" data-quiz-opinion="allA">全部变成 A</button>
+          </div>
+          <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></p>
+          <button class="btn btn-primary" id="btn-quiz-apply" type="button">把 α、β 都调到 0 验证 <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="quiz-visual" aria-hidden="true">
+          <span class="quiz-mini-label" id="quiz-mini-label">M v = v · λ = 1</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-strip" data-zone="next" aria-labelledby="next-title">
+      <div>
+        <p class="eyebrow">NEXT</p>
+        <h2 id="next-title">回到应用地图：还有哪些领域在排队</h2>
+        <p>物理、经济、软件、硬件、美术、音乐、社会科学，七个领域共用同一套矩阵语言。</p>
+      </div>
+      <a class="btn btn-primary" href="atlas.html">打开应用地图 <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>从箭头开始。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../../index.html">入口</a>
+        <a href="../library.html">全部展厅</a>
+        <a href="atlas.html">应用地图</a>
+        <a href="../../ROADMAP.md">路线图</a>
+        <a href="../../RULES.md">规则</a>
+        <a href="../../MANUAL.md">手册</a>
+        <a href="../../REFERENCES.md">参考</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+        项目内容为原创，参考来源仅以链接与出处形式标注。
+      </p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">这个页面需要 JavaScript 才能绘制交互。请启用 JavaScript 后刷新。</div>
+  </noscript>
+
+  <script src="../../js/lib/math.js" defer></script>
+  <script src="../../js/lib/canvas-utils.js" defer></script>
+  <script src="../../js/lib/paths.js" defer></script>
+  <script src="../../js/lib/level-ui.js" defer></script>
+  <script src="../../js/lib/narration.js" defer></script>
+  <script src="../../js/demos/social-opinion.js" defer></script>
+</body>
+</html>

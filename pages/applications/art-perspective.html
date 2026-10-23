@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="美术应用：一点透视。用投影除法画出地面网格与街道，看平行线怎样在消失点相遇。">
+  <meta name="theme-color" content="#efeae1">
+  <title>一点透视 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/canvas.css">
+  <link rel="stylesheet" href="../../css/applications.css">
+</head>
+<body class="lab-page application-page application-art">
+  <a class="skip-link" href="#lab-main">跳到主要内容</a>
+
+  <header class="site-header lab-header">
+    <div class="header-inner">
+      <a class="brand" href="../../index.html" aria-label="Linear Algebra 入口">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../../index.html">入口</a>
+        <a href="../library.html">全部展厅</a>
+        <a href="atlas.html">应用地图</a>
+        <a href="../../ROADMAP.md">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="lab-main" class="lab-main">
+    <section class="lab-intro application-intro" data-zone="intro">
+      <div class="lab-intro-copy">
+        <p class="eyebrow">APPLICATION 11 · 美术 · 一点透视</p>
+        <div class="application-title-row">
+          <span class="application-badge">ART</span>
+          <h1>平行线，<span class="gradient-text">在远处相遇</span></h1>
+        </div>
+        <p class="lede">
+          画面里的铁轨、地砖、街道都朝同一个点收拢。那不是画家的错觉，
+          而是三维坐标除以深度之后，平行方向的极限位置。
+        </p>
+        <div class="intro-pills" aria-label="本章关键词">
+          <span class="pill">消失点</span>
+          <span class="pill">地平线</span>
+          <span class="pill">投影除法</span>
+          <span class="pill pill-accent">可拖拽</span>
+        </div>
+      </div>
+
+      <aside class="application-formula" aria-label="一点透视公式">
+        <p class="formula-label">地面网格</p>
+        <p class="formula-main">x = f·X / (Z + d) + vₚ</p>
+        <p class="formula-sub">
+          同一组平行于画面的竖线，深度 <b>Z</b> 越大，屏幕上的间距越小；
+          <b>Z → ∞</b> 时全部落到消失点 <b>vₚ</b> 上。
+        </p>
+      </aside>
+    </section>
+
+    <div class="workspace" data-zone="workspace">
+      <section class="stage-card" id="stage-card" data-zone="canvas" aria-labelledby="stage-title">
+        <div class="stage-head">
+          <div>
+            <p class="stage-kicker">LIVE PERSPECTIVE</p>
+            <h2 id="stage-title">一条街，一个消失点</h2>
+          </div>
+          <div class="stage-actions">
+            <button class="btn btn-small btn-ghost" id="btn-reset" type="button">重置</button>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="perspective-canvas" class="transform-canvas" width="900" height="620" tabindex="0"
+            aria-label="一点透视：地面网格与路灯朝消失点收拢，拖动可移动消失点。">
+            你的浏览器不支持 Canvas，请换一个现代浏览器。
+          </canvas>
+
+          <div class="det-chip solve-chip" id="perspective-chip">
+            <span>消失点</span>
+            <strong id="canvas-status">居中</strong>
+          </div>
+
+          <p class="canvas-hint" id="perspective-hint">拖动画面移动消失点；右侧也能调视高</p>
+        </div>
+
+        <div class="professor-strip" aria-live="polite">
+          <span class="professor-seal" aria-hidden="true">λ</span>
+          <div>
+            <p id="professor-strip-text">一点透视里，所有垂直于画面的平行线都汇到同一个消失点。</p>
+            <p class="professor-strip-prompt" id="professor-strip-prompt">先把消失点拖到画面正中央，再看两侧是否对称。</p>
+          </div>
+        </div>
+
+        <div class="stage-foot">
+          <div class="foot-item">
+            <span class="foot-label">视高</span>
+            <b id="readout-eye">1.60</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">焦距 f</span>
+            <b id="readout-focal">1.20</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">消失点</span>
+            <b id="readout-vp">0.00, 0.12</b>
+          </div>
+          <div class="foot-item">
+            <span class="foot-label">地平线</span>
+            <b id="readout-horizon">0.12</b>
+          </div>
+        </div>
+      </section>
+
+      <aside class="control-panel" data-zone="controls" aria-label="透视参数">
+        <div class="panel-head">
+          <h2>画框与相机</h2>
+          <span class="pill pill-soft">透视</span>
+        </div>
+
+        <div class="professor-note" aria-live="polite">
+          <div class="professor-head">
+            <span class="professor-seal" aria-hidden="true">λ</span>
+            <span>边做边看</span>
+          </div>
+          <p id="professor-text">一点透视里，所有垂直于画面的平行线都汇到同一个消失点。</p>
+          <p id="professor-prompt" class="professor-prompt">先把消失点拖到画面正中央，再看两侧是否对称。</p>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>视高 h</span>
+            <span class="probe-hint">眼睛离地多高</span>
+          </div>
+          <div class="weight-row">
+            <input id="eye-range" class="weight-range" type="range" min="0.4" max="3" step="0.05" value="1.6"
+              aria-label="视高">
+            <label class="weight-number">
+              <input id="eye" type="number" min="0.4" max="3" step="0.05" value="1.6" inputmode="decimal"
+                aria-label="视高数值">
+              <span>h</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>焦距 f</span>
+            <span class="probe-hint">越大，视野越窄</span>
+          </div>
+          <div class="weight-row">
+            <input id="focal-range" class="weight-range" type="range" min="0.5" max="2.4" step="0.02" value="1.2"
+              aria-label="焦距">
+            <label class="weight-number">
+              <input id="focal" type="number" min="0.5" max="2.4" step="0.02" value="1.2" inputmode="decimal"
+                aria-label="焦距数值">
+              <span>f</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>消失点水平位置</span>
+            <span class="probe-hint">拖动画布也行</span>
+          </div>
+          <div class="weight-row">
+            <input id="vp-x-range" class="weight-range" type="range" min="-2.2" max="2.2" step="0.02" value="0"
+              aria-label="消失点水平位置">
+            <label class="weight-number">
+              <input id="vp-x" type="number" min="-2.2" max="2.2" step="0.02" value="0" inputmode="decimal"
+                aria-label="消失点水平数值">
+              <span>x</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="weight-editor">
+          <div class="probe-head">
+            <span>消失点高度</span>
+            <span class="probe-hint">地平线的高度</span>
+          </div>
+          <div class="weight-row">
+            <input id="vp-y-range" class="weight-range" type="range" min="-0.9" max="1.1" step="0.02" value="0.12"
+              aria-label="消失点高度">
+            <label class="weight-number">
+              <input id="vp-y" type="number" min="-0.9" max="1.1" step="0.02" value="0.12" inputmode="decimal"
+                aria-label="消失点高度数值">
+              <span>y</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <p class="panel-label">预设</p>
+          <div class="preset-grid">
+            <button class="preset-btn" type="button" data-preset="street">街景</button>
+            <button class="preset-btn" type="button" data-preset="low">低机位</button>
+            <button class="preset-btn" type="button" data-preset="high">俯视</button>
+          </div>
+        </div>
+
+        <div class="challenge-card" id="challenge-card">
+          <div class="challenge-head">
+            <span>小挑战</span>
+            <strong id="challenge-state">进行中</strong>
+          </div>
+          <p>把消失点拖回画面正中：两个方向都接近 0。</p>
+          <div class="challenge-metric">
+            <span>偏移距离</span>
+            <b id="challenge-distance">0.12</b>
+          </div>
+          <div class="challenge-meter" id="challenge-meter" role="progressbar"
+            aria-label="消失点居中挑战进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="challenge-meter-fill"></span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="explain-section" data-zone="lecture" aria-labelledby="explain-title">
+      <div class="section-heading">
+        <p class="eyebrow">WHY IT LOOKS LIKE THIS</p>
+        <h2 id="explain-title">透视是除法，不是魔法</h2>
+        <p>近大远小只有一条规则：屏幕坐标 = 世界坐标 ÷ 深度。</p>
+      </div>
+
+      <div class="explain-grid explain-grid-three">
+        <article class="explain-card">
+          <span class="explain-index">01</span>
+          <h3>地砖：等宽，但不等距</h3>
+          <p>真实地面上每块砖一样大；投影之后，越远的砖在画面上越窄。</p>
+          <p class="formula">x = f·X / (Z + d)</p>
+          <p>X 固定的两条边，就是朝消失点收拢的两条斜线。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">02</span>
+          <h3>消失点：平行方向的极限</h3>
+          <p>所有与画面垂直的直线，方向都是 Z 轴；Z 越大，投影点越靠近同一个位置。</p>
+          <p class="formula">lim<sub>Z→∞</sub> f·X/(Z+d) = 0</p>
+          <p>画面平移之后，这个极限点跟着平移——它就是消失点 vₚ。</p>
+        </article>
+
+        <article class="explain-card">
+          <span class="explain-index">03</span>
+          <h3>地平线：视高的投影</h3>
+          <p>地平线的高度等于消失点的高度；视高变化时，地砖的疏密跟着变。</p>
+          <p class="formula">y = f·(0 − h)/(Z + d) + vₚᵧ</p>
+          <p>相机越低，地砖越“贴地”；相机越高，越像俯视。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="quiz-section" data-zone="quiz">
+      <div class="quiz-card" aria-labelledby="quiz-title">
+        <div class="quiz-copy">
+          <p class="eyebrow">先猜后验</p>
+          <h2 id="quiz-title">两条本来平行的铁轨，在画面上会变成什么？</h2>
+          <p>先想：它们的方向相同，深度一起变大，屏幕坐标会靠近哪里？</p>
+          <div class="quiz-options" role="group" aria-label="选择答案">
+            <button class="quiz-option" type="button" data-quiz-perspective="parallel">仍然平行</button>
+            <button class="quiz-option" type="button" data-quiz-perspective="meet">交于消失点</button>
+            <button class="quiz-option" type="button" data-quiz-perspective="cross">交叉后分开</button>
+          </div>
+          <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></p>
+          <button class="btn btn-primary" id="btn-quiz-apply" type="button">把消失点拉到中央验证 <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="quiz-visual" aria-hidden="true">
+          <span class="quiz-mini-label" id="quiz-mini-label">Z → ∞ · 交于 vₚ</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="next-strip" data-zone="next" aria-labelledby="next-title">
+      <div>
+        <p class="eyebrow">NEXT APPLICATION</p>
+        <h2 id="next-title">下一站：音乐，三个频率叠成一个和弦</h2>
+        <p>波形也是线性组合：把三个正弦按系数加起来，就得到和弦的音色。</p>
+      </div>
+      <a class="btn btn-primary" href="music-harmony.html">进入和弦与频谱 <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>从箭头开始。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../../index.html">入口</a>
+        <a href="../library.html">全部展厅</a>
+        <a href="atlas.html">应用地图</a>
+        <a href="../../ROADMAP.md">路线图</a>
+        <a href="../../RULES.md">规则</a>
+        <a href="../../MANUAL.md">手册</a>
+        <a href="../../REFERENCES.md">参考</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+        项目内容为原创，参考来源仅以链接与出处形式标注。
+      </p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">这个页面需要 JavaScript 才能绘制交互。请启用 JavaScript 后刷新。</div>
+  </noscript>
+
+  <script src="../../js/lib/math.js" defer></script>
+  <script src="../../js/lib/canvas-utils.js" defer></script>
+  <script src="../../js/lib/paths.js" defer></script>
+  <script src="../../js/lib/level-ui.js" defer></script>
+  <script src="../../js/lib/narration.js" defer></script>
+  <script src="../../js/demos/art-perspective.js" defer></script>
+</body>
+</html>

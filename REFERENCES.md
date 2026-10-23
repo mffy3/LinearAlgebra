@@ -15,17 +15,31 @@
 4. 3Blue1Brown, *Essence of Linear Algebra*.
    - <https://www.3blue1brown.com/topics/linear-algebra>
    - 用途：视觉直觉的参照；不复制其脚本、分镜、动画、配色或旁白。
+5. James D. Foley, Andries van Dam, Steven K. Feiner, John F. Hughes, *Computer Graphics: Principles and Practice*, 3rd Edition, Addison-Wesley, 2013. ISBN 978-0-321-39952-6.
+   - 用途：核对三维旋转、透视投影与渲染管线的标准顺序（模型 → 视图 → 投影）。
+   - 页面：`pages/applications/computer-projection.html`
+6. Marc Levoy, *CS 178: Digital Photography*（Stanford，透视与投影几何讲义）.
+   - <https://graphics.stanford.edu/courses/cs178/>
+   - 用途：核对一点透视、消失点与地平线的几何关系。
+   - 页面：`pages/applications/art-perspective.html`
+7. Julius O. Smith III, *Mathematics of the Discrete Fourier Transform (DFT)*, 2nd Edition, 2007.
+   - <https://ccrma.stanford.edu/~jos/mdft/>
+   - 用途：核对“傅里叶系数 = 投影系数”与正弦基的表述。
+   - 页面：`pages/applications/music-harmony.html`
+8. Gilbert Strang, *Introduction to Linear Algebra* 第 5 章“特征值与马尔可夫矩阵”；MIT OCW 18.06 对应讲次。
+   - 用途：核对列随机矩阵、稳态与特征值 1 的关系。
+   - 页面：`pages/applications/social-opinion.html`
 
 ## 使用边界
 
 - 本项目的中文文案、页面结构、交互、绘图与代码均为原创实现。
 - 不复制、翻译或改写上述来源的正文、习题、解答、字幕、插图或动画。
 - 数学事实与公式属于公共知识；具体表达、视觉设计与教学比喻由本项目自行完成。
-- 本项目与 MIT、Gilbert Strang 教授、3Blue1Brown 均无隶属、合作或背书关系。
+- 本项目与 MIT、Gilbert Strang 教授、3Blue1Brown、Stanford 均无隶属、合作或背书关系。
 
 ## 数学核对
 
-当前测试覆盖 2×2 矩阵的：
+当前测试覆盖 2×2 矩阵与 3D 投影的：
 
 - 行列式与面积：`|det(A)| = 底 × 高`
 - 逆矩阵与奇异判定
@@ -34,8 +48,9 @@
 - 线性方程组 `Ax = b`：唯一解、无解、无穷多解；`rank[A|b]` 与相容性
 - 物理受力分解：非正交基上的系数、残差与共线退化
 - 旋转、剪切、投影、反射、单位矩阵与零矩阵等特例
+- 3D：`mat3` 乘法结合律、旋转保长度、绕 y 轴 90°、透视投影“越远越小”
 
-当前共 **45** 个测试。
+当前共 **49** 个测试。
 
 运行方式：
 

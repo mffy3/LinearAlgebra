@@ -653,6 +653,89 @@
   }
 
   /* ------------------------------------------------------------------ *
+   * 3D：mat3、旋转与透视投影（计算机 / 美术应用共用）
+   * ------------------------------------------------------------------ */
+
+  /**
+   * 3×3 矩阵，行优先存成 9 个数：
+   *
+   *     | m0  m1  m2 |
+   *     | m3  m4  m5 |
+   *     | m6  m7  m8 |
+   *
+   * 3D 点用 { x, y, z } 表示；矩阵作用在列向量上。
+   */
+  function mat3(values) {
+    var v = values || [1, 0, 0, 0, 1, 0, 0, 0, 1];
+    return [v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8]];
+  }
+
+  function identity3() {
+    return [1, 0, 0, 0, 1, 0, 0, 0, 1];
+  }
+
+  function multiplyMat3(a, b) {
+    var out = new Array(9);
+    for (var r = 0; r < 3; r++) {
+      for (var c = 0; c < 3; c++) {
+        out[r * 3 + c] =
+          a[r * 3] * b[c] +
+          a[r * 3 + 1] * b[3 + c] +
+          a[r * 3 + 2] * b[6 + c];
+      }
+    }
+    return out;
+  }
+
+  function applyMat3(m, p) {
+    return {
+      x: m[0] * p.x + m[1] * p.y + m[2] * p.z,
+      y: m[3] * p.x + m[4] * p.y + m[5] * p.z,
+      z: m[6] * p.x + m[7] * p.y + m[8] * p.z
+    };
+  }
+
+  /** 三维点积；判断面朝向时用它。 */
+  function dot3(a, b) {
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+  }
+
+  /** 绕 x 轴旋转（右手系，角度制）。 */
+  function rotationX3(degrees) {
+    var t = toRadians(degrees);
+    var c = Math.cos(t);
+    var s = Math.sin(t);
+    return [1, 0, 0, 0, c, -s, 0, s, c];
+  }
+
+  /** 绕 y 轴旋转（右手系，角度制）。 */
+  function rotationY3(degrees) {
+    var t = toRadians(degrees);
+    var c = Math.cos(t);
+    var s = Math.sin(t);
+    return [c, 0, s, 0, 1, 0, -s, 0, c];
+  }
+
+  /**
+   * 透视投影：相机在原点、看向 +z，物体先平移到 z + distance 再除以深度。
+   * 返回的 z 是相机空间深度，<= 0 表示落在相机后面（调用方应当丢弃）。
+   */
+  function projectPoint3(p, distance, focal) {
+    var d = distance == null ? 6 : distance;
+    var f = focal == null ? 1 : focal;
+    var depth = p.z + d;
+    if (!Number.isFinite(depth) || Math.abs(depth) < 1e-6) {
+      return { x: 0, y: 0, z: depth, behind: true };
+    }
+    return {
+      x: f * p.x / depth,
+      y: f * p.y / depth,
+      z: depth,
+      behind: depth <= 0
+    };
+  }
+
+  /* ------------------------------------------------------------------ *
    * 导出
    * ------------------------------------------------------------------ */
 
@@ -742,7 +825,17 @@
     unitCirclePoints: unitCirclePoints,
     toRadians: toRadians,
     toDegrees: toDegrees,
-    normalizeAngle: normalizeAngle
+    normalizeAngle: normalizeAngle,
+
+    // 3D：mat3 与透视
+    mat3: mat3,
+    identity3: identity3,
+    multiplyMat3: multiplyMat3,
+    applyMat3: applyMat3,
+    dot3: dot3,
+    rotationX3: rotationX3,
+    rotationY3: rotationY3,
+    projectPoint3: projectPoint3
   };
 
   if (typeof module === 'object' && module.exports) {

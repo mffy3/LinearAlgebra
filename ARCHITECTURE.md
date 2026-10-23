@@ -189,11 +189,12 @@ pages/applications/software-convolution.html # 已完成：图像卷积
 pages/applications/software-pca.html # 已完成：PCA 降维
 pages/applications/hardware-audio.html # 已完成：音频 FIR
 pages/applications/hardware-ecc.html # 已完成：Hamming 纠错
+pages/applications/computer-projection.html # 已完成：三维投影（P7）
+pages/applications/art-perspective.html # 已完成：一点透视（P7）
+pages/applications/music-harmony.html # 已完成：和弦与频谱（P7）
+pages/applications/social-opinion.html # 已完成：意见演化（P7）
 pages/applications/atlas.html # 已完成：跨域应用地图
 pages/applications/release.html # 已完成：发布检查
-pages/applications/economics.html      # 规划中
-pages/applications/computer.html       # 规划中
-...
 ```
 
 它们复用 `main.css` 的 token、`canvas.css` 的区块和 `applications.css` 的公式卡，但**不要**修改五个基础展厅的数学结论。应用页的“即时旁白”写在 `js/lib/narration.js` 里，按领域新增函数；不要把公式塞回页面。

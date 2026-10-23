@@ -43,16 +43,17 @@
     <section class="atlas-hero" data-zone="atlas">
       <div>
         <p class="eyebrow">P6 · 跨域索引</p>
-        <h1>一张地图，<br><span class="gradient-text">九个入口</span></h1>
+        <h1>一张地图，<br><span class="gradient-text">十三个入口</span></h1>
         <p class="lede">
-          物理的力、经济的投入产出、图像的卷积、硬件的纠错，
-          背后都在做同一件事：把一组数按线性规则重新组合。选一个入口，继续看它落在哪个矩阵上。
+          物理的力、经济的投入产出、图像的卷积、硬件的纠错、美术的透视、
+          音乐的频谱、社会科学的意见演化，背后都在做同一件事：
+          把一组数按线性规则重新组合。选一个入口，继续看它落在哪个矩阵上。
         </p>
       </div>
 
       <aside class="atlas-count-card" aria-label="应用数量">
-        <strong id="atlas-count">9</strong>
-        <span>个可交互应用 · 4 个领域</span>
+        <strong id="atlas-count">13</strong>
+        <span>个可交互应用 · 7 个领域</span>
       </aside>
     </section>
 
@@ -62,9 +63,12 @@
       <button class="atlas-filter" type="button" data-domain="economics" aria-pressed="false">经济</button>
       <button class="atlas-filter" type="button" data-domain="software" aria-pressed="false">软件</button>
       <button class="atlas-filter" type="button" data-domain="hardware" aria-pressed="false">硬件</button>
+      <button class="atlas-filter" type="button" data-domain="art" aria-pressed="false">美术</button>
+      <button class="atlas-filter" type="button" data-domain="music" aria-pressed="false">音乐</button>
+      <button class="atlas-filter" type="button" data-domain="social" aria-pressed="false">社会科学</button>
     </div>
 
-    <p class="atlas-count" id="atlas-filter-count" aria-live="polite">显示全部 9 个应用</p>
+    <p class="atlas-count" id="atlas-filter-count" aria-live="polite">显示全部 13 个应用</p>
 
     <section class="atlas-grid" aria-label="应用列表">
       <a class="atlas-card" href="physics.html" data-domain="physics" aria-label="物理：受力分解">
@@ -165,6 +169,50 @@
         <span class="atlas-formula">s = H r (mod 2)</span>
         <div class="atlas-concepts"><span>GF(2)</span><span>校验矩阵</span></div>
       </a>
+
+      <a class="atlas-card" href="computer-projection.html" data-domain="software" aria-label="计算机：三维投影">
+        <div class="atlas-card-top">
+          <span class="atlas-domain">COMPUTER</span>
+          <span class="atlas-index">10</span>
+        </div>
+        <h2>三维投影</h2>
+        <p>先乘旋转矩阵，再除以深度；拖动立方体，看它怎样落到二维屏幕。</p>
+        <span class="atlas-formula">x = f·pₓ / (p_z + d)</span>
+        <div class="atlas-concepts"><span>旋转矩阵</span><span>透视</span></div>
+      </a>
+
+      <a class="atlas-card" href="art-perspective.html" data-domain="art" aria-label="美术：一点透视">
+        <div class="atlas-card-top">
+          <span class="atlas-domain">ART</span>
+          <span class="atlas-index">11</span>
+        </div>
+        <h2>一点透视</h2>
+        <p>地砖越远越窄，所有纵深线汇到同一个消失点；拖动它，整条街跟着转。</p>
+        <span class="atlas-formula">x = f·X / (Z + d) + vₚ</span>
+        <div class="atlas-concepts"><span>消失点</span><span>地平线</span></div>
+      </a>
+
+      <a class="atlas-card" href="music-harmony.html" data-domain="music" aria-label="音乐：和弦与频谱">
+        <div class="atlas-card-top">
+          <span class="atlas-domain">MUSIC</span>
+          <span class="atlas-index">12</span>
+        </div>
+        <h2>和弦与频谱</h2>
+        <p>三个频率按振幅叠加成波形；频谱柱的高度就是这组线性组合的系数。</p>
+        <span class="atlas-formula">y = Σ aᵢ sin(2πfᵢt)</span>
+        <div class="atlas-concepts"><span>线性组合</span><span>换基</span></div>
+      </a>
+
+      <a class="atlas-card" href="social-opinion.html" data-domain="social" aria-label="社会科学：意见演化">
+        <div class="atlas-card-top">
+          <span class="atlas-domain">SOCIAL</span>
+          <span class="atlas-index">13</span>
+        </div>
+        <h2>意见演化</h2>
+        <p>把互相影响写成矩阵，反复相乘，分布收敛到特征向量；α = β 时正好一半。</p>
+        <span class="atlas-formula">x<sub>t+1</sub> = M x<sub>t</sub></span>
+        <div class="atlas-concepts"><span>马尔可夫</span><span>特征向量</span></div>
+      </a>
     </section>
 
     <div class="atlas-empty" id="atlas-empty">这个领域暂时没有应用。</div>
@@ -181,6 +229,10 @@
         <span class="atlas-concept">GF(2)</span>
         <span class="atlas-concept">投影</span>
         <span class="atlas-concept">归一化</span>
+        <span class="atlas-concept">旋转矩阵</span>
+        <span class="atlas-concept">消失点</span>
+        <span class="atlas-concept">傅里叶</span>
+        <span class="atlas-concept">马尔可夫</span>
       </div>
     </section>
 

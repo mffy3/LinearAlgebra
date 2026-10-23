@@ -478,6 +478,50 @@ test('角度转换', () => {
   close(L.normalizeAngle(3 * Math.PI), Math.PI);
 });
 
+test('mat3 单位矩阵与乘法', () => {
+  const p = { x: 1, y: -2, z: 3 };
+  const q = L.applyMat3(L.identity3(), p);
+  close(q.x, 1); close(q.y, -2); close(q.z, 3);
+
+  const a = L.rotationY3(90);
+  const b = L.rotationX3(30);
+  const ab = L.multiplyMat3(a, b);
+  const direct = L.applyMat3(a, L.applyMat3(b, p));
+  const combined = L.applyMat3(ab, p);
+  close(combined.x, direct.x, 1e-9, 'combined.x');
+  close(combined.y, direct.y, 1e-9, 'combined.y');
+  close(combined.z, direct.z, 1e-9, 'combined.z');
+});
+
+test('旋转保持长度', () => {
+  const p = { x: 1, y: 2, z: -3 };
+  const len = Math.hypot(p.x, p.y, p.z);
+  const r = L.applyMat3(L.multiplyMat3(L.rotationX3(37), L.rotationY3(-61)), p);
+  close(Math.hypot(r.x, r.y, r.z), len, 1e-9, 'length');
+});
+
+test('绕 y 轴 90° 把 x 轴送到 -z', () => {
+  const r = L.applyMat3(L.rotationY3(90), { x: 1, y: 0, z: 0 });
+  close(r.x, 0, 1e-9, 'x');
+  close(r.y, 0, 1e-9, 'y');
+  close(r.z, -1, 1e-9, 'z');
+});
+
+test('三维点积：垂直为零，同向为正', () => {
+  close(L.dot3({ x: 1, y: 0, z: 0 }, { x: 0, y: 1, z: 0 }), 0);
+  close(L.dot3({ x: 0, y: 0, z: -1 }, { x: 0, y: 0, z: -2 }), 2);
+  assert.equal(L.dot3({ x: 1, y: 1, z: 1 }, { x: -1, y: -1, z: -1 }) < 0, true);
+});
+
+test('透视投影：距离越远越小', () => {
+  const near = L.projectPoint3({ x: 1, y: 0, z: 0 }, 4, 1);
+  const far = L.projectPoint3({ x: 1, y: 0, z: 0 }, 8, 1);
+  close(near.x, 0.25, 1e-9, 'near');
+  close(far.x, 0.125, 1e-9, 'far');
+  assert.equal(far.x < near.x, true);
+  assert.equal(L.projectPoint3({ x: 1, y: 0, z: -9 }, 4, 1).behind, true);
+});
+
 /* ------------------------------------------------------------------ */
 console.log(`\n${passed} passed, ${failed} failed\n`);
 if (failed > 0) process.exitCode = 1;

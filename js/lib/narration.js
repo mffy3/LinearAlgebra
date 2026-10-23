@@ -458,6 +458,90 @@
     };
   }
 
+  function projection(s) {
+    if (s.faces <= 1) {
+      return {
+        text: '正面视角：只有一个面朝向相机，投影出来就是一个正方形；旋转矩阵把另外四个面转到了背面。',
+        prompt: '把偏航推到 45°，看看第二个面怎样露出来。'
+      };
+    }
+
+    if (s.distance > 9.5) {
+      return {
+        text: '相机退得很远，各顶点的深度差变得不重要，透视越来越接近平行投影：两组平行边几乎不再收拢。',
+        prompt: '把相机距离拉回 5 左右，比较远处的边是不是又收拢了。'
+      };
+    }
+
+    return {
+      text: '旋转矩阵 R 只改朝向、保长度；投影再按深度除一次，远处的顶点被缩小。两步叠在一起，才是你看到的立方体。',
+      prompt: '先转到正面看一个面，再转 45° 看两个面。'
+    };
+  }
+
+  function perspective(s) {
+    if (s.eyeHeight < 0.75) {
+      return {
+        text: '视线压得很低，地平线几乎和地面重合，地砖被压成一条条很薄的带子；消失点仍然在地平线上。',
+        prompt: '把视高抬回 1.6 左右，看看地砖怎样重新展开。'
+      };
+    }
+
+    if (Math.abs(s.vx) > 1.6) {
+      return {
+        text: '消失点被推离画面中心，画面变成“斜着看”的一点透视；所有朝里的平行线仍然共用这一个消失点。',
+        prompt: '把消失点拖回中线，比较两侧的收拢是否对称。'
+      };
+    }
+
+    return {
+      text: '一点透视里，所有垂直于画面的平行线都汇到同一个消失点；离你越远的格子，在画面上越小。',
+      prompt: '先把消失点拖到画面正中央，再看两侧是否对称。'
+    };
+  }
+
+  function harmony(s) {
+    if (s.active <= 1) {
+      return {
+        text: '现在只有一个频率在响，波形就是一条纯正弦；频谱上也只有一根柱。一个基向量就是全部。',
+        prompt: '把三度、五度的振幅推上去，看看波形怎样变得复杂。'
+      };
+    }
+
+    if (s.major) {
+      return {
+        text: '三个频率按 4 : 5 : 6 的比例叠在一起，就是大三和弦；频谱上三根柱的高度就是三个振幅。',
+        prompt: '把中间那根（三度）拉到 0，听听“空五度”是什么感觉。'
+      };
+    }
+
+    return {
+      text: '波形是三个基函数的线性组合：调振幅就是改系数，改相位就是平移波形。频谱显示的正是这组系数。',
+      prompt: '先把三度调小，再把五度调大，比较波形和频谱的变化。'
+    };
+  }
+
+  function opinion(s) {
+    if (s.mixing < 0.01) {
+      return {
+        text: '两个群体互不影响，转移矩阵接近单位矩阵；没有任何力量把意见拉向中间，初始分布原样停住。',
+        prompt: '把“互相影响”推上去，看看两条曲线会不会开始靠近。'
+      };
+    }
+
+    if (s.spread < 0.02) {
+      return {
+        text: '分布已经收敛到稳态：再乘一次矩阵，结果几乎不变。这个稳态就是 λ = 1 对应的特征向量。',
+        prompt: '改变互相影响的比例，看看稳态会不会变。'
+      };
+    }
+
+    return {
+      text: '每一步都用同一个矩阵乘一次：新意见 = 旧意见的加权和。反复乘下去，分布收敛到矩阵的特征向量。',
+      prompt: '先点“连续演化”，看两条柱子在多少步之后不再变化。'
+    };
+  }
+
   global.LinAlgNarration = {
     transform: transform,
     determinant: determinant,
@@ -473,6 +557,10 @@
     convolution: convolution,
     pca: pca,
     audio: audio,
-    ecc: ecc
+    ecc: ecc,
+    projection: projection,
+    perspective: perspective,
+    harmony: harmony,
+    opinion: opinion
   };
 })(typeof globalThis !== 'undefined' ? globalThis : window);
