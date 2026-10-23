@@ -1,4 +1,4 @@
-name: Deploy static site
+name: deploy pages
 
 # GitHub Pages 只能托管静态文件：展厅、应用、练习、路线图都能用；
 # 账号、数据面板、地图装饰需要本地 `node server/app.js`。
@@ -24,22 +24,19 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Prepare static site
+      - name: Build a clean static site
         run: |
           mkdir -p _site
-          rsync -a --exclude '.git' --exclude 'data' --exclude 'node_modules' ./ _site/
+          git archive HEAD | tar -x -C _site
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: _site
 
-      - name: Deploy to Pages
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

@@ -1,5 +1,7 @@
 # Linear Algebra · 线性代数可视化实验室
 
+> 在线体验（静态版）：**https://mffy3.github.io/LinearAlgebra/** —— 展厅、应用、练习、路线图都能用；账号、数据面板与地图装饰需要本地 `node server/app.js`。
+
 一个纯前端、零依赖的线性代数可视化实验室。先选一个起点，再从平面和空间里理解矩阵。
 
 ![Linear Algebra 入口：3D 平面与水平选择](assets/images/entry-demo.png)
