@@ -252,6 +252,46 @@ async function handleEvent(req, res) {
   return sendJson(res, 201, { ok: true });
 }
 
+const DECOR_KINDS = ['cat', 'dog', 'lion', 'tiger', 'spider', 'dino', 'house'];
+
+function handleGetDecor(req, res) {
+  const user = userOf(req);
+  if (!user) return sendJson(res, 401, { error: '需要登录。' });
+  const row = stmts.decorGet.get(user.id);
+  let items = [];
+  if (row && row.data) {
+    try { items = JSON.parse(row.data) || []; } catch (error) { items = []; }
+  }
+  return sendJson(res, 200, { items: items });
+}
+
+function handlePutDecor(req, res) {
+  const user = userOf(req);
+  if (!user) return sendJson(res, 401, { error: '需要登录。' });
+
+  return readBody(req).then(function (body) {
+    const items = body && Array.isArray(body.items) ? body.items : null;
+    if (!items || items.length > 60) {
+      return sendJson(res, 400, { error: '装饰数据不合法。' });
+    }
+    const clean = [];
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i] || {};
+      if (DECOR_KINDS.indexOf(item.kind) < 0) {
+        return sendJson(res, 400, { error: '装饰数据不合法。' });
+      }
+      const x = Number(item.x);
+      const y = Number(item.y);
+      if (!Number.isFinite(x) || !Number.isFinite(y) || x < 0 || x > 1600 || y < 0 || y > 1000) {
+        return sendJson(res, 400, { error: '装饰位置不合法。' });
+      }
+      clean.push({ kind: item.kind, x: Math.round(x), y: Math.round(y) });
+    }
+    stmts.decorUpsert.run(user.id, JSON.stringify(clean), new Date().toISOString());
+    return sendJson(res, 200, { ok: true, count: clean.length });
+  });
+}
+
 function handleStats(req, res) {
   const user = userOf(req);
   if (!user) return sendJson(res, 401, { error: '需要登录才能查看。' });
@@ -411,6 +451,10 @@ const server = http.createServer(function (req, res) {
         return handleEvent(req, res);
       case 'GET /api/stats':
         return handleStats(req, res);
+      case 'GET /api/decor':
+        return handleGetDecor(req, res);
+      case 'PUT /api/decor':
+        return handlePutDecor(req, res);
       case 'POST /api/account/delete':
         return handleDeleteAccount(req, res);
       default:

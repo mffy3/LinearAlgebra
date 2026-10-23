@@ -63,6 +63,13 @@ db.exec(`
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
   );
 
+  CREATE TABLE IF NOT EXISTS decorations (
+    user_id INTEGER PRIMARY KEY,
+    data TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+  );
+
   CREATE INDEX IF NOT EXISTS idx_attempts_user ON attempts (user_id, created_at);
   CREATE INDEX IF NOT EXISTS idx_sessions_expiry ON sessions (expires_at);
 `);
@@ -98,6 +105,12 @@ const stmts = {
      ON CONFLICT(user_id, chapter) DO UPDATE SET
        status = CASE WHEN progress.status = 'tested' THEN 'tested' ELSE excluded.status END,
        updated_at = excluded.updated_at`
+  ),
+
+  decorGet: db.prepare('SELECT data FROM decorations WHERE user_id = ?'),
+  decorUpsert: db.prepare(
+    `INSERT INTO decorations (user_id, data, updated_at) VALUES (?, ?, ?)
+     ON CONFLICT(user_id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at`
   ),
 
   totals: db.prepare(

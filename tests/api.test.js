@@ -168,6 +168,34 @@ async function main() {
       assert.equal(res.data.scores.some(function (s) { return s.score === 180; }), true);
     });
 
+    await ok('未登录不能读写地图装饰', async function () {
+      const read = await call(b, 'GET', '/api/decor');
+      assert.equal(read.status, 401);
+      const write = await call(b, 'PUT', '/api/decor', { items: [] });
+      assert.equal(write.status, 401);
+    });
+
+    await ok('地图装饰保存与读取', async function () {
+      const put = await call(a, 'PUT', '/api/decor', {
+        items: [{ kind: 'cat', x: 100, y: 200 }, { kind: 'house', x: 300, y: 400 }]
+      });
+      assert.equal(put.status, 200);
+      assert.equal(put.data.count, 2);
+      const get = await call(a, 'GET', '/api/decor');
+      assert.equal(get.status, 200);
+      assert.equal(get.data.items.length, 2);
+      assert.equal(get.data.items[0].kind, 'cat');
+    });
+
+    await ok('非法装饰被拒绝', async function () {
+      const kind = await call(a, 'PUT', '/api/decor', { items: [{ kind: 'dragon', x: 1, y: 1 }] });
+      assert.equal(kind.status, 400);
+      const pos = await call(a, 'PUT', '/api/decor', { items: [{ kind: 'cat', x: -5, y: 1 }] });
+      assert.equal(pos.status, 400);
+      const shape = await call(a, 'PUT', '/api/decor', { items: 'nope' });
+      assert.equal(shape.status, 400);
+    });
+
     await ok('未登录时统计被拒绝', async function () {
       const res = await call(b, 'GET', '/api/stats');
       assert.equal(res.status, 401);

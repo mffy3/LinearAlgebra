@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="线性代数学习路线图：六个章节站、七个应用区，登录后小屋与宠物会记录进度。">
+  <meta name="theme-color" content="#efeae1">
+  <title>学习路线图 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/account.css">
+  <link rel="stylesheet" href="../css/roadmap.css">
+</head>
+<body class="lab-page roadmap-page">
+  <a class="skip-link" href="#map-main">跳到主要内容</a>
+
+  <header class="site-header lab-header">
+    <div class="header-inner">
+      <a class="brand" href="../index.html" aria-label="Linear Algebra 入口">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html">入口</a>
+        <a href="library.html">全部展厅</a>
+        <a href="roadmap.html" aria-current="page">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="map-main" class="lab-main roadmap-main">
+    <section class="map-head" aria-labelledby="map-title">
+      <p class="eyebrow">ROADMAP · 学习路线</p>
+      <h1 id="map-title">一张地图，走完全程</h1>
+      <p class="lede">六个章节站、七个应用区。每一站都能点开：看简介、进章节、做练习、过大测；登录后还能在地图上布置宠物与小屋。</p>
+      <p class="map-hint" id="map-hint">正在读取你的进度…</p>
+      <p class="map-save" id="map-save" role="status"></p>
+    </section>
+
+    <div class="map-layout">
+      <div class="map-frame">
+        <svg id="map-svg" viewBox="0 0 1600 1000" role="img"
+             aria-label="线性代数学习路线图：六章与七个应用区"></svg>
+      </div>
+      <aside class="pet-card" id="map-pet" aria-live="polite"></aside>
+    </div>
+
+    <section class="map-legend" aria-label="图例">
+      <span><i class="legend-dot is-new"></i>未开始</span>
+      <span><i class="legend-dot is-visited"></i>已访问</span>
+      <span><i class="legend-dot is-practiced"></i>已练习</span>
+      <span><i class="legend-dot is-tested"></i>已测试</span>
+      <span><i class="legend-house"></i>宠物 / 小屋（自己布置）</span>
+      <span class="legend-note">站点颜色 = 进度；宠物与小屋由你摆，不看成绩。</span>
+    </section>
+  </main>
+
+  <aside class="map-panel" id="map-panel" aria-hidden="true" aria-label="详情">
+    <button class="map-panel-close" id="map-panel-close" type="button" aria-label="关闭">×</button>
+    <div id="map-panel-body"></div>
+  </aside>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>先猜后验，再动笔。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../index.html">入口</a>
+        <a href="library.html">全部展厅</a>
+        <a href="roadmap.html">路线图</a>
+        <a href="../RULES.md">规则</a>
+        <a href="../MANUAL.md">手册</a>
+        <a href="../REFERENCES.md">参考</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+        项目内容为原创，参考来源仅以链接与出处形式标注。
+      </p>
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="noscript-warning">地图需要 JavaScript 才能绘制。</div>
+  </noscript>
+
+  <script src="../js/lib/account.js" defer></script>
+  <script src="../js/lib/roadmap-pets.js" defer></script>
+  <script src="../js/lib/roadmap-data.js" defer></script>
+  <script src="../js/lib/roadmap.js" defer></script>
+</body>
+</html>

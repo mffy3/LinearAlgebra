@@ -714,3 +714,14 @@
 .grade-note {
   color: var(--faint) !important;
 }
+
+.practice-toast .toast-pet {
+  display: inline-block;
+  margin-right: 6px;
+  animation: toast-pet-bounce 1.3s ease-in-out infinite;
+}
+
+@keyframes toast-pet-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}

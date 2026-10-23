@@ -160,7 +160,14 @@
       node.setAttribute('role', 'status');
       document.body.appendChild(node);
     }
-    node.textContent = message;
+    var petKind = null;
+    try { petKind = window.localStorage.getItem('la-pet'); } catch (error) { petKind = null; }
+    node.textContent = '';
+    if (petKind) {
+      var petEmoji = { cat: '🐱', dog: '🐶', lion: '🦁', tiger: '🐯', spider: '🕷️', dino: '🦖' }[petKind];
+      if (petEmoji) node.appendChild(el('span', 'toast-pet', petEmoji));
+    }
+    node.appendChild(document.createTextNode(message));
     node.classList.add('is-visible');
     if (state.toastTimer) window.clearTimeout(state.toastTimer);
     state.toastTimer = window.setTimeout(function () {
