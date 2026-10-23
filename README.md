@@ -131,6 +131,13 @@ node server/app.js
 限时模式有倒计时，每 25 分钟提醒一次。大题作答有数学符号工具栏，输入 `\alpha`、`\sqrt` 会补全成 α、√。交卷后选择题与填空题自动判分，大题按参考答案自评；逐题给解析与出处，并能一键下载「原题 + 答案解析」。
 登录后成绩与正确率会进数据面板。
 
+
+### 使用指南
+
+逐页怎么用、每个展厅能拖什么、练习模式怎么选、路线图怎么布置宠物，都写在
+[`GUIDE.md`](GUIDE.md) 里。只想快速上手：打开 `index.html` → 选一条路线 → 进任意展厅拖动；
+想记进度：双击 `start-server.bat` → 入口右上角注册 → 学完在数据面板看图表。
+
 ---
 
 ## 目录结构
@@ -293,6 +300,17 @@ node tests/questions.test.js
 3. **显式状态**：矩阵状态只保存一份，动画只做插值；不增量累乘，保证可逆、无累积误差。
 4. **低耦合**：数学、绘图、页面三层单向依赖；删掉一个展厅，其他展厅照常运行。
 5. **零依赖**：不为了一个滑块引入框架；离线、可审计、能直接打开。
+
+## 鸣谢
+
+本站的章节顺序、术语与可视化思路，受到以下公开课程与教材的启发：
+
+- Gilbert Strang 的 *Introduction to Linear Algebra* 与 MIT OCW 18.06；
+- 3Blue1Brown 的 *Essence of Linear Algebra* 系列；
+- Stanford CS 178（透视与投影）、Julius O. Smith 的 DFT 教材、Foley 等的 *Computer Graphics*。
+
+只参考教学顺序与数学事实，不复制原文、习题、字幕或动画；具体来源与使用边界见
+[`REFERENCES.md`](REFERENCES.md)，逐条台账见 [`SOURCE_LEDGER.csv`](SOURCE_LEDGER.csv)。
 
 ---
 

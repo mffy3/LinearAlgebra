@@ -1,0 +1,9 @@
+编号,类型,名称,作者/机构,链接,使用方式,项目位置
+S001,教材,Introduction to Linear Algebra (6th ed.),Gilbert Strang,https://math.mit.edu/~gs/linearalgebra/,仅参考章节顺序与数学事实；未复制正文或习题,六个章节展厅与题库出处
+S002,网课,MIT OCW 18.06 Linear Algebra,MIT OpenCourseWare,https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/,仅参考课程脉络与常见误解,章节讲解与题库出处
+S003,视频,Essence of Linear Algebra,3Blue1Brown,https://www.3blue1brown.com/topics/linear-algebra,仅参考可视化直觉；未复制脚本/分镜/配色,章节动画与即时旁白
+S004,教材,Computer Graphics: Principles and Practice (3rd ed.),Foley / van Dam / Feiner / Hughes,https://www.pearson.com/,仅参考三维旋转与透视投影的术语与顺序,computer-projection.html
+S005,网课,CS 178: Digital Photography,Stanford / Marc Levoy,https://graphics.stanford.edu/courses/cs178/,仅参考一点透视与消失点几何,art-perspective.html
+S006,教材,Mathematics of the Discrete Fourier Transform (2nd ed.),Julius O. Smith III,https://ccrma.stanford.edu/~jos/mdft/,仅参考“傅里叶系数 = 投影系数”的表述,music-harmony.html
+S007,教材,Introduction to Linear Algebra 第 5 章（特征值与马尔可夫矩阵）,Gilbert Strang,https://math.mit.edu/~gs/linearalgebra/,仅参考列随机矩阵与稳态的关系,social-opinion.html
+S008,论文,Input-Output Economics,Wassily Leontief,https://www.nobelprize.org/prizes/economic-sciences/1973/leontief/facts/,仅参考投入产出模型的结构,economics-leontief.html

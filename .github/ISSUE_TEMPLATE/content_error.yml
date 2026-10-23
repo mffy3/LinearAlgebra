@@ -1,0 +1,45 @@
+name: 内容错误
+description: 这一页的数学讲错了、答案不对，或术语前后不一致
+title: "[content] "
+labels: ["content", "math-error"]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: 页面
+      description: 哪个页面或哪一道题（章节 / 应用 / 练习第几题）
+      placeholder: 例：pages/02-determinant.html；练习 02 章 medium 第 4 题
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 你认为正确的结果
+      description: 可以写公式、数值或推导
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 页面上显示的结果
+    validations:
+      required: true
+
+  - type: input
+    id: source
+    attributes:
+      label: 依据（可选）
+      description: 教材、课程或你自己验算的过程；没有可不填
+      placeholder: 例：Strang §4.1 / 自己代入验算
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: 提交前确认
+      options:
+        - label: 我已在最新版本上复现
+          required: true
+        - label: 这不是“我看不懂”，而是可验证的错误
+          required: true
