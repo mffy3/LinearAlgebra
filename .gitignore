@@ -8,6 +8,8 @@ desktop.ini
 *.swo
 
 # 依赖与构建产物
+__pycache__/
+*.pyc
 node_modules/
 dist/
 build/
