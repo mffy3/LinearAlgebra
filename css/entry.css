@@ -282,6 +282,23 @@
   border-color: rgba(46, 49, 44, 0.08);
 }
 
+/* 有页面的路线标签直接是可点的入口 */
+a.path-step {
+  text-decoration: none;
+  transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
+}
+
+a.path-step:hover {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  background: rgba(227, 232, 221, 0.7);
+}
+
+a.path-step:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .path-actions {
   display: flex;
   align-items: center;

@@ -26,12 +26,34 @@
     learned: {
       label: '有扎实的基础',
       title: '直接进应用',
-      desc: '不再重复定义。直接从物理里的受力分解开始，把已经学过的矩阵和方程组用起来。',
+      desc: '不再重复定义。直接从物理里的受力分解开始，把已经学过的矩阵和方程组用起来；下面每个名字都能直接进。',
       cta: '进入物理应用',
       href: 'pages/applications/physics.html?level=learned',
-      steps: ['物理', '刚体旋转', '量子态', '投入产出', '投资组合', '图像卷积', 'PCA', '音频', '纠错', '经济', '计算机', '美术', '音乐', '社会科学'],
-      futureFrom: 9
+      steps: ['物理', '刚体旋转', '量子态', '投入产出', '投资组合', '图像卷积', 'PCA', '音频', '纠错', '三维投影', '一点透视', '和弦与频谱', '意见演化']
     }
+  };
+
+  /** 路线标签 → 页面；没有登记的标签保持纯文本。 */
+  var PAGES = {
+    '向量': 'pages/00-vectors.html',
+    '矩阵变换': 'pages/01-transform.html',
+    '行列式': 'pages/02-determinant.html',
+    '秩': 'pages/03-rank.html',
+    '特征向量': 'pages/04-eigenvector.html',
+    '方程组': 'pages/05-solve.html',
+    '物理': 'pages/applications/physics.html',
+    '刚体旋转': 'pages/applications/physics-rotation.html',
+    '量子态': 'pages/applications/physics-quantum.html',
+    '投入产出': 'pages/applications/economics-leontief.html',
+    '投资组合': 'pages/applications/economics-portfolio.html',
+    '图像卷积': 'pages/applications/software-convolution.html',
+    'PCA': 'pages/applications/software-pca.html',
+    '音频': 'pages/applications/hardware-audio.html',
+    '纠错': 'pages/applications/hardware-ecc.html',
+    '三维投影': 'pages/applications/computer-projection.html',
+    '一点透视': 'pages/applications/art-perspective.html',
+    '和弦与频谱': 'pages/applications/music-harmony.html',
+    '意见演化': 'pages/applications/social-opinion.html'
   };
 
   var picker = document.querySelector('.level-picker');
@@ -69,8 +91,14 @@
     if (pathSteps) {
       pathSteps.innerHTML = '';
       data.steps.forEach(function (step, index) {
-        var item = document.createElement('span');
+        var href = PAGES[step];
+        var item = document.createElement(href ? 'a' : 'span');
         item.className = 'path-step';
+        if (href) {
+          item.href = href;
+          item.classList.add('is-link');
+          if (selected) item.href = href + (href.indexOf('?') >= 0 ? '&' : '?') + 'level=' + selected;
+        }
         if (data.futureFrom != null && index >= data.futureFrom) {
           item.classList.add('is-muted');
         }

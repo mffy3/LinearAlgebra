@@ -256,6 +256,19 @@ if (window.LinearSpace) {
 - `landmarks` 只决定全局地图上的小圆点，不参与任何数学；
 - 不调用 `attach` 的页面完全保持原样。
 
+### 应用页的「只放大」模式
+
+应用页（物理 / 经济 / 软件 / 硬件 / 美术 / 音乐 / 社科）的拖动本身就是交互，
+所以它们调用时传 `panZoom: false, minimap: false`：
+
+```js
+window.LinearSpace.attach({ canvas: canvas, view: view, redraw: requestRender, panZoom: false, minimap: false });
+```
+
+- 只做「画布铺满 + 底部讲解条 + 右上角退出」，不拦截任何指针 / 滚轮事件，原有拖动照常；
+- 底部讲解条会占位：`reserveDockSpace()` 给画布留出同样高度的下边距，避免盖住图表刻度；
+- 退出键放在右上角偏下（`top: 58px`），避开各页自己的状态 chip。
+
 ### 视口新增的能力
 
 `view.center`、`view.zoom`、`view.setZoom(z, 屏幕锚点)`、`view.panBy(dx, dy)`、`view.resetView()`、`view.visibleBounds()`。

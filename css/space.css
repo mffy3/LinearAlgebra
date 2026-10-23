@@ -163,6 +163,18 @@ body.space-open {
   color: var(--danger);
 }
 
+/* 应用页的「只放大、不平移」模式：没有地图，退出键单独放在右上角 */
+.space-exit-standalone {
+  position: absolute;
+  top: 58px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  z-index: 2;
+  pointer-events: auto;
+  box-shadow: 0 6px 18px rgba(46, 49, 44, 0.14);
+}
+
 .space-map-foot {
   display: flex;
   align-items: center;
@@ -304,6 +316,13 @@ body.space-open {
     width: 26px;
     height: 26px;
     font-size: 0.7rem;
+  }
+
+  .space-exit-standalone {
+    top: 54px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
   }
 
   .space-map-foot {

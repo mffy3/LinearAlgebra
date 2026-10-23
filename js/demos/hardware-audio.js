@@ -746,4 +746,18 @@
   updateReadouts();
   requestRender();
   drawQuiz();
+  /* ------------------------------------------------------------------ *
+   * 全屏观看（space-mode.js）：应用页只放大画布，不改变各页自己的拖动
+   * ------------------------------------------------------------------ */
+
+  if (window.LinearSpace) {
+    window.LinearSpace.attach({
+      canvas: canvas,
+      view: view,
+      redraw: requestRender,
+      panZoom: false,
+      minimap: false
+    });
+  }
+
 })();

@@ -54,6 +54,8 @@
     var hitTest = typeof opts.hitTest === 'function' ? opts.hitTest : function () { return false; };
     var landmarks = typeof opts.landmarks === 'function' ? opts.landmarks : function () { return []; };
     var onChange = typeof opts.onChange === 'function' ? opts.onChange : function () { };
+    var panZoom = opts.panZoom !== false;
+    var minimap = opts.minimap !== false;
 
     var active = false;
     var closing = false;
@@ -95,45 +97,81 @@
       ui = el('div', 'space-ui');
       ui.hidden = true;
 
-      var hint = el('p', 'space-hint', '拖动平移 · 滚轮 / 双指缩放 · Esc 退出');
+      var hintText = panZoom
+        ? '拖动平移 · 滚轮 / 双指缩放 · Esc 退出'
+        : '全屏查看 · Esc 退出';
+      var hint = el('p', 'space-hint', hintText);
       hint.setAttribute('aria-hidden', 'true');
       ui.appendChild(hint);
-
-      var map = el('div', 'space-map');
-      map.setAttribute('role', 'group');
-      map.setAttribute('aria-label', '全局地图与退出全屏');
-
-      mapCanvas = el('canvas', 'space-map-canvas');
-      mapCanvas.setAttribute('aria-label', '当前视野在平面上的位置');
-      map.appendChild(mapCanvas);
 
       exitButton = el('button', 'space-exit');
       exitButton.type = 'button';
       exitButton.setAttribute('aria-label', '退出全屏（Esc）');
       exitButton.innerHTML = '<span aria-hidden="true">✕</span>';
-      map.appendChild(exitButton);
 
-      var foot = el('div', 'space-map-foot');
-      foot.appendChild(el('span', 'space-map-label', '全局地图'));
-      var home = el('button', 'space-home', '回到原点');
-      home.type = 'button';
-      foot.appendChild(home);
-      map.appendChild(foot);
+      if (minimap) {
+        var map = el('div', 'space-map');
+        map.setAttribute('role', 'group');
+        map.setAttribute('aria-label', '全局地图与退出全屏');
 
-      ui.appendChild(map);
+        mapCanvas = el('canvas', 'space-map-canvas');
+        mapCanvas.setAttribute('aria-label', '当前视野在平面上的位置');
+        map.appendChild(mapCanvas);
+        map.appendChild(exitButton);
 
-      var zoom = el('div', 'space-zoom');
-      zoom.setAttribute('role', 'group');
-      zoom.setAttribute('aria-label', '缩放');
-      var zin = el('button', 'space-zoom-btn', '+');
-      zin.type = 'button';
-      zin.setAttribute('aria-label', '放大');
-      var zout = el('button', 'space-zoom-btn', '−');
-      zout.type = 'button';
-      zout.setAttribute('aria-label', '缩小');
-      zoom.appendChild(zin);
-      zoom.appendChild(zout);
-      ui.appendChild(zoom);
+        var foot = el('div', 'space-map-foot');
+        foot.appendChild(el('span', 'space-map-label', '全局地图'));
+        var home = el('button', 'space-home', '回到原点');
+        home.type = 'button';
+        foot.appendChild(home);
+        map.appendChild(foot);
+
+        ui.appendChild(map);
+
+        on(home, 'click', function () {
+          view.center.x = 0;
+          view.center.y = 0;
+          view.resize();
+          commit();
+        });
+        on(mapCanvas, 'pointerdown', function (event) {
+          var rect = mapCanvas.getBoundingClientRect();
+          var extent = mapExtent();
+          var nx = (event.clientX - rect.left) / Math.max(1, rect.width) - 0.5;
+          var ny = (event.clientY - rect.top) / Math.max(1, rect.height) - 0.5;
+          view.center.x = nx * extent * 2;
+          view.center.y = -ny * extent * 2;
+          view.resize();
+          commit();
+        });
+      } else {
+        exitButton.className = 'space-exit space-exit-standalone';
+        ui.appendChild(exitButton);
+      }
+
+      if (panZoom) {
+        var zoom = el('div', 'space-zoom');
+        zoom.setAttribute('role', 'group');
+        zoom.setAttribute('aria-label', '缩放');
+        var zin = el('button', 'space-zoom-btn', '+');
+        zin.type = 'button';
+        zin.setAttribute('aria-label', '放大');
+        var zout = el('button', 'space-zoom-btn', '−');
+        zout.type = 'button';
+        zout.setAttribute('aria-label', '缩小');
+        zoom.appendChild(zin);
+        zoom.appendChild(zout);
+        ui.appendChild(zoom);
+
+        on(zin, 'click', function () {
+          view.setZoom(view.zoom * 1.28, { x: view.width / 2, y: view.height / 2 });
+          commit();
+        });
+        on(zout, 'click', function () {
+          view.setZoom(view.zoom / 1.28, { x: view.width / 2, y: view.height / 2 });
+          commit();
+        });
+      }
 
       var dock = el('div', 'space-dock');
       dock.setAttribute('aria-live', 'polite');
@@ -149,30 +187,6 @@
       wrap.appendChild(ui);
 
       on(exitButton, 'click', function () { exit(); });
-      on(home, 'click', function () {
-        view.center.x = 0;
-        view.center.y = 0;
-        view.resize();
-        commit();
-      });
-      on(zin, 'click', function () {
-        view.setZoom(view.zoom * 1.28, { x: view.width / 2, y: view.height / 2 });
-        commit();
-      });
-      on(zout, 'click', function () {
-        view.setZoom(view.zoom / 1.28, { x: view.width / 2, y: view.height / 2 });
-        commit();
-      });
-      on(mapCanvas, 'pointerdown', function (event) {
-        var rect = mapCanvas.getBoundingClientRect();
-        var extent = mapExtent();
-        var nx = (event.clientX - rect.left) / Math.max(1, rect.width) - 0.5;
-        var ny = (event.clientY - rect.top) / Math.max(1, rect.height) - 0.5;
-        view.center.x = nx * extent * 2;
-        view.center.y = -ny * extent * 2;
-        view.resize();
-        commit();
-      });
     }
 
     /* ---------------------------------------------------------------- *
@@ -185,14 +199,35 @@
       onChange(view);
     }
 
+    /**
+     * 应用页的「只放大」模式里，底部讲解条是覆盖在画布上的；
+     * 给画布留出和讲解条一样高的下边距，避免挡住图表底部的刻度。
+     */
+    function reserveDockSpace() {
+      if (panZoom || !active || !ui) return;
+      var dock = ui.querySelector('.space-dock');
+      if (!dock) return;
+      var height = Math.ceil(dock.getBoundingClientRect().height) + 26;
+      var next = height + 'px';
+      if (wrap.style.paddingBottom !== next) wrap.style.paddingBottom = next;
+    }
+
     function fitSpaceView() {
+      view.center.x = 0;
+      view.center.y = 0;
+
+      if (!panZoom) {
+        view.zoom = 1;
+        view.resize();
+        commit();
+        return;
+      }
+
       var pad = Math.min(view.padding, Math.min(view.width, view.height) * 0.09);
       var usable = Math.max(1, Math.min(view.width, view.height) - pad * 2);
       var desiredSpan = clamp(view.worldSpan * 1.35, 10, 18);
       var baseScale = usable / Math.max(0.0001, view.worldSpan);
       var desiredScale = usable / desiredSpan;
-      view.center.x = 0;
-      view.center.y = 0;
       view.zoom = clamp(desiredScale / baseScale, 0.2, 1.6);
       view.resize();
       commit();
@@ -361,6 +396,7 @@
       if (dockText.textContent !== text) dockText.textContent = text;
       if (dockPrompt.textContent !== prompt) dockPrompt.textContent = prompt;
       dockPrompt.classList.toggle('is-empty', !prompt);
+      reserveDockSpace();
     }
 
     var dockObserver = null;
@@ -439,9 +475,10 @@
       // 等浏览器完成全屏布局，再按新尺寸定初始缩放。
       global.requestAnimationFrame(function () {
         if (!active) return;
+        reserveDockSpace();
         fitSpaceView();
         drawMinimap();
-        if (!rafId) rafId = global.requestAnimationFrame(tick);
+        if (minimap && !rafId) rafId = global.requestAnimationFrame(tick);
         var hint = ui.querySelector('.space-hint');
         if (hint) {
           hint.classList.add('is-visible');
@@ -464,6 +501,7 @@
 
       document.body.classList.remove('space-open');
       wrap.classList.remove('space-open');
+      wrap.style.paddingBottom = '';
       ui.hidden = true;
       if (launchButton) {
         launchButton.setAttribute('aria-expanded', 'false');
@@ -644,20 +682,24 @@
 
     function bindGlobalEvents(binding) {
       if (binding) {
-        on(wrap, 'pointerdown', onPointerDown, true);
-        on(global, 'pointermove', onPointerMove, true);
-        on(global, 'pointerup', onPointerUp, true);
-        on(global, 'pointercancel', onPointerUp, true);
-        on(wrap, 'wheel', onWheel, { passive: false });
+        if (panZoom) {
+          on(wrap, 'pointerdown', onPointerDown, true);
+          on(global, 'pointermove', onPointerMove, true);
+          on(global, 'pointerup', onPointerUp, true);
+          on(global, 'pointercancel', onPointerUp, true);
+          on(wrap, 'wheel', onWheel, { passive: false });
+        }
         on(document, 'keydown', onKeyDown);
         on(document, 'fullscreenchange', onFullscreenChange);
         on(document, 'webkitfullscreenchange', onFullscreenChange);
       } else {
-        off(wrap, 'pointerdown', onPointerDown, true);
-        off(global, 'pointermove', onPointerMove, true);
-        off(global, 'pointerup', onPointerUp, true);
-        off(global, 'pointercancel', onPointerUp, true);
-        off(wrap, 'wheel', onWheel, { passive: false });
+        if (panZoom) {
+          off(wrap, 'pointerdown', onPointerDown, true);
+          off(global, 'pointermove', onPointerMove, true);
+          off(global, 'pointerup', onPointerUp, true);
+          off(global, 'pointercancel', onPointerUp, true);
+          off(wrap, 'wheel', onWheel, { passive: false });
+        }
         off(document, 'keydown', onKeyDown);
         off(document, 'fullscreenchange', onFullscreenChange);
         off(document, 'webkitfullscreenchange', onFullscreenChange);
