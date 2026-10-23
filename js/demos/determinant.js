@@ -829,4 +829,24 @@
   syncInputs(state.matrix);
   updateReadouts();
   requestRender();
+
+  /* ------------------------------------------------------------------ *
+   * 全屏无限空间（space-mode.js）
+   * ------------------------------------------------------------------ */
+
+  if (window.LinearSpace) {
+    window.LinearSpace.attach({
+      canvas: canvas,
+      view: view,
+      redraw: requestRender,
+      hitTest: function (event) { return !!hitTest(event); },
+      landmarks: function () {
+        return L.unitSquarePoints().map(function (point) {
+          var mapped = L.applyMat(state.drawn, point);
+          return { x: mapped.x, y: mapped.y, color: K.PALETTE.square };
+        });
+      }
+    });
+  }
+
 })();

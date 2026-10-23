@@ -66,6 +66,8 @@ index.html
 | 入口路线 | `js/lib/entry-flow.js` | 三个水平、路线、CTA | 画 3D |
 | 路线配置 | `js/lib/paths.js` | 每条路线的页面顺序、每站引导、学习清单 | 改 3D 或 DOM |
 | 路线提示 | `js/lib/level-ui.js` | 读取水平，插入“第 N 站”、清单、quiz 提示；进阶路线隐藏基础 quiz | 改页面数学内容 |
+| 全屏空间 | `js/lib/space-mode.js` | 全屏 UI、全局地图、底部讲解条、平移缩放手势 | 改数学结论、改展厅状态 |
+| 视口 | `js/lib/canvas-utils.js` | 世界↔屏幕、中心/缩放、无限网格与坐标轴 | 决定“解是什么” |
 | 应用控制 | `js/demos/physics-force.js` | 锚点、重力、张力 | 复制 `solve2` 公式 |
 | 零基础课 | `js/demos/vectors.js` | 相加、数乘、αu+βv、目标挑战 | 引入矩阵（第 0 课只讲向量） |
 | 控制器 | `js/demos/*.js` | 读输入、算状态、调绘图、更新读数 | 复制数学公式、写大段 CSS |
@@ -99,6 +101,8 @@ index.html
 | 数学结论 / 新函数 | `js/lib/math.js` + `tests/math.test.js` | 先写测试，再接页面 |
 | 增加一个展厅 | 复制 `pages/05-solve.html` 的区块骨架 | 见下一节 checklist |
 | 增加一个应用页 | `pages/applications/` + `css/applications.css` + 独立 JS | 不要改核心五个展厅的公式 |
+| 全屏空间 / 全局地图 / 底部讲解条 | `js/lib/space-mode.js`、`css/space.css` | 见第 10 节；不要在这里写数学 |
+| 网格铺不满 / 平移缩放 | `js/lib/canvas-utils.js` 的 `gridBounds`、`chooseStep` | `range` 只在奇异矩阵时兜底 |
 | 修改水平到页面的映射 | `js/lib/entry-flow.js` 的 `LEVELS[level].href` | 入口只负责跳转，不复制课程内容 |
 
 ---
@@ -207,6 +211,66 @@ pages/applications/computer.html       # 规划中
 
 **页面按 `data-zone` 分区，数学只进 `math.js`，图形只进 `canvas-utils.js`，语气只进 `narration.js`，交互只进 `demos/*.js`。**  
 以后想改哪一块，就只动那一层；这样迭代不会把别的展厅带崩。
+
+---
+
+## 10. 全屏无限空间：`space-mode.js`（2026-10 优化）
+
+六个基础展厅的画布右上角多了一个「全屏」按钮。点进去之后：
+
+- 画布铺满整个窗口，网格按“无限平面”绘制，拖动空白处可以平移，滚轮 / 双指可以缩放；
+- 右上角是一张全局地图：深色细框是当前视野，点击地图可以把视野挪过去；
+- 地图右上角的 ✕ 退出全屏，电脑端按 `Esc` 同样退出；
+- 正下方的长方形讲解条镜像右栏「边做边看」，跟着你的操作实时更新。
+
+### 分层
+
+| 文件 | 职责 | 不要做什么 |
+|---|---|---|
+| `js/lib/canvas-utils.js` | 视口的中心 / 缩放、无限网格、坐标轴、裁剪 | 不写 UI、不读页面状态 |
+| `js/lib/space-mode.js` | 全屏 DOM、全局地图、底部讲解条、指针 / 键盘 | 不写数学、不改展厅状态 |
+| `css/space.css` | 上述 UI 的样式与响应式 | 颜色仍取 `main.css` 的 token |
+
+### 给新展厅接入（三步）
+
+1. 页面 `<head>` 在 `canvas.css` 之后加 `space.css`；
+2. `narration.js` 之后、展厅控制器之前加 `space-mode.js`；
+3. 控制器末尾调用：
+
+```js
+if (window.LinearSpace) {
+  window.LinearSpace.attach({
+    canvas: canvas,
+    view: view,
+    redraw: requestRender,
+    hitTest: function (event) { return !!hitTest(event); },
+    landmarks: function () {
+      return [{ x: state.u.x, y: state.u.y, color: K.PALETTE.e1 }];
+    }
+  });
+}
+```
+
+- `hitTest` 返回 `true` 的手势交给展厅自己（拖箭头），返回 `false` 才平移画面；
+- `landmarks` 只决定全局地图上的小圆点，不参与任何数学；
+- 不调用 `attach` 的页面完全保持原样。
+
+### 视口新增的能力
+
+`view.center`、`view.zoom`、`view.setZoom(z, 屏幕锚点)`、`view.panBy(dx, dy)`、`view.resetView()`、`view.visibleBounds()`。
+
+网格与坐标轴不再按写死的 `range` 绘制，而是取**画布四边在映射反像中的包围盒**：
+
+- 宽屏、竖屏、手机、任何窗口比例，方格纸都会铺到画布边缘；
+- 平移、缩放之后自动重算，不需要改参数；
+- `range` 只在奇异矩阵（反像无界，例如 `det = 0`）时兜底；
+- `step` 会按屏幕间距自动取 1、2、4、8… 或 0.5、0.25…，缩得很小时也不会糊成一片。
+
+### 自测方式
+
+- `node tests/math.test.js`：数学不回归；
+- 无头浏览器 1440 / 390 两种宽度各截一张：进入全屏、拖平移、滚轮缩放、`Esc` 退出；
+- 检查控制台无报错、退出后 `body` 不带 `space-open`、按钮文字回到「全屏」。
 
 ## 许可与发布文件
 

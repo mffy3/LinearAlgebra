@@ -911,4 +911,26 @@
   requestRender();
   drawQuiz();
   window.addEventListener('resize', drawQuiz);
+
+  /* ------------------------------------------------------------------ *
+   * 全屏无限空间（space-mode.js）
+   * ------------------------------------------------------------------ */
+
+  if (window.LinearSpace) {
+    window.LinearSpace.attach({
+      canvas: canvas,
+      view: view,
+      redraw: requestRender,
+      hitTest: function (event) { return !!hitTarget(event); },
+      landmarks: function () {
+        var marks = [{ x: state.b.x, y: state.b.y, color: K.PALETTE.gold }];
+        var solved = L.solve2(state.matrix, state.b);
+        if (solved && solved.unique && solved.solution) {
+          marks.push({ x: solved.solution.x, y: solved.solution.y, color: K.PALETTE.e1 });
+        }
+        return marks;
+      }
+    });
+  }
+
 })();

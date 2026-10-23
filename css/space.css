@@ -1,0 +1,373 @@
+/* ==========================================================================
+   space.css · 全屏「无限矢量空间」
+   只服务 space-mode.js：全屏画布、全局地图、底部讲解条、缩放按钮。
+   颜色全部取自 main.css 的 token，Canvas 内的颜色仍在 canvas-utils.js。
+   ========================================================================== */
+
+/* 入口按钮：插在 .stage-actions 里，和「重置」同一排 */
+.space-launch {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.space-launch-icon {
+  font-size: 0.82em;
+  line-height: 1;
+  transform: translateY(-0.5px);
+}
+
+/* --------------------------------------------------------------------------
+   全屏画布
+   -------------------------------------------------------------------------- */
+
+body.space-open {
+  overflow: hidden;
+}
+
+.canvas-wrap.space-open {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  width: auto;
+  height: auto;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--surface);
+  box-shadow: none;
+}
+
+.canvas-wrap.space-open:fullscreen {
+  width: 100vw;
+  height: 100vh;
+}
+
+.canvas-wrap.space-open .transform-canvas {
+  cursor: grab;
+}
+
+.canvas-wrap.space-open .transform-canvas.is-panning {
+  cursor: grabbing;
+}
+
+.canvas-wrap.space-open.is-panning .transform-canvas {
+  cursor: grabbing;
+}
+
+/* --------------------------------------------------------------------------
+   浮层骨架
+   -------------------------------------------------------------------------- */
+
+.space-ui {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.space-ui[hidden] {
+  display: none;
+}
+
+.space-ui button {
+  font-family: var(--font-sans);
+  transition: border-color 150ms ease, background 150ms ease, color 150ms ease;
+}
+
+.space-ui button:hover {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.space-ui button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* 顶部短暂的操作提示 */
+.space-hint {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  margin: 0;
+  padding: 7px 15px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(250, 246, 238, 0.9);
+  font-size: 0.68rem;
+  letter-spacing: 0.01em;
+  opacity: 0;
+  transform: translate(-50%, -8px);
+  transition: opacity 260ms ease, transform 260ms ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.space-hint.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* --------------------------------------------------------------------------
+   全局地图
+   -------------------------------------------------------------------------- */
+
+.space-map {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 196px;
+  padding: 8px;
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  background: rgba(250, 246, 238, 0.95);
+  box-shadow: 0 18px 44px rgba(46, 49, 44, 0.14);
+  pointer-events: auto;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.space-map-canvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 11px;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+/* 退出键固定在地图的右上角 */
+.space-exit {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(46, 49, 44, 0.18);
+  border-radius: 50%;
+  color: var(--ink);
+  background: rgba(250, 246, 238, 0.94);
+  font-size: 0.78rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(46, 49, 44, 0.12);
+}
+
+.space-exit:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.space-map-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 4px 1px;
+}
+
+.space-map-label {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.54rem;
+  letter-spacing: 0.08em;
+}
+
+.space-home {
+  padding: 0;
+  border: 0;
+  color: var(--accent-ink);
+  background: none;
+  font-size: 0.56rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   缩放
+   -------------------------------------------------------------------------- */
+
+.space-zoom {
+  position: absolute;
+  right: 20px;
+  bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  pointer-events: auto;
+}
+
+.space-zoom-btn {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--hairline);
+  border-radius: 50%;
+  color: var(--ink);
+  background: rgba(250, 246, 238, 0.94);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(46, 49, 44, 0.1);
+}
+
+/* --------------------------------------------------------------------------
+   正下方讲解条
+   -------------------------------------------------------------------------- */
+
+.space-dock {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  display: flex;
+  width: min(660px, calc(100% - 200px));
+  align-items: flex-start;
+  gap: 12px;
+  padding: 15px 19px;
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  background: rgba(250, 246, 238, 0.96);
+  box-shadow: 0 18px 44px rgba(46, 49, 44, 0.16);
+  transform: translateX(-50%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.space-dock-seal {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  place-items: center;
+  border-radius: 50%;
+  color: #fbf8f1;
+  background: var(--accent);
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.space-dock-body {
+  min-width: 0;
+}
+
+.space-dock-text {
+  margin: 1px 0 0;
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.space-dock-prompt {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--hairline-soft);
+  color: var(--muted);
+  font-size: 0.66rem;
+  line-height: 1.55;
+}
+
+.space-dock-prompt::before {
+  content: "先想一想：";
+  color: var(--accent);
+}
+
+.space-dock-prompt.is-empty {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   小屏
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 720px) {
+  .space-map {
+    top: 12px;
+    right: 12px;
+    width: 124px;
+    padding: 6px;
+    border-radius: 13px;
+  }
+
+  .space-exit {
+    top: 9px;
+    right: 9px;
+    width: 26px;
+    height: 26px;
+    font-size: 0.7rem;
+  }
+
+  .space-map-foot {
+    padding: 5px 2px 0;
+  }
+
+  .space-home {
+    font-size: 0.52rem;
+  }
+
+  /* 手机端把提示放到左上角，避免和底部讲解条叠在一起 */
+  .space-hint {
+    top: 14px;
+    right: auto;
+    bottom: auto;
+    left: 12px;
+    max-width: 205px;
+    font-size: 0.58rem;
+    line-height: 1.5;
+    text-align: left;
+    transform: translateY(-8px);
+  }
+
+  .space-hint.is-visible {
+    transform: translateY(0);
+  }
+
+  .space-dock {
+    bottom: 12px;
+    width: calc(100% - 24px);
+    max-height: 40vh;
+    overflow-y: auto;
+    padding: 12px 14px;
+    border-radius: 14px;
+  }
+
+  .space-dock-text {
+    font-size: 0.8rem;
+  }
+
+  .space-dock-prompt {
+    font-size: 0.6rem;
+  }
+
+  /* 缩放按钮竖排在右侧中部，不会压住地图和讲解条 */
+  .space-zoom {
+    top: 50%;
+    right: 12px;
+    bottom: auto;
+    transform: translateY(-50%);
+  }
+
+  .space-zoom-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .space-launch-icon {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .space-hint {
+    transition: none;
+  }
+}

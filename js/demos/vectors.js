@@ -750,4 +750,26 @@
   updateReadouts();
   requestRender();
   drawQuiz();
+
+  /* ------------------------------------------------------------------ *
+   * 全屏无限空间（space-mode.js）
+   * ------------------------------------------------------------------ */
+
+  if (window.LinearSpace) {
+    window.LinearSpace.attach({
+      canvas: canvas,
+      view: view,
+      redraw: requestRender,
+      hitTest: function (event) { return !!hitTest(event); },
+      landmarks: function () {
+        var data = compute();
+        return [
+          { x: state.u.x, y: state.u.y, color: K.PALETTE.e1 },
+          { x: state.v.x, y: state.v.y, color: K.PALETTE.e2 },
+          { x: data.w.x, y: data.w.y, color: K.PALETTE.gold }
+        ];
+      }
+    });
+  }
+
 })();

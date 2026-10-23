@@ -86,7 +86,10 @@
       width: 1,
       height: 1,
       dpr: 1,
+      baseScale: 1,
       scale: 1,
+      zoom: 1,
+      center: { x: 0, y: 0 },
       originX: 0,
       originY: 0,
       worldSpan: opts.worldSpan == null ? 12 : opts.worldSpan,
@@ -116,13 +119,57 @@
 
       var pad = Math.min(view.padding, Math.min(cssW, cssH) * 0.09);
       var usable = Math.max(1, Math.min(cssW, cssH) - pad * 2);
-      view.scale = usable / view.worldSpan;
-      view.originX = cssW / 2;
-      view.originY = cssH / 2;
+      view.baseScale = usable / Math.max(0.0001, view.worldSpan);
+      view.scale = view.baseScale * view.zoom;
+      view.originX = cssW / 2 - view.center.x * view.scale;
+      view.originY = cssH / 2 + view.center.y * view.scale;
 
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.imageSmoothingEnabled = true;
       return view;
+    };
+
+    /**
+     * 当前画布四条边对应的世界坐标范围（不含任何 padding）。
+     * 平移、缩放、窗口尺寸变化之后都会变，所以每次绘制时现取。
+     */
+    view.visibleBounds = function () {
+      var tl = view.screenToWorld(0, 0);
+      var br = view.screenToWorld(view.width, view.height);
+      return { minX: tl.x, maxX: br.x, minY: br.y, maxY: tl.y };
+    };
+
+    /** 以屏幕坐标 anchor 为锚点缩放；anchor 下的世界点保持不动。 */
+    view.setZoom = function (nextZoom, anchor) {
+      var z = Math.min(60, Math.max(0.06, Number(nextZoom) || 1));
+      if (!anchor) {
+        view.zoom = z;
+        view.resize();
+        return view.zoom;
+      }
+      var before = view.screenToWorld(anchor.x, anchor.y);
+      view.zoom = z;
+      view.resize();
+      var after = view.screenToWorld(anchor.x, anchor.y);
+      view.center.x += before.x - after.x;
+      view.center.y += before.y - after.y;
+      view.resize();
+      return view.zoom;
+    };
+
+    /** 按屏幕像素平移画布内容（手指往右拖，内容跟着往右走）。 */
+    view.panBy = function (dxScreen, dyScreen) {
+      view.center.x -= dxScreen / view.scale;
+      view.center.y += dyScreen / view.scale;
+      view.resize();
+      return view.center;
+    };
+
+    view.resetView = function () {
+      view.zoom = 1;
+      view.center.x = 0;
+      view.center.y = 0;
+      view.resize();
     };
 
     view.worldToScreen = function (x, y) {
@@ -238,32 +285,173 @@
    * ------------------------------------------------------------------ */
 
   /**
+   * 读出 mapPoint 的线性部分。绝大多数展厅传进来的是矩阵映射，
+   * 因此这里用三个点就能还原 M = [[ax, bx], [ay, by]] 与偏移量。
+   * 不是线性映射（或含非法值）时返回 null，调用方退回固定范围。
+   */
+  function linearMapInfo(mapPoint) {
+    if (typeof mapPoint !== 'function') return null;
+    try {
+      var o = mapPoint({ x: 0, y: 0 });
+      var ex = mapPoint({ x: 1, y: 0 });
+      var ey = mapPoint({ x: 0, y: 1 });
+      if (!o || !ex || !ey) return null;
+      var info = {
+        ox: o.x, oy: o.y,
+        ax: ex.x - o.x, ay: ex.y - o.y,
+        bx: ey.x - o.x, by: ey.y - o.y
+      };
+      if (!Number.isFinite(info.ox) || !Number.isFinite(info.oy) ||
+        !Number.isFinite(info.ax) || !Number.isFinite(info.ay) ||
+        !Number.isFinite(info.bx) || !Number.isFinite(info.by)) {
+        return null;
+      }
+      return info;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function isIdentityMap(info) {
+    if (!info) return false;
+    return Math.abs(info.ox) < 1e-9 && Math.abs(info.oy) < 1e-9 &&
+      Math.abs(info.ax - 1) < 1e-9 && Math.abs(info.ay) < 1e-9 &&
+      Math.abs(info.bx) < 1e-9 && Math.abs(info.by - 1) < 1e-9;
+  }
+
+  /**
+   * 求“当前画布”在 mapPoint 反像空间里的世界坐标包围盒。
+   *
+   * 这样网格就能一直铺到画布四边：平移、缩放、宽屏、手机竖屏都不用改参数。
+   * 奇异矩阵（反像无界）退回一个足够大的固定范围。
+   */
+  function gridBounds(view, mapPoint, fallbackRange) {
+    var bounds = view.visibleBounds();
+    var info = linearMapInfo(mapPoint);
+    var fallback = Math.max(8, Number(fallbackRange) || 10);
+    var pad = Math.max(1, Math.abs(bounds.maxX - bounds.minX) * 0.04);
+
+    if (!info || isIdentityMap(info)) {
+      return {
+        minX: bounds.minX - pad,
+        maxX: bounds.maxX + pad,
+        minY: bounds.minY - pad,
+        maxY: bounds.maxY + pad
+      };
+    }
+
+    var det = info.ax * info.by - info.ay * info.bx;
+    if (Math.abs(det) < 1e-9) {
+      return {
+        minX: -Math.max(fallback, 48),
+        maxX: Math.max(fallback, 48),
+        minY: -Math.max(fallback, 48),
+        maxY: Math.max(fallback, 48)
+      };
+    }
+
+    var corners = [
+      view.screenToWorld(0, 0),
+      view.screenToWorld(view.width, 0),
+      view.screenToWorld(view.width, view.height),
+      view.screenToWorld(0, view.height)
+    ];
+
+    var minX = Infinity;
+    var maxX = -Infinity;
+    var minY = Infinity;
+    var maxY = -Infinity;
+
+    for (var i = 0; i < corners.length; i++) {
+      var px = corners[i].x - info.ox;
+      var py = corners[i].y - info.oy;
+      var wx = (info.by * px - info.bx * py) / det;
+      var wy = (-info.ay * px + info.ax * py) / det;
+      if (!Number.isFinite(wx) || !Number.isFinite(wy)) continue;
+      minX = Math.min(minX, wx);
+      maxX = Math.max(maxX, wx);
+      minY = Math.min(minY, wy);
+      maxY = Math.max(maxY, wy);
+    }
+
+    if (!Number.isFinite(minX) || minX === Infinity) {
+      return { minX: -fallback, maxX: fallback, minY: -fallback, maxY: fallback };
+    }
+
+    return {
+      minX: minX - pad,
+      maxX: maxX + pad,
+      minY: minY - pad,
+      maxY: maxY + pad
+    };
+  }
+
+  /**
+   * 让网格线在屏幕上的间距保持在 18–90 px：
+   * 缩得很小时自动把 step 变成 2、4、8……，放得很大时变成 0.5、0.25……
+   */
+  function chooseStep(view, bounds, mapScale) {
+    var spanX = Math.abs(bounds.maxX - bounds.minX);
+    var spanY = Math.abs(bounds.maxY - bounds.minY);
+    var span = Math.max(spanX, spanY, 0.001);
+    var factor = view.scale * (mapScale > 0 ? mapScale : 1);
+    var step = 1;
+    var guard = 0;
+
+    while (factor * step < 18 && guard < 24) {
+      step *= 2;
+      guard++;
+    }
+    guard = 0;
+    while (factor * step > 96 && guard < 24) {
+      step /= 2;
+      guard++;
+    }
+    while (span / step > 320 && guard < 40) {
+      step *= 2;
+      guard++;
+    }
+    return step;
+  }
+
+  /**
    * 画“被 mapPoint 变换后的网格”。
+   *
+   * 网格范围不再由 range 写死，而是由画布四边的反像决定，
+   * 因此无论窗口多宽、画布多大、是否平移缩放，方格纸都会铺满整个画布。
    *
    * @param {CanvasRenderingContext2D} ctx
    * @param {object} view
    * @param {(p:{x:number,y:number})=>{x:number,y:number}} mapPoint
-   * @param {object} options range / minor / major / lineWidth / dash / skipAxes
+   * @param {object} options range(兜底) / minor / major / lineWidth / dash / step / adaptive
    */
   function drawGrid(ctx, view, mapPoint, options) {
     var opts = options || {};
-    var range = opts.range == null ? 10 : Math.max(2, Math.round(opts.range));
     var minorWidth = opts.lineWidth == null ? 1 : opts.lineWidth;
     var majorWidth = opts.majorWidth == null ? 1.25 : opts.majorWidth;
     var pad = 24;
 
+    var bounds = gridBounds(view, mapPoint, opts.range);
+    var info = linearMapInfo(mapPoint);
+    var mapScale = 1;
+    if (info) {
+      var mapDet = info.ax * info.by - info.ay * info.bx;
+      if (Math.abs(mapDet) > 1e-9) mapScale = Math.sqrt(Math.abs(mapDet));
+    }
+    var step = opts.step || (opts.adaptive === false ? 1 : chooseStep(view, bounds, mapScale));
+
     var minorPath = [];
     var majorPath = [];
 
-    function pushLine(k, horizontal) {
+    function pushLine(value, horizontal) {
       var a;
       var b;
       if (horizontal) {
-        a = { x: -range, y: k };
-        b = { x: range, y: k };
+        a = { x: bounds.minX, y: value };
+        b = { x: bounds.maxX, y: value };
       } else {
-        a = { x: k, y: -range };
-        b = { x: k, y: range };
+        a = { x: value, y: bounds.minY };
+        b = { x: value, y: bounds.maxY };
       }
 
       var pa;
@@ -284,14 +472,23 @@
       var clipped = clipSegment(sa.x, sa.y, sb.x, sb.y, -pad, -pad, view.width + pad, view.height + pad);
       if (!clipped) return;
 
-      var target = (k % 5 === 0) ? majorPath : minorPath;
+      var index = Math.round(value / step);
+      var target = (index % 5 === 0) ? majorPath : minorPath;
       target.push(clipped);
     }
 
-    for (var k = -range; k <= range; k++) {
+    var kMin = Math.ceil(bounds.minX / step);
+    var kMax = Math.floor(bounds.maxX / step);
+    var jMin = Math.ceil(bounds.minY / step);
+    var jMax = Math.floor(bounds.maxY / step);
+
+    for (var k = kMin; k <= kMax; k++) {
       if (k === 0) continue; // 坐标轴单独画
-      pushLine(k, true);
-      pushLine(k, false);
+      pushLine(k * step, false);
+    }
+    for (var j = jMin; j <= jMax; j++) {
+      if (j === 0) continue;
+      pushLine(j * step, true);
     }
 
     function strokePath(segments, color, width) {
@@ -317,17 +514,20 @@
 
   /**
    * 画被 mapPoint 变换后的两条坐标轴。
+   *
+   * 端点取自画布四边的反像，所以坐标轴同样会一直画到画布边缘；
+   * 平移、缩放之后不需要重新算 range。
    */
   function drawAxes(ctx, view, mapPoint, options) {
     var opts = options || {};
-    var range = opts.range == null ? 10 : Math.max(2, Math.round(opts.range));
     var color = opts.color || PALETTE.axis;
     var width = opts.lineWidth == null ? 1.35 : opts.lineWidth;
     var pad = 24;
 
+    var bounds = gridBounds(view, mapPoint, opts.range);
     var axes = [
-      { a: { x: -range, y: 0 }, b: { x: range, y: 0 } },
-      { a: { x: 0, y: -range }, b: { x: 0, y: range } }
+      { a: { x: bounds.minX, y: 0 }, b: { x: bounds.maxX, y: 0 } },
+      { a: { x: 0, y: bounds.minY }, b: { x: 0, y: bounds.maxY } }
     ];
 
     ctx.save();
@@ -338,8 +538,14 @@
     ctx.beginPath();
 
     for (var i = 0; i < axes.length; i++) {
-      var a = mapPoint(axes[i].a);
-      var b = mapPoint(axes[i].b);
+      var a;
+      var b;
+      try {
+        a = mapPoint(axes[i].a);
+        b = mapPoint(axes[i].b);
+      } catch (err) {
+        continue;
+      }
       if (!a || !b) continue;
       var sa = view.worldToScreen(a);
       var sb = view.worldToScreen(b);

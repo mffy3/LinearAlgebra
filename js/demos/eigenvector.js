@@ -897,4 +897,25 @@
   syncProbeInputs(state.probe);
   updateReadouts();
   requestRender();
+
+  /* ------------------------------------------------------------------ *
+   * 全屏无限空间（space-mode.js）
+   * ------------------------------------------------------------------ */
+
+  if (window.LinearSpace) {
+    window.LinearSpace.attach({
+      canvas: canvas,
+      view: view,
+      redraw: requestRender,
+      hitTest: function (event) { return !!hitTestProbe(event); },
+      landmarks: function () {
+        var mapped = L.applyMat(state.drawn, state.probe);
+        return [
+          { x: state.probe.x, y: state.probe.y, color: K.PALETTE.warm },
+          { x: mapped.x, y: mapped.y, color: K.PALETTE.e1 }
+        ];
+      }
+    });
+  }
+
 })();

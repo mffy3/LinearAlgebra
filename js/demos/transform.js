@@ -816,4 +816,26 @@
   syncInputs(state.matrix);
   updateReadouts();
   requestRender();
+
+  /* ------------------------------------------------------------------ *
+   * 全屏无限空间（space-mode.js）
+   * ------------------------------------------------------------------ */
+
+  if (window.LinearSpace) {
+    window.LinearSpace.attach({
+      canvas: canvas,
+      view: view,
+      redraw: requestRender,
+      hitTest: function (event) { return !!hitTest(event); },
+      landmarks: function () {
+        var e1 = L.applyMat(state.drawn, { x: 1, y: 0 });
+        var e2 = L.applyMat(state.drawn, { x: 0, y: 1 });
+        return [
+          { x: e1.x, y: e1.y, color: K.PALETTE.e1 },
+          { x: e2.x, y: e2.y, color: K.PALETTE.e2 }
+        ];
+      }
+    });
+  }
+
 })();
