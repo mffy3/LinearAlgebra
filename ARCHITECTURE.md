@@ -351,6 +351,59 @@ progress  (user_id, chapter, status: visited|practiced|tested, updated_at)  -- �
 - 新增图表：在 `dashboard.js` 里写一个 `drawXxx(stats)`，复用 `prepare()` 处理 DPR，
   不要引入图表库。
 
+## 12. 练习与章节大测（2026-10，P9）
+
+### 文件
+
+| 文件 | 职责 |
+|---|---|
+| pages/practice.html | 练习 / 大测页面骨架（靠 query 参数区分章、档、类型） |
+| css/practice.css | 模式卡、答题卡、计时器、结果与解析 |
+| js/lib/practice.js | 引擎：选模式 → 答题 → 计时 → 判分 → 记录 → 下载 |
+| js/lib/questions/*.js | 六章题库，每章 3×6 道练习 + 8 道大测 |
+| 	ests/questions.test.js | 题库结构自检 |
+
+页面参数：practice.html?chapter=01-transform&tier=easy（练习）或
+practice.html?chapter=01-transform&kind=test（大测）。
+
+### 题目格式
+
+`js
+{ q: '题干', o: ['A', 'B', 'C', 'D'], a: 0, e: '解析', s: 'Strang §1.1' }
+{ q: '填空题干', n: 5, tol: 0.01, e: '解析', s: 'Strang §1.1' }
+`
+
+-  是正确选项下标（0–3）；数值题用 
+ 与 	ol，不要 o；
+- 每题必须有 e（解析）与 s（短出处）；每章 
+efs 给两条带链接的完整来源；
+- 练习每档 6 题、百分制；大测 8 题、满分 200（每题 25 分）。
+
+### 五种模式
+
+限时打分 / 限时只对答案 / 不限时打分 / 不限时不打分 / 跳过。
+限时：练习 90 分钟、大测 150 分钟；倒计时显示在答题卡右上角，
+每到 25 分钟弹一次提示（不遮挡卷面）。
+
+### 记录口径
+
+交卷时调用 LinearAccount.record({ kind, chapter, tier, mode, duration, score, total, correctCount, questionCount })：
+
+- 打分模式写 score / total / correctCount / questionCount；
+- 只对答案、不打分模式只写 kind / chapter / mode / duration（不进正确率）；
+- 服务端用 question_count 与 correct_count 计算正确率，缺省时退回单题的 0/1。
+
+### 加题
+
+只改 js/lib/questions/<章>.js，保持字段不变；写完跑 
+ode tests/questions.test.js。
+不要在 practice.js 里写题目，也不要在页面 HTML 里写答案。
+
+### 下载
+
+交卷页的「下载原题与答案解析」在浏览器端用 Blob 生成一个独立 HTML：
+题目、答案、解析、出处、本章参考。未登录也能下载，符合“未登录不记录但可拿原题”的约定。
+
 ## 许可与发布文件
 
 - `LICENSE`：代码 MIT。

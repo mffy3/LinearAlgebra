@@ -48,6 +48,8 @@ db.exec(`
     total REAL,
     mode TEXT,
     duration INTEGER,
+    correct_count INTEGER,
+    question_count INTEGER,
     created_at TEXT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
   );
@@ -81,8 +83,8 @@ const stmts = {
   deleteExpiredSessions: db.prepare('DELETE FROM sessions WHERE expires_at < ?'),
 
   insertAttempt: db.prepare(
-    `INSERT INTO attempts (user_id, kind, chapter, tier, correct, score, total, mode, duration, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    `INSERT INTO attempts (user_id, kind, chapter, tier, correct, score, total, mode, duration, correct_count, question_count, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ),
   upsertProgress: db.prepare(
     `INSERT INTO progress (user_id, chapter, status, updated_at) VALUES (?, ?, ?, ?)
@@ -95,15 +97,15 @@ const stmts = {
     `SELECT
        COUNT(*) AS records,
        COALESCE(SUM(CASE WHEN kind != 'visit' THEN 1 ELSE 0 END), 0) AS attempts,
-       COALESCE(SUM(CASE WHEN correct IS NOT NULL THEN 1 ELSE 0 END), 0) AS graded,
-       COALESCE(SUM(CASE WHEN correct = 1 THEN 1 ELSE 0 END), 0) AS correct
+       COALESCE(SUM(COALESCE(question_count, CASE WHEN correct IS NOT NULL THEN 1 ELSE 0 END)), 0) AS graded,
+       COALESCE(SUM(COALESCE(correct_count, CASE WHEN correct = 1 THEN 1 ELSE 0 END)), 0) AS correct
      FROM attempts WHERE user_id = ?`
   ),
   byChapter: db.prepare(
     `SELECT chapter,
        COUNT(*) AS attempts,
-       COALESCE(SUM(CASE WHEN correct IS NOT NULL THEN 1 ELSE 0 END), 0) AS graded,
-       COALESCE(SUM(CASE WHEN correct = 1 THEN 1 ELSE 0 END), 0) AS correct
+       COALESCE(SUM(COALESCE(question_count, CASE WHEN correct IS NOT NULL THEN 1 ELSE 0 END)), 0) AS graded,
+       COALESCE(SUM(COALESCE(correct_count, CASE WHEN correct = 1 THEN 1 ELSE 0 END)), 0) AS correct
      FROM attempts WHERE user_id = ?
      GROUP BY chapter ORDER BY chapter`
   ),

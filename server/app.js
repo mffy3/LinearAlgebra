@@ -230,10 +230,20 @@ async function handleEvent(req, res) {
   const duration = Number.isFinite(body.duration) ? Math.max(0, Math.round(body.duration)) : null;
   const tier = typeof body.tier === 'string' && /^[a-z]{2,12}$/.test(body.tier) ? body.tier : null;
   const mode = typeof body.mode === 'string' && body.mode.length <= 24 ? body.mode : null;
+
+  // 练习 / 测试整卷记录：correctCount 与 questionCount；单题记录退回 0/1。
+  const questionCount = Number.isFinite(body.questionCount) && body.questionCount > 0
+    ? Math.min(500, Math.round(body.questionCount))
+    : (correct === null ? null : 1);
+  const correctCount = Number.isFinite(body.correctCount)
+    ? Math.max(0, Math.min(questionCount || 1, Math.round(body.correctCount)))
+    : (correct === null ? null : correct);
+
   const createdAt = new Date().toISOString();
 
   stmts.insertAttempt.run(
-    user.id, kind, body.chapter, tier, correct, score, total, mode, duration, createdAt
+    user.id, kind, body.chapter, tier, correct, score, total, mode, duration,
+    correctCount, questionCount, createdAt
   );
 
   const status = kind === 'test' ? 'tested' : kind === 'practice' ? 'practiced' : 'visited';

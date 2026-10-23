@@ -1489,3 +1489,48 @@ body[data-level="learned"].level-core .quiz-section {
     padding: 11px 12px;
   }
 }
+
+/* --------------------------------------------------------------------------
+   练习入口（每章页尾）
+   -------------------------------------------------------------------------- */
+
+.practice-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px 24px;
+  max-width: 1120px;
+  margin: 48px auto 0;
+  padding: 24px 28px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: 0 12px 34px rgba(46, 49, 44, 0.05);
+}
+
+.practice-strip h2 {
+  margin: 4px 0 6px;
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.practice-strip p {
+  max-width: 58ch;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+
+.practice-strip-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 720px) {
+  .practice-strip {
+    margin: 36px 14px 0;
+    padding: 18px 16px;
+  }
+}

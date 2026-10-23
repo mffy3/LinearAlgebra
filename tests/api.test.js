@@ -138,11 +138,17 @@ async function main() {
       const q1 = await call(a, 'POST', '/api/events', { kind: 'quiz', chapter: '00-vectors', correct: true });
       const q2 = await call(a, 'POST', '/api/events', { kind: 'quiz', chapter: '00-vectors', correct: false });
       const t1 = await call(a, 'POST', '/api/events', {
-        kind: 'test', chapter: '01-transform', score: 180, total: 200, mode: 'timed', duration: 5400
+        kind: 'test', chapter: '01-transform', score: 180, total: 200, mode: 'timed', duration: 5400,
+        correctCount: 7, questionCount: 8
+      });
+      const p1 = await call(a, 'POST', '/api/events', {
+        kind: 'practice', chapter: '00-vectors', tier: 'easy', score: 67, total: 100,
+        correctCount: 4, questionCount: 6
       });
       assert.equal(q1.status, 201);
       assert.equal(q2.status, 201);
       assert.equal(t1.status, 201);
+      assert.equal(p1.status, 201);
     });
 
     await ok('非法记录被拒绝', async function () {
@@ -153,13 +159,13 @@ async function main() {
     await ok('统计正确聚合', async function () {
       const res = await call(a, 'GET', '/api/stats');
       assert.equal(res.status, 200);
-      assert.equal(res.data.totals.attempts, 3);
-      assert.equal(res.data.totals.graded, 2);
-      assert.equal(res.data.totals.correct, 1);
-      assert.equal(res.data.totals.accuracy, 0.5);
+      assert.equal(res.data.totals.attempts, 4);
+      assert.equal(res.data.totals.graded, 16);
+      assert.equal(res.data.totals.correct, 12);
+      assert.equal(res.data.totals.accuracy, 0.75);
       assert.deepEqual(res.data.progress.map(function (p) { return p.chapter; }), ['00-vectors', '01-transform']);
-      assert.equal(res.data.scores.length, 1);
-      assert.equal(res.data.scores[0].score, 180);
+      assert.equal(res.data.scores.length, 2);
+      assert.equal(res.data.scores.some(function (s) { return s.score === 180; }), true);
     });
 
     await ok('未登录时统计被拒绝', async function () {
