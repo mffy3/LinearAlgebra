@@ -61,6 +61,8 @@
 
   var ctx = null;
   var rafId = null;
+  var layoutInfo = null;
+  var dragging = null;
 
   /* ------------------------------------------------------------------ *
    * 计算
@@ -185,6 +187,16 @@
     var barTop = top + 46;
     var maxBar = Math.max(8, bottom - 18 - barTop);
 
+    layoutInfo = {
+      left: left,
+      right: right,
+      top: top,
+      bottom: bottom,
+      barTop: barTop,
+      maxBar: maxBar,
+      slot: (right - left) / 3
+    };
+
     drawPanel(left, top, right - left, bottom - top);
 
     var slot = (right - left) / 3;
@@ -292,7 +304,7 @@
     if (els.hint) {
       if (achieved) els.hint.textContent = '三度归零：只剩根音与五度两条正弦';
       else if (active <= 1) els.hint.textContent = '单音：波形是一条纯正弦';
-      else els.hint.textContent = '调右侧三个振幅，波形与频谱会一起变';
+      else els.hint.textContent = '拖频谱柱改振幅，或调右侧滑块';
     }
 
     draw();
@@ -397,6 +409,70 @@
       }
     });
   }
+
+  /* ------------------------------------------------------------------ *
+   * 直接拖动频谱柱改振幅（画布内交互）
+   * ------------------------------------------------------------------ */
+
+  var dragState = null;
+
+  function pointerPos(event) {
+    var rect = canvas.getBoundingClientRect();
+    return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+  }
+
+  function barAt(pos) {
+    if (!layoutInfo) return -1;
+    var box = layoutInfo;
+    if (pos.x < box.left || pos.x > box.right) return -1;
+    if (pos.y < box.top || pos.y > box.bottom) return -1;
+    var index = Math.floor((pos.x - box.left) / Math.max(1, box.slot));
+    return Math.max(0, Math.min(2, index));
+  }
+
+  function amplitudeFromY(y) {
+    if (!layoutInfo) return 0;
+    var value = (layoutInfo.bottom - 20 - y) / Math.max(1, layoutInfo.maxBar);
+    return Math.round(clamp(value, 0, 1) * 100) / 100;
+  }
+
+  canvas.addEventListener('pointerdown', function (event) {
+    var pos = pointerPos(event);
+    var index = barAt(pos);
+    if (index < 0) return;
+    event.preventDefault();
+    dragState = { index: index, id: event.pointerId };
+    if (canvas.setPointerCapture) canvas.setPointerCapture(event.pointerId);
+    canvas.classList.add('is-dragging');
+    setAmplitude(index + 1, amplitudeFromY(pos.y));
+  });
+
+  canvas.addEventListener('pointermove', function (event) {
+    var pos = pointerPos(event);
+    if (dragState) {
+      if (dragState.id !== event.pointerId) return;
+      event.preventDefault();
+      setAmplitude(dragState.index + 1, amplitudeFromY(pos.y));
+      return;
+    }
+    canvas.classList.toggle('is-grabbable', barAt(pos) >= 0);
+  });
+
+  function endBarDrag(event) {
+    if (!dragState) return;
+    if (event && canvas.hasPointerCapture && canvas.hasPointerCapture(event.pointerId)) {
+      canvas.releasePointerCapture(event.pointerId);
+    }
+    dragState = null;
+    canvas.classList.remove('is-dragging');
+    canvas.classList.remove('is-grabbable');
+  }
+
+  canvas.addEventListener('pointerup', endBarDrag);
+  canvas.addEventListener('pointercancel', endBarDrag);
+  canvas.addEventListener('pointerleave', function () {
+    if (!dragState) canvas.classList.remove('is-grabbable');
+  });
 
   /* ------------------------------------------------------------------ *
    * 启动

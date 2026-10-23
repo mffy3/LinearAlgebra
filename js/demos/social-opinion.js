@@ -61,6 +61,8 @@
 
   var ctx = null;
   var rafId = null;
+  var barsLayout = null;
+  var dragging = null;
 
   /* ------------------------------------------------------------------ *
    * 计算
@@ -129,6 +131,14 @@
 
     var centers = [w * 0.3, w * 0.7];
     var barW = Math.min(110, w * 0.16);
+
+    barsLayout = {
+      top: top,
+      base: base,
+      maxHeight: maxHeight,
+      centers: centers,
+      barW: barW
+    };
 
     for (var i = 0; i < 2; i++) {
       var cx = centers[i];
@@ -389,7 +399,7 @@
     if (els.hint) {
       if (state.playing) els.hint.textContent = '正在逐轮演化……';
       else if (spread < 0.002) els.hint.textContent = '已收敛：再乘矩阵也不会变';
-      else els.hint.textContent = '用右侧按钮走一步或连续演化';
+      else els.hint.textContent = '拖柱子改分布，或用右侧按钮演化';
     }
 
     draw();
@@ -514,6 +524,83 @@
       }
     });
   }
+
+  /* ------------------------------------------------------------------ *
+   * 直接拖动柱子改分布（画布内交互）
+   * ------------------------------------------------------------------ */
+
+  var dragState = null;
+
+  function pointerPos(event) {
+    var rect = canvas.getBoundingClientRect();
+    return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+  }
+
+  function barAt(pos) {
+    if (!barsLayout) return -1;
+    var box = barsLayout;
+    if (pos.y < box.top - 16 || pos.y > box.base + 30) return -1;
+    // 整个柱状图区域都算：左半边拖 A，右半边拖 B。
+    return pos.x < view.width / 2 ? 0 : 1;
+  }
+
+  function shareFromY(y) {
+    if (!barsLayout) return 0;
+    var value = (barsLayout.base - y) / Math.max(1, barsLayout.maxHeight);
+    return Math.round(clamp(value, 0, 1) * 100) / 100;
+  }
+
+  function applyShare(value) {
+    value = Math.round(clamp(value, 0, 1) * 100) / 100;
+    state.playing = false;
+    state.lastTick = 0;
+    if (els.btnPlay) els.btnPlay.textContent = '连续演化';
+    state.start = value;
+    state.current = { x: value, y: 1 - value };
+    state.step = 0;
+    syncInputs();
+    updateReadouts();
+  }
+
+  canvas.addEventListener('pointerdown', function (event) {
+    var pos = pointerPos(event);
+    var index = barAt(pos);
+    if (index < 0) return;
+    event.preventDefault();
+    dragState = { index: index, id: event.pointerId };
+    if (canvas.setPointerCapture) canvas.setPointerCapture(event.pointerId);
+    canvas.classList.add('is-dragging');
+    var share = shareFromY(pos.y);
+    applyShare(index === 0 ? share : 1 - share);
+  });
+
+  canvas.addEventListener('pointermove', function (event) {
+    var pos = pointerPos(event);
+    if (dragState) {
+      if (dragState.id !== event.pointerId) return;
+      event.preventDefault();
+      var share = shareFromY(pos.y);
+      applyShare(dragState.index === 0 ? share : 1 - share);
+      return;
+    }
+    canvas.classList.toggle('is-grabbable', barAt(pos) >= 0);
+  });
+
+  function endBarDrag(event) {
+    if (!dragState) return;
+    if (event && canvas.hasPointerCapture && canvas.hasPointerCapture(event.pointerId)) {
+      canvas.releasePointerCapture(event.pointerId);
+    }
+    dragState = null;
+    canvas.classList.remove('is-dragging');
+    canvas.classList.remove('is-grabbable');
+  }
+
+  canvas.addEventListener('pointerup', endBarDrag);
+  canvas.addEventListener('pointercancel', endBarDrag);
+  canvas.addEventListener('pointerleave', function () {
+    if (!dragState) canvas.classList.remove('is-grabbable');
+  });
 
   /* ------------------------------------------------------------------ *
    * 启动
