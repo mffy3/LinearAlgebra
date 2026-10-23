@@ -1,0 +1,468 @@
+/* ==========================================================================
+   account.css · 本地账号
+   入口页账号卡、导航小入口、登录 / 注册弹窗。
+   颜色与控件沿用 main.css / entry.css 的 token。
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   入口页：起点选择 + 账号卡
+   -------------------------------------------------------------------------- */
+
+.entry-side {
+  display: grid;
+  width: 100%;
+  max-width: 840px;
+  grid-template-columns: minmax(0, 1fr) 232px;
+  align-items: stretch;
+  justify-self: end;
+  gap: 16px;
+}
+
+.entry-side .entry-choice {
+  height: 100%;
+  max-width: none;
+  justify-self: stretch;
+}
+
+.entry-account {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 18px 18px;
+  border: 1px solid rgba(46, 49, 44, 0.14);
+  border-radius: 30px;
+  background: rgba(250, 246, 238, 0.78);
+  box-shadow: 0 24px 70px rgba(46, 49, 44, 0.1);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  pointer-events: auto;
+}
+
+.entry-account-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.entry-account-head h2 {
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 0.92rem;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.entry-account-head span {
+  flex: none;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.05em;
+}
+
+.entry-account-text {
+  color: var(--muted);
+  font-size: 0.67rem;
+  line-height: 1.65;
+}
+
+.entry-account-points {
+  display: grid;
+  gap: 5px;
+  margin: 2px 0 0;
+  padding: 10px 0 0;
+  border-top: 1px solid var(--hairline-soft);
+  list-style: none;
+}
+
+.entry-account-points li {
+  position: relative;
+  padding-left: 12px;
+  color: var(--faint);
+  font-size: 0.58rem;
+  line-height: 1.5;
+}
+
+.entry-account-points li::before {
+  content: "";
+  position: absolute;
+  top: 0.52em;
+  left: 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.55;
+}
+
+.entry-account-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 7px;
+  margin-top: auto;
+}
+
+.entry-account-primary {
+  justify-content: center;
+  width: 100%;
+}
+
+.entry-account-link {
+  padding: 0;
+  border: 0;
+  color: var(--muted);
+  background: none;
+  font: inherit;
+  font-size: 0.62rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.entry-account-link:hover {
+  color: var(--ink);
+}
+
+/* --------------------------------------------------------------------------
+   导航里的账号入口
+   -------------------------------------------------------------------------- */
+
+.nav-account {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  color: var(--ink);
+  background: rgba(250, 246, 238, 0.7);
+  font: inherit;
+  font-size: 0.68rem;
+  line-height: 1.4;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 150ms ease, color 150ms ease;
+}
+
+.nav-account:hover {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.entry-top-links .nav-account {
+  padding: 5px 11px;
+  font-size: 0.7rem;
+}
+
+/* --------------------------------------------------------------------------
+   弹窗
+   -------------------------------------------------------------------------- */
+
+body.account-open {
+  overflow: hidden;
+}
+
+.account-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: grid;
+  padding: 20px;
+  place-items: center;
+}
+
+.account-modal[hidden] {
+  display: none;
+}
+
+.account-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(46, 49, 44, 0.38);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.account-dialog {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  padding: 28px 28px 22px;
+  border: 1px solid var(--hairline);
+  border-radius: 26px;
+  background: var(--surface);
+  box-shadow: 0 30px 80px rgba(46, 49, 44, 0.26);
+}
+
+.account-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--hairline);
+  border-radius: 50%;
+  color: var(--muted);
+  background: var(--surface);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.account-close:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.account-dialog h2 {
+  margin: 4px 0 10px;
+  font-size: 1.55rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.account-lead {
+  max-width: 46ch;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.7;
+}
+
+.account-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 16px 0 14px;
+}
+
+.account-compare > div {
+  padding: 12px 14px;
+  border: 1px solid var(--hairline-soft);
+  border-radius: 14px;
+  background: var(--bg-soft);
+}
+
+.account-compare > div:last-child {
+  border-color: rgba(116, 134, 118, 0.32);
+  background: rgba(227, 232, 221, 0.55);
+}
+
+.account-compare h3 {
+  margin-bottom: 6px;
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.account-compare ul {
+  margin: 0;
+  padding-left: 15px;
+  color: var(--muted);
+  font-size: 0.66rem;
+  line-height: 1.65;
+}
+
+.account-offline {
+  margin: 14px 0;
+  padding: 12px 14px;
+  border-left: 3px solid var(--gold);
+  border-radius: 0 12px 12px 0;
+  background: rgba(239, 232, 221, 0.7);
+}
+
+.account-offline h3 {
+  margin-bottom: 4px;
+  font-size: 0.74rem;
+}
+
+.account-offline p,
+.account-offline li {
+  color: var(--muted);
+  font-size: 0.66rem;
+  line-height: 1.65;
+}
+
+.account-offline ol {
+  margin: 6px 0;
+  padding-left: 18px;
+}
+
+.account-offline code {
+  padding: 1px 5px;
+  border-radius: 5px;
+  background: rgba(46, 49, 44, 0.07);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+}
+
+.account-note {
+  margin-top: 6px;
+  color: var(--accent-ink) !important;
+}
+
+.account-signed {
+  margin: 16px 0 6px;
+  padding: 14px;
+  border: 1px solid var(--hairline);
+  border-radius: 14px;
+  background: var(--bg-soft);
+}
+
+.account-signed p {
+  margin-bottom: 10px;
+  font-size: 0.8rem;
+}
+
+.account-signed-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.account-tabs {
+  display: flex;
+  gap: 4px;
+  margin: 6px 0 14px;
+  padding: 4px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: var(--bg-soft);
+}
+
+.account-tabs[hidden] {
+  display: none;
+}
+
+.account-tabs button {
+  flex: 1;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--muted);
+  background: transparent;
+  font: inherit;
+  font-size: 0.74rem;
+  cursor: pointer;
+  transition: color 150ms ease, background 150ms ease;
+}
+
+.account-tabs button[aria-selected="true"] {
+  color: var(--ink);
+  background: var(--surface);
+  box-shadow: 0 2px 8px rgba(46, 49, 44, 0.08);
+}
+
+.account-form[hidden] {
+  display: none;
+}
+
+.account-field[hidden],
+.account-signed[hidden],
+.account-offline[hidden] {
+  display: none;
+}
+
+.account-field {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: 0.64rem;
+}
+
+.account-field input {
+  padding: 9px 11px;
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  outline: 0;
+  color: var(--ink);
+  background: var(--surface);
+  font: inherit;
+  font-size: 0.82rem;
+}
+
+.account-field input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(116, 134, 118, 0.14);
+}
+
+.account-error {
+  min-height: 1.1em;
+  margin: 2px 0 8px;
+  color: var(--danger);
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.account-submit {
+  width: 100%;
+}
+
+.account-privacy {
+  margin-top: 12px;
+  color: var(--faint);
+  font-size: 0.6rem;
+  line-height: 1.6;
+}
+
+.account-privacy code {
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(46, 49, 44, 0.06);
+  font-family: var(--font-mono);
+}
+
+/* --------------------------------------------------------------------------
+   响应式
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1180px) {
+  .entry-side {
+    max-width: 560px;
+    grid-template-columns: 1fr;
+  }
+
+  .entry-account {
+    padding: 16px 18px;
+  }
+
+  .entry-account-points {
+    display: none;
+  }
+
+  .entry-account-actions {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .entry-account-primary {
+    width: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .entry-account {
+    border-radius: 24px;
+  }
+
+  .account-dialog {
+    padding: 22px 18px 18px;
+    border-radius: 22px;
+  }
+
+  .account-compare {
+    grid-template-columns: 1fr;
+  }
+
+  .account-dialog h2 {
+    font-size: 1.3rem;
+  }
+}

@@ -9,6 +9,7 @@
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/entry.css">
+  <link rel="stylesheet" href="css/account.css">
 </head>
 <body class="entry-page">
   <a class="skip-link" href="#entry-main">跳到主要内容</a>
@@ -46,42 +47,58 @@
       </p>
     </section>
 
-    <section class="entry-choice" data-zone="entry-choice" aria-labelledby="choice-title">
-      <div class="entry-choice-head">
-        <h2 id="choice-title">你的起点</h2>
-        <span>只影响顺序，不影响内容</span>
-      </div>
-
-      <div class="level-picker" role="group" aria-label="选择你的基础">
-        <button class="level-option" type="button" data-level="zero" aria-pressed="false">
-          <span class="level-no">01</span>
-          <span class="level-title">完全零基础</span>
-        </button>
-        <button class="level-option" type="button" data-level="some" aria-pressed="false">
-          <span class="level-no">02</span>
-          <span class="level-title">略有了解</span>
-        </button>
-        <button class="level-option" type="button" data-level="learned" aria-pressed="false">
-          <span class="level-no">03</span>
-          <span class="level-title">有扎实的基础</span>
-        </button>
-      </div>
-
-      <div class="entry-path" id="entry-path" data-zone="path" hidden aria-live="polite">
-        <div class="path-head">
-          <span class="path-label">你的路线</span>
-          <span class="path-level" id="path-level">完全零基础</span>
+    <div class="entry-side">
+      <section class="entry-choice" data-zone="entry-choice" aria-labelledby="choice-title">
+        <div class="entry-choice-head">
+          <h2 id="choice-title">你的起点</h2>
+          <span>只影响顺序，不影响内容</span>
         </div>
-        <h2 class="path-title" id="path-title" tabindex="-1">从零开始</h2>
-        <p class="path-desc" id="path-desc">先认识箭头和网格，再看矩阵怎样搬动整个平面。</p>
-        <div class="path-steps" id="path-steps"></div>
-        <div class="path-actions">
-          <a class="btn btn-primary" id="path-start" href="pages/01-transform.html?level=zero">从矩阵变换开始 <span aria-hidden="true">→</span></a>
-          <a class="path-all" href="pages/library.html">全部展厅</a>
-          <button class="path-change" id="path-change" type="button">换一个起点</button>
+
+        <div class="level-picker" role="group" aria-label="选择你的基础">
+          <button class="level-option" type="button" data-level="zero" aria-pressed="false">
+            <span class="level-no">01</span>
+            <span class="level-title">完全零基础</span>
+          </button>
+          <button class="level-option" type="button" data-level="some" aria-pressed="false">
+            <span class="level-no">02</span>
+            <span class="level-title">略有了解</span>
+          </button>
+          <button class="level-option" type="button" data-level="learned" aria-pressed="false">
+            <span class="level-no">03</span>
+            <span class="level-title">有扎实的基础</span>
+          </button>
         </div>
-      </div>
-    </section>
+
+        <div class="entry-path" id="entry-path" data-zone="path" hidden aria-live="polite">
+          <div class="path-head">
+            <span class="path-label">你的路线</span>
+            <span class="path-level" id="path-level">完全零基础</span>
+          </div>
+          <h2 class="path-title" id="path-title" tabindex="-1">从零开始</h2>
+          <p class="path-desc" id="path-desc">先认识箭头和网格，再看矩阵怎样搬动整个平面。</p>
+          <div class="path-steps" id="path-steps"></div>
+          <div class="path-actions">
+            <a class="btn btn-primary" id="path-start" href="pages/01-transform.html?level=zero">从矩阵变换开始 <span aria-hidden="true">→</span></a>
+            <a class="path-all" href="pages/library.html">全部展厅</a>
+            <button class="path-change" id="path-change" type="button">换一个起点</button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="entry-account" id="entry-account" aria-labelledby="account-title">
+        <div class="entry-account-head">
+          <h2 id="account-title" data-account-title>你的账号</h2>
+          <span data-account-tag>检查中</span>
+        </div>
+        <p class="entry-account-text" data-account-text>正在检查本地服务……</p>
+        <ul class="entry-account-points">
+          <li>不登录也能用全部内容</li>
+          <li>登录只多一份本机记录</li>
+          <li>数据不离开这台电脑</li>
+        </ul>
+        <div class="entry-account-actions" data-account-actions></div>
+      </aside>
+    </div>
   </main>
 
   <footer class="entry-foot">
@@ -93,6 +110,7 @@
     <div class="noscript-warning">这个入口需要 JavaScript 才能绘制三维空间。请启用 JavaScript 后刷新。</div>
   </noscript>
 
+  <script src="js/lib/account.js" defer></script>
   <script src="js/lib/entry-scene.js" defer></script>
   <script src="js/lib/entry-flow.js" defer></script>
 </body>

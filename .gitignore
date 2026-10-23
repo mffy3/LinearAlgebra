@@ -34,6 +34,12 @@ coverage/
 *.docx
 线性代数学习工具_*.md
 
+# 本地账号数据库（只在本机，绝不提交）
+data/
+*.db
+*.db-wal
+*.db-shm
+
 # 本地视觉自检产物与无头浏览器配置
 screenshots/
 .edge-profile*/

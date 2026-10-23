@@ -273,6 +273,69 @@ if (window.LinearSpace) {
 - 无头浏览器 1440 / 390 两种宽度各截一张：进入全屏、拖平移、滚轮缩放、`Esc` 退出；
 - 检查控制台无报错、退出后 `body` 不带 `space-open`、按钮文字回到「全屏」。
 
+## 11. 本地后端与账号（2026-10，P8）
+
+### 为什么是「本地后端」
+
+账号与记录需要一个真正能写数据的地方，但项目仍然要保持「双击就能打开、零依赖」。
+折中方案：**一个只监听 `127.0.0.1` 的 Node 服务**，只用自带模块（`node:http`、`node:sqlite`、
+`node:crypto`），不装任何 npm 包；同时把静态站点也托管在同一个端口，页面与 `/api` 同源，
+cookie 才能生效。
+
+- 不启动服务：直接双击 `index.html`，全部内容照常，登录入口自动显示「离线」；
+- 启动服务：`start-server.bat` 或 `node server/app.js` → `http://127.0.0.1:4173/`。
+
+### 分层
+
+| 文件 | 职责 | 不要做什么 |
+|---|---|---|
+| `server/app.js` | HTTP、路由、静态托管、参数校验、限流 | 不写业务 SQL |
+| `server/db.js` | 建表与所有 SQL 语句 | 不处理 cookie、不做校验 |
+| `server/auth.js` | scrypt 哈希、会话 token、cookie 字符串 | 不读数据库 |
+| `js/lib/account.js` | 前端账号状态、弹窗、记录接口 | 不直接拼 SQL / 不存密码 |
+| `js/lib/record.js` | 章节访问与答题记录（页面侧） | 不画图、不改页面内容 |
+| `pages/dashboard.html` + `js/demos/dashboard.js` | 数据面板与三种图表 | 不重复实现统计口径 |
+
+### 接口
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| GET | `/api/health` | 前端用它判断「服务是否在」 |
+| POST | `/api/register` | 注册并直接登录（`{username, password}`） |
+| POST | `/api/login` | 登录 |
+| POST | `/api/logout` | 退出 |
+| GET | `/api/me` | 当前用户或 `null` |
+| POST | `/api/events` | 记录 `visit` / `quiz` / `practice` / `test` |
+| GET | `/api/stats` | 汇总：总正确率、各章正确率、分数、进度、近 14 天活动 |
+| POST | `/api/account/delete` | 校验密码后删除账号与全部记录 |
+
+### 数据表
+
+```text
+users     (id, username UNIQUE, pass_hash, salt, created_at)
+sessions  (token PK, user_id, created_at, expires_at)
+attempts  (id, user_id, kind, chapter, tier, correct, score, total, mode, duration, created_at)
+progress  (user_id, chapter, status: visited|practiced|tested, updated_at)  -- 联合主键
+```
+
+数据库文件在 `data/linear-algebra.db`，`data/` 已被 `.gitignore` 排除。
+删掉 `data/` 就等于清空所有账号；也可以在数据面板里删除单个账号。
+
+### 安全约定
+
+- 密码只保存 `scrypt(password, salt)` 的十六进制结果，比较用 `timingSafeEqual`；
+- 会话是 32 字节随机 token，放在 `HttpOnly; SameSite=Lax; Path=/` 的 cookie 里，30 天过期；
+- 所有写接口都要求登录；`/api/account/delete` 还要再验一次密码；
+- 静态服务拒绝 `server/`、`data/`、`.git`、点文件，并做了路径越界检查；
+- 只监听 `127.0.0.1`，没有 CORS、没有外网暴露。
+
+### 改这里要注意
+
+- 新增记录类型：先改 `server/app.js` 的白名单与 `progress` 映射，再改 `record.js`；
+- 改统计口径：只改 `server/db.js` 的 SQL 与 `dashboard.js` 的展示，别在两处各算一遍；
+- 新增图表：在 `dashboard.js` 里写一个 `drawXxx(stats)`，复用 `prepare()` 处理 DPR，
+  不要引入图表库。
+
 ## 许可与发布文件
 
 - `LICENSE`：代码 MIT。

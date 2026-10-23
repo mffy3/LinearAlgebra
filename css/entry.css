@@ -89,10 +89,10 @@
   z-index: 3;
   display: grid;
   min-height: 100svh;
-  max-width: 1320px;
-  grid-template-columns: minmax(0, 1fr) minmax(420px, 0.78fr);
+  max-width: 1460px;
+  grid-template-columns: minmax(0, 1fr) minmax(600px, 0.95fr);
   align-items: end;
-  gap: 44px;
+  gap: 36px;
   margin: 0 auto;
   padding: 120px 44px 42px;
   pointer-events: none;

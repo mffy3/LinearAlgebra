@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="用户使用数据库：练习正确率、测试分数与学习进度，用柱状图、饼状图、折线图查看。">
+  <meta name="theme-color" content="#efeae1">
+  <title>数据面板 · Linear Algebra</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/canvas.css">
+  <link rel="stylesheet" href="../css/account.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body class="lab-page dashboard-page">
+  <a class="skip-link" href="#dash-main">跳到主要内容</a>
+
+  <header class="site-header lab-header">
+    <div class="header-inner">
+      <a class="brand" href="../index.html" aria-label="Linear Algebra 入口">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="presentation">
+            <rect x="3" y="3" width="11" height="11" rx="2"></rect>
+            <rect x="18" y="3" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="3" y="18" width="11" height="11" rx="2" opacity="0.55"></rect>
+            <rect x="18" y="18" width="11" height="11" rx="2"></rect>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Linear Algebra</strong>
+          <small>INTERACTIVE LINEAR ALGEBRA</small>
+        </span>
+      </a>
+
+      <nav class="site-nav" aria-label="主导航">
+        <a href="../index.html">入口</a>
+        <a href="library.html">全部展厅</a>
+        <a href="applications/atlas.html">应用地图</a>
+        <a href="dashboard.html" aria-current="page">数据面板</a>
+        <a href="../ROADMAP.md">路线图</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="dash-main" class="lab-main dash-main">
+    <section class="lab-intro dash-hero" data-zone="intro">
+      <div class="lab-intro-copy">
+        <p class="eyebrow">USER DATA · 只在这台电脑上</p>
+        <h1>你的学习记录，<span class="gradient-text">只在本地</span></h1>
+        <p class="lede">
+          答题正确率、测试分数、学习进度，全部来自你自己的操作。
+          没有云端、没有第三方统计；换一台电脑或删掉账号，这些数字就归零。
+        </p>
+      </div>
+      <div class="dash-account" id="dash-account" aria-live="polite"></div>
+    </section>
+
+    <section class="dash-notice" id="dash-offline" hidden aria-live="polite">
+      <h2>本地服务没有启动</h2>
+      <p>数据面板需要 <code>start-server.bat</code>（或 <code>node server/app.js</code>）启动的本地服务。
+        页面内容与练习不受影响，只是没有记录。</p>
+      <p><a class="btn btn-small" href="../index.html">回到入口</a></p>
+    </section>
+
+    <section class="dash-notice" id="dash-login" hidden aria-live="polite">
+      <h2>还没有登录</h2>
+      <p>登录之后，练习正确率、测试分数与学习进度才会被记录。不登录也能用全部内容，只是没有这些数字。</p>
+      <p><button class="btn btn-primary" type="button" id="dash-login-btn">登录 / 注册</button></p>
+    </section>
+
+    <div id="dash-content" hidden>
+      <section class="dash-kpis" aria-label="学习概览">
+        <article class="dash-kpi">
+          <span>答题总数</span>
+          <strong id="kpi-attempts">0</strong>
+          <small>练习 + 测试，不含访问</small>
+        </article>
+        <article class="dash-kpi">
+          <span>正确率</span>
+          <strong id="kpi-accuracy">—</strong>
+          <small id="kpi-accuracy-note">还没有判过分的记录</small>
+        </article>
+        <article class="dash-kpi">
+          <span>覆盖章节</span>
+          <strong id="kpi-chapters">0 / 6</strong>
+          <small>至少打开过一次</small>
+        </article>
+        <article class="dash-kpi">
+          <span>测试次数</span>
+          <strong id="kpi-tests">0</strong>
+          <small>章节大测</small>
+        </article>
+      </section>
+
+      <section class="dash-grid" aria-label="图表">
+        <article class="dash-card">
+          <div class="dash-card-head">
+            <h2>各章正确率</h2>
+            <span>柱状图</span>
+          </div>
+          <p class="dash-card-note">按章节统计「先猜后验」与练习的判分记录。</p>
+          <div class="dash-chart-wrap"><canvas id="chart-accuracy" aria-label="各章正确率柱状图"></canvas></div>
+        </article>
+
+        <article class="dash-card">
+          <div class="dash-card-head">
+            <h2>答对 / 答错</h2>
+            <span>饼状图</span>
+          </div>
+          <p class="dash-card-note">只统计判过分的作答；访问记录不计入。</p>
+          <div class="dash-chart-wrap"><canvas id="chart-pie" aria-label="答对答错饼状图"></canvas></div>
+        </article>
+
+        <article class="dash-card">
+          <div class="dash-card-head">
+            <h2>最近活动</h2>
+            <span>折线图</span>
+          </div>
+          <p class="dash-card-note">最近 14 天每天产生了多少条记录。</p>
+          <div class="dash-chart-wrap"><canvas id="chart-timeline" aria-label="最近活动折线图"></canvas></div>
+        </article>
+
+        <article class="dash-card">
+          <div class="dash-card-head">
+            <h2>测试分数</h2>
+            <span>折线图</span>
+          </div>
+          <p class="dash-card-note">章节大测的得分百分比；还没有测试时这里会是空的。</p>
+          <div class="dash-chart-wrap"><canvas id="chart-scores" aria-label="测试分数折线图"></canvas></div>
+        </article>
+      </section>
+
+      <section class="dash-progress" aria-labelledby="progress-title">
+        <div class="dash-card-head">
+          <h2 id="progress-title">学习进度</h2>
+          <span>按章节</span>
+        </div>
+        <ul class="dash-progress-list" id="dash-progress-list"></ul>
+      </section>
+
+      <section class="dash-danger" aria-labelledby="danger-title">
+        <div>
+          <h2 id="danger-title">账号与数据</h2>
+          <p>数据只保存在本机的 <code>data/linear-algebra.db</code>。删除账号会同时删掉全部记录，无法恢复。</p>
+        </div>
+        <div class="dash-danger-actions">
+          <button class="btn btn-small btn-ghost" type="button" id="btn-logout">退出登录</button>
+          <button class="btn btn-small dash-danger-btn" type="button" id="btn-delete">删除账号与数据</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <strong>Linear Algebra</strong>
+        <span>从箭头开始。</span>
+      </div>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="../index.html">入口</a>
+        <a href="library.html">全部展厅</a>
+        <a href="applications/atlas.html">应用地图</a>
+        <a href="../ROADMAP.md">路线图</a>
+        <a href="../RULES.md">规则</a>
+        <a href="../MANUAL.md">手册</a>
+        <a href="../REFERENCES.md">参考</a>
+      </nav>
+      <p class="footer-disclaimer">
+        本项目为独立开源项目，与 MIT、Gilbert Strang 教授及 3Blue1Brown 均无隶属或背书关系。
+        项目内容为原创，参考来源仅以链接与出处形式标注。
+      </p>
+    </div>
+  </footer>
+
+  <dialog class="dash-dialog" id="delete-dialog">
+    <form method="dialog" id="delete-form">
+      <h2>删除账号与全部数据</h2>
+      <p>这会删除用户名、密码哈希、全部答题与进度记录，无法恢复。输入密码确认。</p>
+      <label>密码
+        <input type="password" id="delete-password" autocomplete="current-password" maxlength="128">
+      </label>
+      <p class="account-error" id="delete-error" role="alert"></p>
+      <div class="dash-dialog-actions">
+        <button class="btn btn-small btn-ghost" type="submit" value="cancel">取消</button>
+        <button class="btn btn-small dash-danger-btn" type="submit" value="confirm" id="delete-confirm">确认删除</button>
+      </div>
+    </form>
+  </dialog>
+
+  <noscript>
+    <div class="noscript-warning">数据面板需要 JavaScript 才能读取本地记录。</div>
+  </noscript>
+
+  <script src="../js/lib/account.js" defer></script>
+  <script src="../js/demos/dashboard.js" defer></script>
+</body>
+</html>
