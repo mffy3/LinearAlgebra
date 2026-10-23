@@ -67,6 +67,13 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_sessions_expiry ON sessions (expires_at);
 `);
 
+// 旧库升级：补上练习/测试的“对几题 / 共几题”两列。
+(function migrateAttempts() {
+  const columns = db.prepare('PRAGMA table_info(attempts)').all().map(function (row) { return row.name; });
+  if (columns.indexOf('correct_count') < 0) db.exec('ALTER TABLE attempts ADD COLUMN correct_count INTEGER');
+  if (columns.indexOf('question_count') < 0) db.exec('ALTER TABLE attempts ADD COLUMN question_count INTEGER');
+})();
+
 const stmts = {
   insertUser: db.prepare(
     'INSERT INTO users (username, pass_hash, salt, created_at) VALUES (?, ?, ?, ?)'
