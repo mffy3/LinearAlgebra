@@ -379,12 +379,12 @@
     if (!els.account) return;
     els.account.innerHTML = '';
 
-    if (!state.online) {
+    if (state.mode === 'offline') {
       var p = document.createElement('p');
       p.innerHTML = '<strong>离线</strong>';
       els.account.appendChild(p);
       var hint = document.createElement('p');
-      hint.textContent = '启动 start-server.bat 后刷新，这里会显示账号与数据。';
+      hint.textContent = '这个浏览器不允许本地存储，账号与记录暂时不可用。';
       els.account.appendChild(hint);
       return;
     }
@@ -403,7 +403,8 @@
     p3.innerHTML = '<strong>' + escapeHtml(state.user.username) + '</strong>';
     els.account.appendChild(p3);
     var meta = document.createElement('p');
-    meta.textContent = '账号创建于 ' + formatDate(state.user.created_at) + ' · 数据只在这台电脑上';
+    meta.textContent = '账号创建于 ' + formatDate(state.user.created_at)
+      + (state.mode === 'local' ? ' · 本机账号（只在这个浏览器里）' : ' · 数据只在这台电脑上');
     els.account.appendChild(meta);
 
     var actions = document.createElement('div');
@@ -473,7 +474,7 @@
   }
 
   function load() {
-    if (!account.state.online || !account.state.user) {
+    if (!account.state.user) {
       current = null;
       return Promise.resolve(null);
     }
@@ -491,11 +492,12 @@
 
   function renderShell() {
     var state = account.state;
-    var ready = state.online && state.user;
+    var ready = !!state.user;
+    var usable = state.mode !== 'offline';
 
     renderAccount(state);
-    if (els.offline) els.offline.hidden = state.online !== false;
-    if (els.login) els.login.hidden = !(state.online && !state.user);
+    if (els.offline) els.offline.hidden = usable || !!state.user;
+    if (els.login) els.login.hidden = !(usable && !state.user);
     if (els.content) els.content.hidden = !ready;
 
     if (ready) load();
@@ -535,17 +537,7 @@
         return;
       }
 
-      fetch('/api/account/delete', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: password })
-      }).then(function (response) {
-        return response.json().catch(function () { return {}; }).then(function (data) {
-          if (!response.ok) throw new Error(data.error || '删除失败');
-          return data;
-        });
-      }).then(function () {
+      account.deleteAccount(password).then(function () {
         els.dialog.close();
         account.state.user = null;
         renderShell();

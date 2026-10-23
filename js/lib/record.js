@@ -21,7 +21,7 @@
   var quizRecorded = false;
 
   account.whenReady(function (state) {
-    if (!state.online || !state.user) return;
+    if (!state.user) return;
 
     var key = 'la-visited-' + chapter;
     var visited = false;
@@ -42,7 +42,7 @@
 
     var option = target.closest('.quiz-options button');
     if (!option || quizRecorded) return;
-    if (!account.state.online || !account.state.user) return;
+    if (!account.state.user) return;
 
     // 页面的答题逻辑会先一步更新反馈；等它跑完再读结果。
     window.setTimeout(function () {

@@ -15,8 +15,11 @@
 
   if (!global || !global.document) return;
 
+  var Local = global.LocalAccount || null;
+
   var state = {
     online: null,     // null=还没检测，true/false=检测结果
+    mode: 'offline',  // server / local / offline
     user: null,
     ready: false
   };
@@ -127,7 +130,9 @@
     if (state.user) {
       if (tag) tag.textContent = '已登录';
       if (title) title.textContent = state.user.username;
-      if (text) text.textContent = '你的答题、测试与学习进度都记在这台电脑上。';
+      if (text) text.textContent = state.mode === 'local'
+        ? '本机账号：记录只存在这个浏览器，换设备不同步。'
+        : '你的答题、测试与学习进度都记在这台电脑上。';
       var dash = document.createElement('a');
       dash.className = 'btn btn-small entry-account-primary';
       dash.href = '/pages/dashboard.html';
@@ -142,10 +147,12 @@
       return;
     }
 
-    if (state.online) {
-      if (tag) tag.textContent = '未登录';
+    if (state.mode !== 'offline') {
+      if (tag) tag.textContent = state.mode === 'local' ? '本机账号' : '未登录';
       if (title) title.textContent = '你的账号';
-      if (text) text.textContent = '不登录也能用全部功能。登录只是多一份只存在本机的使用记录。';
+      if (text) text.textContent = state.mode === 'local'
+        ? '不用启动服务：注册后账号只存在这个浏览器，密码只保存加盐哈希。'
+        : '不登录也能用全部功能。登录只是多一份只存在本机的使用记录。';
       var login = document.createElement('button');
       login.type = 'button';
       login.className = 'btn btn-small entry-account-primary';
@@ -163,7 +170,7 @@
 
     if (tag) tag.textContent = '离线';
     if (title) title.textContent = '本地账号';
-    if (text) text.textContent = '现在直接打开了页面文件：全部内容都能用，登录需要先启动本地服务。';
+    if (text) text.textContent = '这个浏览器不允许本地存储，账号与记录暂时不可用；全部内容照常使用。';
     var how = document.createElement('button');
     how.type = 'button';
     how.className = 'btn btn-small entry-account-primary';
@@ -191,7 +198,7 @@
       var existing = target.parent.querySelector('.nav-account');
       if (existing) existing.remove();
 
-      if (target.kind === 'top' && !state.online && !state.user) return;
+      if (target.kind === 'top' && state.mode === 'offline' && !state.user) return;
 
       var node;
       if (state.user) {
@@ -202,7 +209,7 @@
       } else {
         node = document.createElement('button');
         node.type = 'button';
-        node.textContent = state.online ? '登录' : '账号';
+        node.textContent = state.mode !== 'offline' ? '登录' : '账号';
         node.addEventListener('click', function () { openDialog('login'); });
       }
       node.className = 'nav-account';
@@ -315,10 +322,24 @@
   function openDialog(tab) {
     buildModal();
     var signed = !!state.user;
+    var usable = state.online || state.mode === 'local';
     modal.querySelector('[data-account-signed]').hidden = !signed;
-    modal.querySelector('[data-account-form]').hidden = signed || !state.online;
-    modal.querySelector('.account-tabs').hidden = signed || !state.online;
-    modal.querySelector('[data-account-offline]').hidden = state.online || signed;
+    modal.querySelector('[data-account-form]').hidden = signed || !usable;
+    modal.querySelector('.account-tabs').hidden = signed || !usable;
+    modal.querySelector('[data-account-offline]').hidden = usable || signed;
+
+    var kicker = modal.querySelector('.account-dialog .eyebrow');
+    var lead = modal.querySelector('.account-lead');
+    var privacy = modal.querySelector('.account-privacy');
+    if (state.mode === 'local') {
+      if (kicker) kicker.textContent = 'ACCOUNT · 本机账号（不联网）';
+      if (lead) lead.textContent = '不用启动服务：账号只存在这个浏览器，密码只保存加盐哈希，数据不上传。';
+      if (privacy) privacy.textContent = '本机账号：密码用 PBKDF2 加盐哈希保存在浏览器；换设备不同步，清除站点数据会一起清空。';
+    } else {
+      if (kicker) kicker.textContent = 'ACCOUNT · 只在本机';
+      if (lead) lead.textContent = '不登录也能用全部内容。登录只是多一份「用户使用数据库」：练习正确率、测试分数、学习进度，以及它们对应的图表。';
+      if (privacy) privacy.textContent = '密码只保存加盐哈希；数据存在本机 data/linear-algebra.db，可以随时在数据面板里删除账号与全部记录。没有第三方统计、没有上报。';
+    }
 
     if (signed) {
       modal.querySelector('[data-account-name]').textContent = state.user.username;
@@ -331,7 +352,7 @@
 
     var focusEl = signed
       ? modal.querySelector('[data-account-logout]')
-      : (state.online ? modal.querySelector('input[name="username"]') : modal.querySelector('.account-close'));
+      : (state.mode !== 'offline' ? modal.querySelector('input[name="username"]') : modal.querySelector('.account-close'));
     if (focusEl) {
       try { focusEl.focus({ preventScroll: true }); } catch (error) { focusEl.focus(); }
     }
@@ -377,10 +398,17 @@
     var submit = modal.querySelector('[data-account-submit]');
     if (submit) submit.disabled = true;
 
-    api(tab === 'register' ? '/api/register' : '/api/login', {
-      method: 'POST',
-      body: { username: username, password: password }
-    }).then(function (result) {
+    var request;
+    if (state.mode === 'local') {
+      request = (tab === 'register' ? Local.register(username, password) : Local.login(username, password))
+        .then(function (user) { return { user: user }; });
+    } else {
+      request = api(tab === 'register' ? '/api/register' : '/api/login', {
+        method: 'POST',
+        body: { username: username, password: password }
+      });
+    }
+    request.then(function (result) {
       state.user = result.user;
       form.reset();
       closeDialog();
@@ -394,6 +422,13 @@
   }
 
   function logout() {
+    if (state.mode === 'local') {
+      return Local.logout().then(function () {
+        state.user = null;
+        closeDialog();
+        notify();
+      });
+    }
     if (!state.online) return Promise.resolve();
     return api('/api/logout', { method: 'POST' }).catch(function () { }).then(function () {
       state.user = null;
@@ -407,7 +442,7 @@
    * ------------------------------------------------------------------ */
 
   function record(event) {
-    if (!state.online || !state.user || !event) return Promise.resolve(null);
+    if (!state.user || !event) return Promise.resolve(null);
     var payload = {
       kind: event.kind,
       chapter: event.chapter,
@@ -416,16 +451,40 @@
       total: event.total,
       tier: event.tier,
       mode: event.mode,
-      duration: event.duration
+      duration: event.duration,
+      correctCount: event.correctCount,
+      questionCount: event.questionCount
     };
+    if (state.mode === 'local') {
+      return Local.record(payload).catch(function () { return null; });
+    }
+    if (!state.online) return Promise.resolve(null);
     return api('/api/events', { method: 'POST', body: payload }).catch(function () {
       return null;
     });
   }
 
   function stats() {
-    if (!state.online || !state.user) return Promise.reject(new Error('offline'));
+    if (!state.user) return Promise.reject(new Error('offline'));
+    if (state.mode === 'local') return Local.stats();
+    if (!state.online) return Promise.reject(new Error('offline'));
     return api('/api/stats');
+  }
+
+  function deleteAccount(password) {
+    if (!state.user) return Promise.reject(new Error('未登录'));
+    if (state.mode === 'local') return Local.deleteAccount(password);
+    return api('/api/account/delete', { method: 'POST', body: { password: password } });
+  }
+
+  function getDecor() {
+    if (state.mode === 'local') return Local.getDecor();
+    return api('/api/decor').catch(function () { return { items: [] }; });
+  }
+
+  function putDecor(items) {
+    if (state.mode === 'local') return Local.putDecor(items);
+    return api('/api/decor', { method: 'PUT', body: { items: items } });
   }
 
   /* ------------------------------------------------------------------ *
@@ -433,7 +492,17 @@
    * ------------------------------------------------------------------ */
 
   var initPromise = checkHealth().then(function (online) {
-    return online ? loadMe() : null;
+    if (online) {
+      state.mode = 'server';
+      return loadMe();
+    }
+    if (Local && Local.available()) {
+      state.mode = 'local';
+      state.user = Local.currentUser();
+      return state.user;
+    }
+    state.mode = 'offline';
+    return null;
   }).then(function () {
     state.ready = true;
     render();
@@ -449,6 +518,9 @@
     closeDialog: closeDialog,
     record: record,
     stats: stats,
+    deleteAccount: deleteAccount,
+    getDecor: getDecor,
+    putDecor: putDecor,
     logout: logout
   };
 })(typeof window !== 'undefined' ? window : null);

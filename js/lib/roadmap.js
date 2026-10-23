@@ -312,26 +312,15 @@
   }
 
   function saveDecor() {
-    if (!state.user) return;
+    if (!state.user || !account) return;
     if (state.saving) return;
     state.saving = true;
-    fetch('/api/decor', {
-      method: 'PUT',
-      credentials: 'same-origin',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ items: state.decor })
-    }).then(function (response) {
+    account.putDecor(state.decor).then(function () {
       state.saving = false;
-      if (response.ok) {
-        showSave('已保存到你的账号。');
-      } else if (response.status === 401) {
-        showSave('登录状态过期了，刷新后再试。');
-      } else {
-        showSave('保存失败，稍后再试。');
-      }
-    }).catch(function () {
+      showSave(account.state.mode === 'local' ? '已保存到这个浏览器。' : '已保存到你的账号。');
+    }).catch(function (error) {
       state.saving = false;
-      showSave('网络不通，装饰只留在这一页。');
+      showSave(error && error.status === 401 ? '登录状态过期了，刷新后再试。' : '保存失败，稍后再试。');
     });
   }
 
@@ -523,12 +512,10 @@
   }
 
   function loadDecor() {
-    return fetch('/api/decor', { credentials: 'same-origin' })
-      .then(function (response) { return response.ok ? response.json() : { items: [] }; })
-      .then(function (payload) {
-        state.decor = Array.isArray(payload.items) ? payload.items : [];
-      })
-      .catch(function () { state.decor = []; });
+    if (!account) return Promise.resolve();
+    return account.getDecor().then(function (payload) {
+      state.decor = payload && Array.isArray(payload.items) ? payload.items : [];
+    }).catch(function () { state.decor = []; });
   }
 
   function load() {
@@ -536,12 +523,17 @@
     account.init().then(function () {
       state.user = account.state.user;
       state.online = account.state.online;
+      var local = account.state.mode === 'local';
       if (!state.user) {
         redrawMap();
-        if (hint) hint.textContent = '未登录也能看、能点、能进；登录后可以布置宠物与小屋。';
+        if (hint) hint.textContent = local
+          ? '不用启动服务：登录「本机账号」后就能布置宠物与小屋（只存这个浏览器）。'
+          : '未登录也能看、能点、能进；登录后可以布置宠物与小屋。';
         return;
       }
-      if (hint) hint.textContent = '已登录：站点颜色是进度，宠物与小屋由你布置。';
+      if (hint) hint.textContent = local
+        ? '本机账号：站点颜色是进度，装饰只存在这个浏览器。'
+        : '已登录：站点颜色是进度，宠物与小屋由你布置。';
       loadDecor().then(function () {
         if (account.stats) {
           account.stats().then(applyStats).catch(function () { redrawMap(); });

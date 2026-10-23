@@ -297,8 +297,26 @@ if (window.LinearSpace) {
 `node:crypto`），不装任何 npm 包；同时把静态站点也托管在同一个端口，页面与 `/api` 同源，
 cookie 才能生效。
 
-- 不启动服务：直接双击 `index.html`，全部内容照常，登录入口自动显示「离线」；
+- 不启动服务：直接双击 `index.html`，全部内容照常，登录走「本机账号」；
 - 启动服务：`start-server.bat` 或 `node server/app.js` → `http://127.0.0.1:4173/`。
+
+### 账号的两种提供方（2026-10 新增）
+
+`account.js` 只关心「有没有可用的账号后端」，不关心数据存哪。启动时探测 `/api/health`：
+
+| 模式 | 触发条件 | 存储 | 实现 |
+|---|---|---|---|
+| `server` | `/api/health` 返回 ok | SQLite `data/linear-algebra.db` | `server/` + `fetch('/api/...')` |
+| `local` | 静态托管 / `file://` / 服务没开，但浏览器允许本地存储 | `localStorage`（`la-local-*` 键） | `js/lib/local-account.js` |
+| `offline` | 浏览器禁用本地存储 | 无 | 只读内容 |
+
+- 本机账号的密码用 WebCrypto **PBKDF2-SHA256（210,000 次，16 字节随机盐）**，只存哈希；
+- 记录与统计的字段、口径和 `/api/stats` 完全一致（`totals` / `byChapter` / `scores` /
+  `progress` / `timeline`），数据面板不需要知道用的是哪种账号；
+- 地图装饰走同一层：`account.getDecor()` / `account.putDecor()`，服务器写 `decorations` 表，
+  本机写 `la-local-decor-v1`；
+- 页面侧只需要判断 `account.state.user`，不要再判断 `state.online`；
+- 本机账号不跨设备、不跨浏览器，清除站点数据会一起清空；删除账号会同时清掉记录与装饰。
 
 ### 分层
 

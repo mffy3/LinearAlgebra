@@ -3,6 +3,27 @@
 本项目遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 的写法，版本号遵循
 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
+## [1.2.0] - 2026-10-24
+
+### Added
+
+- **本机账号**：不启动本地服务也能注册 / 登录 / 记录 / 看数据面板 / 布置地图装饰。
+  密码用 WebCrypto PBKDF2-SHA256（210,000 次）加盐哈希，只存浏览器 `localStorage`；
+  账号、记录与装饰都不上传。
+- 账号层拆成两个提供方：`server`（默认，`/api`）与 `local`（静态托管 / `file://`），
+  `account.js` 对页面暴露同一套接口；`local-account.test.js` 覆盖注册、登录、记录、统计、装饰与删除。
+- 路线图装饰、练习成绩、数据面板在无服务器时同样可用。
+
+### Changed
+
+- `record()` 现在把 `correctCount` / `questionCount` 一并传给两种后端，正确率口径一致。
+- README / GUIDE / MANUAL / ARCHITECTURE 增加“本机账号 vs 服务账号”的说明。
+
+### Security
+
+- 本机账号做 5 次失败后 10 秒冷却；密码不落盘、不进日志；删除账号会清掉记录与装饰。
+- 静态托管时没有任何服务端密钥或数据库暴露面。
+
 ## [1.1.0] - 2026-10-24
 
 在 v1.0.1 基础上新增练习与测试、学习路线图、使用指南与发布文件。

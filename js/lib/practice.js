@@ -712,7 +712,7 @@
     back.href = chapter.page;
     actions.appendChild(back);
 
-    if (account && account.state && account.state.online && account.state.user) {
+    if (account && account.state && account.state.user) {
       var dash = el('a', 'btn btn-small btn-ghost', '数据面板');
       dash.href = 'dashboard.html';
       actions.appendChild(dash);
