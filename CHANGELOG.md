@@ -3,9 +3,9 @@
 本项目遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 的写法，版本号遵循
 [Semantic Versioning](https://semver.org/lang/zh-CN/)。
 
-## [0.1.0] - 2026-10-24
+## [1.1.0] - 2026-10-24
 
-首个公开版本：六个可拖动的章节展厅、十三个跨域应用、练习与测试、本地账号与学习路线图。
+在 v1.0.1 基础上新增练习与测试、学习路线图、使用指南与发布文件。
 
 ### Added
 
