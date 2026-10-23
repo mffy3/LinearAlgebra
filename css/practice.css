@@ -541,3 +541,176 @@
     justify-content: space-between;
   }
 }
+
+/* --------------------------------------------------------------------------
+   大题作答：公式输入
+   -------------------------------------------------------------------------- */
+
+.math-field {
+  display: grid;
+  gap: 8px;
+}
+
+.math-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 7px;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  background: var(--bg-soft);
+}
+
+.math-symbol {
+  display: grid;
+  width: 30px;
+  height: 28px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--hairline);
+  border-radius: 7px;
+  color: var(--ink);
+  background: var(--surface);
+  font-family: var(--font-serif);
+  font-size: 0.86rem;
+  cursor: pointer;
+}
+
+.math-symbol:hover {
+  border-color: var(--accent);
+}
+
+.math-area {
+  width: 100%;
+  min-height: 118px;
+  padding: 10px 12px;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  outline: 0;
+  color: var(--ink);
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  line-height: 1.75;
+  resize: vertical;
+}
+
+.math-area:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(116, 134, 118, 0.14);
+}
+
+.math-suggest {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.math-suggest[hidden] {
+  display: none;
+}
+
+.math-suggest-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 9px;
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  color: var(--ink);
+  background: var(--surface);
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.math-suggest-item:hover {
+  border-color: var(--accent);
+}
+
+.math-suggest-item i {
+  color: var(--faint);
+  font-style: normal;
+  font-size: 0.54rem;
+}
+
+.math-hint {
+  color: var(--faint);
+  font-size: 0.6rem;
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   大题自评
+   -------------------------------------------------------------------------- */
+
+.review-answer {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.review-answer b {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.review-answer pre {
+  margin: 0;
+  padding: 9px 11px;
+  overflow-x: auto;
+  border-radius: 9px;
+  background: var(--bg-soft);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.self-grade {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.self-grade > span {
+  color: var(--muted);
+  font-size: 0.64rem;
+}
+
+.self-btn {
+  padding: 5px 11px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  color: var(--ink);
+  background: var(--surface);
+  font: inherit;
+  font-size: 0.66rem;
+  cursor: pointer;
+}
+
+.self-btn:hover {
+  border-color: var(--accent);
+}
+
+.self-btn.is-active {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  background: rgba(227, 232, 221, 0.75);
+}
+
+.result-score-value {
+  font: inherit;
+}
+
+.review-item.is-partial .review-head span {
+  color: var(--gold);
+}
+
+.grade-note {
+  color: var(--faint) !important;
+}
