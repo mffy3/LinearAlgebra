@@ -56,6 +56,10 @@
     var onChange = typeof opts.onChange === 'function' ? opts.onChange : function () { };
     var panZoom = opts.panZoom !== false;
     var minimap = opts.minimap !== false;
+    var dragPan = opts.dragPan !== false;
+    var reserveDock = opts.reserveDock === true;
+    var keepScale = opts.keepScale === true;
+    var savedScale = 0;
 
     var active = false;
     var closing = false;
@@ -98,7 +102,7 @@
       ui.hidden = true;
 
       var hintText = panZoom
-        ? '拖动平移 · 滚轮 / 双指缩放 · Esc 退出'
+        ? (dragPan ? '拖动平移 · 滚轮 / 双指缩放 · Esc 退出' : '滚轮缩放 · 点地图移动视野 · Esc 退出')
         : '全屏查看 · Esc 退出';
       var hint = el('p', 'space-hint', hintText);
       hint.setAttribute('aria-hidden', 'true');
@@ -204,7 +208,7 @@
      * 给画布留出和讲解条一样高的下边距，避免挡住图表底部的刻度。
      */
     function reserveDockSpace() {
-      if (panZoom || !active || !ui) return;
+      if (!reserveDock || !active || !ui) return;
       var dock = ui.querySelector('.space-dock');
       if (!dock) return;
       var height = Math.ceil(dock.getBoundingClientRect().height) + 26;
@@ -215,6 +219,14 @@
     function fitSpaceView() {
       view.center.x = 0;
       view.center.y = 0;
+
+      if (keepScale) {
+        view.resize();
+        if (savedScale > 0) view.zoom = clamp(savedScale / Math.max(0.0001, view.baseScale), 0.05, 6);
+        view.resize();
+        commit();
+        return;
+      }
 
       if (!panZoom) {
         view.zoom = 1;
@@ -453,6 +465,7 @@
         cy: view.center.y,
         stageMinHeight: stage ? stage.style.minHeight : ''
       };
+      savedScale = view.scale;
 
       // 画布改成 fixed 之后会脱离文档流；先给 stage 占住原来的高度，
       // 退出时再还原，页面就不会因为进入全屏而上下跳。
@@ -682,22 +695,26 @@
 
     function bindGlobalEvents(binding) {
       if (binding) {
-        if (panZoom) {
+        if (panZoom && dragPan) {
           on(wrap, 'pointerdown', onPointerDown, true);
           on(global, 'pointermove', onPointerMove, true);
           on(global, 'pointerup', onPointerUp, true);
           on(global, 'pointercancel', onPointerUp, true);
+        }
+        if (panZoom) {
           on(wrap, 'wheel', onWheel, { passive: false });
         }
         on(document, 'keydown', onKeyDown);
         on(document, 'fullscreenchange', onFullscreenChange);
         on(document, 'webkitfullscreenchange', onFullscreenChange);
       } else {
-        if (panZoom) {
+        if (panZoom && dragPan) {
           off(wrap, 'pointerdown', onPointerDown, true);
           off(global, 'pointermove', onPointerMove, true);
           off(global, 'pointerup', onPointerUp, true);
           off(global, 'pointercancel', onPointerUp, true);
+        }
+        if (panZoom) {
           off(wrap, 'wheel', onWheel, { passive: false });
         }
         off(document, 'keydown', onKeyDown);

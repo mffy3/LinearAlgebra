@@ -686,8 +686,9 @@
       canvas: canvas,
       view: view,
       redraw: requestRender,
-      panZoom: false,
-      minimap: false
+      dragPan: false,
+      reserveDock: true,
+      keepScale: true
     });
   }
 

@@ -256,18 +256,20 @@ if (window.LinearSpace) {
 - `landmarks` 只决定全局地图上的小圆点，不参与任何数学；
 - 不调用 `attach` 的页面完全保持原样。
 
-### 应用页的「只放大」模式
+### 应用页的全屏
 
-应用页（物理 / 经济 / 软件 / 硬件 / 美术 / 音乐 / 社科）的拖动本身就是交互，
-所以它们调用时传 `panZoom: false, minimap: false`：
+应用页（物理 / 经济 / 软件 / 硬件 / 美术 / 音乐 / 社科）同样有「全屏」，但交互不同：
 
-```js
-window.LinearSpace.attach({ canvas: canvas, view: view, redraw: requestRender, panZoom: false, minimap: false });
-```
+- 空间类页面（物理、经济、软件、硬件、三维投影、一点透视）调用
+  `attach({ dragPan: false, reserveDock: true, keepScale: true })`：
+  画布铺满、右上角小地图 + 退出键、滚轮缩放、点地图移动视野；
+  **左键拖动不拦截**，各页自己的拖动（锚点、金点、播放头、立方体旋转）照常；
+- 图表类页面（音乐、社会）调用 `attach({ panZoom: false, minimap: false, reserveDock: true })`：
+  只做「画布铺满 + 底部讲解条 + 右上角退出」，因为它们不是空间视图，给地图反而误导；
+- `reserveDock` 会给画布留出讲解条的高度，避免盖住图表刻度；
+- `keepScale` 让进入全屏时保持原来的像素比例，画面不会突然放大或缩小。
 
-- 只做「画布铺满 + 底部讲解条 + 右上角退出」，不拦截任何指针 / 滚轮事件，原有拖动照常；
-- 底部讲解条会占位：`reserveDockSpace()` 给画布留出同样高度的下边距，避免盖住图表刻度；
-- 退出键放在右上角偏下（`top: 58px`），避开各页自己的状态 chip。
+> 小地图只反映 `view` 的平移与缩放；不基于 view 绘制的页面（音乐、社会）不显示地图。
 
 ### 视口新增的能力
 

@@ -544,7 +544,8 @@
       view: view,
       redraw: requestRender,
       panZoom: false,
-      minimap: false
+      minimap: false,
+      reserveDock: true
     });
   }
 
